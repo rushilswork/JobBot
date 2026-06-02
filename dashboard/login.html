@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JobBot — Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#080808;color:#f5f5f7;font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;}
+.card{background:#111;border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:3rem 2.5rem;width:100%;max-width:420px;box-shadow:0 32px 80px rgba(0,0,0,.6);}
+.logo{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;letter-spacing:-1px;margin-bottom:.25rem;}
+.logo span{color:#f97316;}
+.sub{font-size:.82rem;color:rgba(245,245,247,.45);margin-bottom:2.5rem;}
+label{display:block;font-size:.72rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:rgba(245,245,247,.45);margin-bottom:.45rem;}
+input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#f5f5f7;font-family:'Inter',sans-serif;font-size:.9rem;padding:.75rem 1rem;border-radius:10px;outline:none;transition:border-color .15s;margin-bottom:1.2rem;}
+input:focus{border-color:rgba(249,115,22,.5);background:rgba(255,255,255,.07);}
+button{width:100%;padding:.85rem;background:#f97316;border:none;border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:background .15s,transform .1s;margin-top:.5rem;}
+button:hover{background:#ea6c0a;transform:translateY(-1px);}
+button:active{transform:translateY(0);}
+button:disabled{opacity:.7;transform:none;}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.err{color:#f87171;font-size:.78rem;margin-top:.75rem;text-align:center;min-height:1.2rem;}
+.hint{font-size:.68rem;color:rgba(245,245,247,.28);text-align:center;margin-top:1.5rem;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">Job<span>Bot</span></div>
+  <div class="sub">Automated job discovery pipeline</div>
+  <form id="form">
+    <label>Username</label>
+    <input id="user" type="text" placeholder="admin" autocomplete="username" required/>
+    <label>Password</label>
+    <div style="position:relative;margin-bottom:1.2rem;">
+      <input id="pass" type="password" placeholder="••••••••" autocomplete="current-password" required style="margin-bottom:0;padding-right:2.8rem;width:100%;"/>
+      <span id="toggle-pass" onclick="togglePass()" style="position:absolute;right:.85rem;top:50%;transform:translateY(-50%);cursor:pointer;color:rgba(245,245,247,.4);font-size:1rem;user-select:none;transition:color .15s;" title="Show password">👁</span>
+    </div>
+    <button type="submit" id="btn">Sign In</button>
+    <div class="err" id="err"></div>
+  </form>
+  <div class="hint">Secured with bcrypt + JWT · httpOnly cookies</div>
+</div>
+<script>
+// If already logged in, skip to dashboard
+fetch('/auth/me').then(r=>{if(r.ok)window.location.replace('/dashboard');}).catch(()=>{});
+
+document.getElementById('form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('btn');
+  const err = document.getElementById('err');
+  btn.innerHTML = '<span class="spinner"></span>Signing in...'; btn.disabled = true; err.textContent = '';
+  try {
+    const r = await fetch('/auth/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({username: document.getElementById('user').value, password: document.getElementById('pass').value})
+    });
+    const d = await r.json();
+    if (r.ok) { window.location.replace('/dashboard'); }
+    else { err.textContent = d.detail || 'Invalid credentials'; }
+  } catch(e) { err.textContent = 'Connection error'; }
+  btn.innerHTML = 'Sign In'; btn.disabled = false;
+});
+
+function togglePass(){
+  const inp = document.getElementById('pass');
+  const icon = document.getElementById('toggle-pass');
+  if(inp.type === 'password'){
+    inp.type = 'text';
+    icon.textContent = '🙈';
+    icon.style.color = 'rgba(249,115,22,.8)';
+  } else {
+    inp.type = 'password';
+    icon.textContent = '👁';
+    icon.style.color = 'rgba(245,245,247,.4)';
+  }
+}
+</script>
+</body>
+</html>

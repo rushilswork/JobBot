@@ -1,0 +1,70 @@
+filters:
+  keywords:
+  - software engineer
+  - software developer
+  - SDE
+  - backend engineer
+  - full stack engineer
+  - software technologist
+  - platform engineer
+  locations:
+  - India
+  - Hyderabad
+  - Bengaluru
+  - Mumbai
+  - Remote
+  exclude_keywords:
+  - intern
+  - internship
+  - senior staff
+  - principal
+  - staff engineer
+  - VP
+  - director
+  - SDET
+  - QA
+  - quality assurance
+  - test engineer
+  - devops
+  - data scientist
+  - data analyst
+  - machine learning
+  - data engineer
+  - product manager
+  - designer
+  - UX
+  - hiring for
+  - product based company
+  - client hiring
+  - MNC hiring
+  - urgent requirement
+  - walk-in
+  - walkin
+  - staffing
+  - recruitment agency
+  - experience must
+  - banking experience
+  - insurance experience
+  - domain experience
+  - notice period
+  - immediate joiner
+portals:
+  linkedin:
+    enabled: true
+  naukri:
+    enabled: true
+  indeed:
+    enabled: true
+  glassdoor:
+    enabled: true
+  monster:
+    enabled: true
+  greenhouse:
+    enabled: true
+  instahire:
+    enabled: true
+  hiring_cafe:
+    enabled: true
+  uplers:
+    enabled: true
+check_interval_minutes: 60
