@@ -682,10 +682,12 @@ function AccountModal({onClose}){
     } else setCreateErr(d.detail||'Error');
   };
 
-  const deleteUser=async(username)=>{
-    if(!confirm('Delete user '+username+'?'))return;
-    await fetch('/auth/users/'+encodeURIComponent(username),{method:'DELETE'});
-    setUsers(prev=>prev.filter(u=>u.username!==username));
+  const [delConfirm,setDelConfirm]=useState(null);
+  const deleteUser=(username)=>setDelConfirm(username);
+  const confirmDelete=async()=>{
+    await fetch('/auth/users/'+encodeURIComponent(delConfirm),{method:'DELETE'});
+    setUsers(prev=>prev.filter(u=>u.username!==delConfirm));
+    setDelConfirm(null);
   };
 
   const logout=async()=>{await fetch('/auth/logout',{method:'POST'});window.location.href='/';};
@@ -693,6 +695,7 @@ function AccountModal({onClose}){
   const isAdmin=user?.role==='admin';
 
   return(
+    <>{delConfirm&&<ConfirmDialog icon="👤" title={"Delete user \""+delConfirm+"\"?"} message="This user will be permanently removed and will no longer be able to sign in." confirmLabel="Delete User" onConfirm={confirmDelete} onCancel={()=>setDelConfirm(null)}/>}
     <div className="acct-modal" onClick={e=>e.target===e.currentTarget&&onClose()}>
       <div className="acct-card" style={{maxWidth:480}}>
         <div className="acct-hdr">
