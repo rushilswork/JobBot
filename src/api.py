@@ -110,7 +110,15 @@ def public_signup(body: dict):
     if len(password) < 8:
         raise HTTPException(400, "Password must be at least 8 characters")
     users = list_users()
-    role = "admin" if not users else "viewer"
+    if not users:
+        # First user — becomes admin
+        role = "admin"
+    else:
+        # Check if any admin already exists — if yes, block public signup
+        has_admin = any(u["role"] == "admin" for u in users)
+        if has_admin:
+            raise HTTPException(403, "Signup is disabled. Ask an admin to create your account.")
+        role = "viewer"
     try:
         create_user(username, password, role)
         return {"ok": True, "role": role}
