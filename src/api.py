@@ -130,7 +130,7 @@ def public_signup(body: dict):
 def get_stats(current_user: dict = Depends(get_current_user)):
     session = get_session()
     try:
-        jobs = session.query(Job).all()
+        jobs = session.query(Job).filter(Job.discovered_by == current_user["username"]).all()
         counts = {s: 0 for s in ["new", "reviewed", "applying", "applied", "skipped", "failed"]}
         for j in jobs:
             if j.status in counts:
@@ -151,24 +151,24 @@ def discovery_progress(current_user: dict = Depends(get_current_user)):
     return get_progress()
 
 @app.post("/api/discovery/trigger")
-def discovery_trigger(current_user: dict = Depends(require_admin)):
-    trigger_now()
+def discovery_trigger(current_user: dict = Depends(get_current_user)):
+    trigger_now(triggered_by=current_user["username"])
     return {"ok": True}
 
 @app.post("/api/discovery/stop")
-def discovery_stop(current_user: dict = Depends(require_admin)):
+def discovery_stop(current_user: dict = Depends(get_current_user)):
     stop_discovery()
     return {"ok": True}
 
 @app.post("/api/discovery/start")
-def discovery_start(current_user: dict = Depends(require_admin)):
+def discovery_start(current_user: dict = Depends(get_current_user)):
     config = load_config()
+    trigger_now(triggered_by=current_user["username"])
     ensure_running(interval_minutes=config.get("check_interval_minutes", 60))
     return {"ok": True}
 
 @app.get("/api/discovery/stream")
 async def discovery_stream(current_user: dict = Depends(get_current_user)):
-    """SSE stream — emits progress log lines and status updates."""
     async def event_gen():
         sent = 0
         last_status_json = ""
@@ -185,14 +185,9 @@ async def discovery_stream(current_user: dict = Depends(get_current_user)):
                     last_status_json = status_json
                 await asyncio.sleep(1.5)
         except asyncio.CancelledError:
-            pass  # client disconnected or server shutting down — normal
-
-    return StreamingResponse(
-        event_gen(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"},
-    )
-
+            pass
+    return StreamingResponse(event_gen(), media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"})
 
 
 # ── Jobs ──────────────────────────────────────────────────────────────────
@@ -215,14 +210,13 @@ def list_jobs(
 
     session = get_session()
     try:
-        q = session.query(Job).join(Company)
+        q = session.query(Job).join(Company).filter(Job.discovered_by == current_user["username"])
         if status and status != "all":
             q = q.filter(Job.status == status)
             if status == "new":
                 from datetime import timedelta
                 from src.background import _read_state
                 state = _read_state()
-                # Use last scan start time if available, else 24h fallback
                 scan_ts = state.get("last_scan_completed_at")
                 if scan_ts:
                     try:
@@ -233,7 +227,6 @@ def list_jobs(
                     cutoff = datetime.utcnow() - timedelta(hours=24)
                 q = q.filter(Job.discovered_at >= cutoff)
         jobs = q.order_by(Job.discovered_at.desc()).limit(2000).all()
-
         result = []
         for j in jobs:
             work_mode = _mode(j)
@@ -242,26 +235,20 @@ def list_jobs(
             if portal and portal != "all" and j.portal != portal:
                 continue
             if location and location != "all":
-                loc_hay = (j.location or "").lower()
-                if location.lower() not in loc_hay:
+                if location.lower() not in (j.location or "").lower():
                     continue
             if search:
                 s = search.lower()
                 if s not in j.title.lower() and s not in j.company.name.lower() and s not in (j.location or "").lower():
                     continue
             result.append({
-                "id":            j.id,
-                "title":         j.title,
-                "company":       j.company.name,
-                "location":      j.location or "",
-                "portal":        j.portal,
-                "status":        j.status,
-                "work_mode":     work_mode,
-                "job_url":       j.job_url,
+                "id": j.id, "title": j.title, "company": j.company.name,
+                "location": j.location or "", "portal": j.portal, "status": j.status,
+                "work_mode": work_mode, "job_url": j.job_url,
                 "discovered_at": j.discovered_at.isoformat() if j.discovered_at else None,
-                "applied_at":    j.applied_at.isoformat() if j.applied_at else None,
-                "description":   (j.description or "")[:600],
-                "cover_letter":  j.cover_letter or "",
+                "applied_at": j.applied_at.isoformat() if j.applied_at else None,
+                "description": (j.description or "")[:600],
+                "cover_letter": j.cover_letter or "",
             })
         return result
     finally:
@@ -271,20 +258,22 @@ def list_jobs(
 class StatusUpdate(BaseModel):
     status: str
 
+ALLOWED_STATUSES = ["new","reviewed","applying","applied","skipped","failed"]
+
 @app.delete("/api/jobs/purge-suspicious")
 def purge_suspicious_jobs(current_user: dict = Depends(require_admin)):
     import re
     SUSPICIOUS = re.compile(
-        r"\b(experience must|banking experience|insurance experience|"
-        r"years exp|notice period|immediate joiner|serve notice|"
-        r"product based company|client hiring|mnc hiring|"
-        r"hiring for|urgent requirement|walk[\s-]?in|staffing|"
-        r"recruitment agency|domain experience)\b",
-        re.IGNORECASE,
-    )
+        r"\b(experience must|banking experience|insurance experience|years exp|notice period|"
+        r"immediate joiner|serve notice|product based company|client hiring|mnc hiring|"
+        r"hiring for|urgent requirement|walk[\s-]?in|staffing|recruitment agency|domain experience)\b",
+        re.IGNORECASE)
     session = get_session()
     try:
-        jobs = session.query(Job).filter(Job.status == "new").all()
+        jobs = session.query(Job).filter(
+            Job.status == "new",
+            Job.discovered_by == current_user["username"]
+        ).all()
         deleted = 0
         for j in jobs:
             if SUSPICIOUS.search(j.title or ""):
@@ -298,18 +287,17 @@ def purge_suspicious_jobs(current_user: dict = Depends(require_admin)):
 def clear_all_jobs(current_user: dict = Depends(require_admin)):
     session = get_session()
     try:
-        deleted = session.query(Job).delete()
+        deleted = session.query(Job).filter(Job.discovered_by == current_user["username"]).delete()
         session.commit()
+        trigger_now(triggered_by=current_user["username"])
+        return {"deleted": deleted}
     finally:
         session.close()
-    trigger_now()
-    return {"deleted": deleted}
 
 @app.patch("/api/jobs/{job_id}")
 def update_job(job_id: int, body: StatusUpdate, current_user: dict = Depends(get_current_user)):
-    _allowed_statuses = ["new", "reviewed", "applying", "applied", "skipped", "failed"]
-    if body.status not in _allowed_statuses:
-        raise HTTPException(400, f"Invalid status. Must be one of: {_allowed_statuses}")
+    if body.status not in ALLOWED_STATUSES:
+        raise HTTPException(400, f"Invalid status. Must be one of: {ALLOWED_STATUSES}")
     session = get_session()
     try:
         job = session.get(Job, job_id)
@@ -326,52 +314,6 @@ def update_job(job_id: int, body: StatusUpdate, current_user: dict = Depends(get
         session.close()
 
 
-
-
-
-
-# ── AI Search ─────────────────────────────────────────────────────────────
-class AISearchBody(BaseModel):
-    query: str
-    top_n: int = 50
-
-@app.post("/api/search/ai")
-def ai_search_endpoint(body: AISearchBody, current_user: dict = Depends(get_current_user)):
-    """Natural language job search — parses query intent and scores all DB jobs."""
-    from src.ai_search import ai_search
-
-    query = body.query.strip()[:500]
-    if not query:
-        raise HTTPException(400, "Query cannot be empty")
-
-    session = get_session()
-    try:
-        jobs = session.query(Job).join(Company).order_by(Job.discovered_at.desc()).limit(2000).all()
-
-        def _mode(job):
-            if job.notes and "work_mode:" in job.notes:
-                return job.notes.split("work_mode:")[-1].strip().split()[0]
-            return "unknown"
-
-        job_dicts = [{
-            "id":            j.id,
-            "title":         j.title,
-            "company":       j.company.name,
-            "location":      j.location or "",
-            "portal":        j.portal,
-            "status":        j.status,
-            "work_mode":     _mode(j),
-            "job_url":       j.job_url,
-            "discovered_at": j.discovered_at.isoformat() if j.discovered_at else None,
-            "description":   (j.description or "")[:600],
-            "cover_letter":  j.cover_letter or "",
-        } for j in jobs]
-    finally:
-        session.close()
-
-    results = ai_search(job_dicts, query, top_n=min(body.top_n, 100))
-    return {"query": query, "results": results, "total": len(results)}
-
 # ── Resume parsing ────────────────────────────────────────────────────────
 @app.post("/api/resume/parse")
 async def parse_resume(request: Request, current_user: dict = Depends(get_current_user)):
@@ -379,12 +321,10 @@ async def parse_resume(request: Request, current_user: dict = Depends(get_curren
     file = form.get("file")
     if not file:
         raise HTTPException(400, "No file uploaded")
-
     content = await file.read()
     filename = file.filename.lower()
     text = ""
     import io, re
-
     try:
         if filename.endswith(".pdf"):
             import pdfplumber
@@ -398,20 +338,46 @@ async def parse_resume(request: Request, current_user: dict = Depends(get_curren
             text = content.decode("utf-8", errors="ignore")
     except Exception as e:
         raise HTTPException(500, f"Could not parse file: {e}")
-
-    SKILLS = [
-        "python","java","javascript","typescript","golang","rust","c++","c#","kotlin","swift","scala",
-        "ruby","php","react","vue","angular","next.js","node.js","django","flask","fastapi","spring",
+    SKILLS = ["python","java","javascript","typescript","golang","rust","c++","c#","kotlin","swift",
+        "scala","react","vue","angular","next.js","node.js","django","flask","fastapi","spring",
         "sql","postgresql","mysql","mongodb","redis","elasticsearch","kafka","cassandra","dynamodb",
-        "aws","gcp","azure","docker","kubernetes","terraform","ci/cd","github actions",
-        "machine learning","deep learning","nlp","natural language processing","artificial intelligence",
-        "computer vision","pytorch","tensorflow","scikit-learn","pandas","numpy","spark","hadoop",
-        "rest api","graphql","grpc","microservices","system design","distributed systems",
-        "data structures","algorithms","linux","git","llm","transformers","openai","langchain",
-    ]
+        "aws","gcp","azure","docker","kubernetes","terraform","ci/cd","machine learning","deep learning",
+        "nlp","natural language processing","artificial intelligence","pytorch","tensorflow",
+        "scikit-learn","pandas","numpy","spark","rest api","graphql","microservices","system design",
+        "distributed systems","data structures","algorithms","linux","git","llm","transformers"]
     lo = text.lower()
     found = [s for s in SKILLS if re.search(r'\b' + re.escape(s) + r'\b', lo)]
     return {"skills": found, "char_count": len(text)}
+
+
+# ── AI Search ─────────────────────────────────────────────────────────────
+class AISearchBody(BaseModel):
+    query: str
+    top_n: int = 50
+
+@app.post("/api/search/ai")
+def ai_search_endpoint(body: AISearchBody, current_user: dict = Depends(get_current_user)):
+    from src.ai_search import ai_search
+    query = body.query.strip()[:500]
+    if not query:
+        raise HTTPException(400, "Query cannot be empty")
+    session = get_session()
+    try:
+        jobs = session.query(Job).join(Company).filter(
+            Job.discovered_by == current_user["username"]
+        ).order_by(Job.discovered_at.desc()).limit(2000).all()
+        def _mode(job):
+            if job.notes and "work_mode:" in job.notes:
+                return job.notes.split("work_mode:")[-1].strip().split()[0]
+            return "unknown"
+        job_dicts = [{"id":j.id,"title":j.title,"company":j.company.name,"location":j.location or "",
+            "portal":j.portal,"status":j.status,"work_mode":_mode(j),"job_url":j.job_url,
+            "discovered_at":j.discovered_at.isoformat() if j.discovered_at else None,
+            "description":(j.description or "")[:600],"cover_letter":j.cover_letter or ""} for j in jobs]
+    finally:
+        session.close()
+    results = ai_search(job_dicts, query, top_n=min(body.top_n, 100))
+    return {"query": query, "results": results, "total": len(results)}
 
 
 # ── Config management ─────────────────────────────────────────────────────
@@ -419,31 +385,25 @@ async def parse_resume(request: Request, current_user: dict = Depends(get_curren
 def get_config(current_user: dict = Depends(get_current_user)):
     with open(CONFIG_YAML) as f:
         cfg = yaml.safe_load(f)
-    return {
-        "keywords":  cfg.get("filters", {}).get("keywords", []),
-        "locations": cfg.get("filters", {}).get("locations", []),
-        "portals":   cfg.get("portals", {}),
-    }
-
+    return {"keywords": cfg.get("filters",{}).get("keywords",[]),
+            "locations": cfg.get("filters",{}).get("locations",[]),
+            "portals":   cfg.get("portals",{})}
 
 class ConfigUpdate(BaseModel):
     keywords:  list[str] | None = None
     locations: list[str] | None = None
     portals:   dict | None = None
 
-
 @app.patch("/api/config")
 def update_config(body: ConfigUpdate, current_user: dict = Depends(require_admin)):
     with open(CONFIG_YAML) as f:
         cfg = yaml.safe_load(f)
-
     if body.keywords is not None:
-        cfg.setdefault("filters", {})["keywords"] = [k.strip() for k in body.keywords if k.strip()]
+        cfg.setdefault("filters",{})["keywords"] = [k.strip() for k in body.keywords if k.strip()]
     if body.locations is not None:
-        cfg.setdefault("filters", {})["locations"] = [l.strip() for l in body.locations if l.strip()]
+        cfg.setdefault("filters",{})["locations"] = [l.strip() for l in body.locations if l.strip()]
     if body.portals is not None:
         cfg["portals"] = body.portals
-
     with open(CONFIG_YAML, "w") as f:
         yaml.dump(cfg, f, allow_unicode=True, sort_keys=False)
     return {"ok": True}

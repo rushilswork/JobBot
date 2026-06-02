@@ -36,7 +36,7 @@ def _enabled(config: dict, key: str) -> bool:
     return cfg.get("enabled", True) if isinstance(cfg, dict) else True
 
 
-def _save(session, listings) -> int:
+def _save(session, listings, discovered_by="system") -> int:
     count = 0
     for l in listings:
         co = session.query(Company).filter_by(name=l.company_name).first()
@@ -55,6 +55,7 @@ def _save(session, listings) -> int:
             "status":          JobStatus.NEW,
             "discovered_at":   datetime.utcnow(),
             "notes":           f"work_mode:{l.work_mode}",
+            "discovered_by":   discovered_by,
         })
         if created:
             count += 1
@@ -67,6 +68,11 @@ async def run_discovery(headed: bool = False, on_progress=None) -> int:
     headed  = headed or os.environ.get("JOBBOT_HEADED", "").lower() in ("1","true","yes")
     config  = load_config()
     filters = config.get("filters", {})
+
+    # Get who triggered this scan
+    from src.background import _read_state
+    state = _read_state()
+    triggered_by = state.get("triggered_by", "system")
 
     init_db()
     session   = get_session()
@@ -92,7 +98,7 @@ async def run_discovery(headed: bool = False, on_progress=None) -> int:
         try:
             _prog(f"[{key.upper()}] searching...")
             listings = await discoverer.discover()
-            n = _save(session, listings)
+            n = _save(session, listings, triggered_by)
             total_new += n
             _prog(f"[{key.upper()}] +{n} new jobs ({len(listings)} found)")
         except Exception as e:

@@ -150,6 +150,13 @@ def create_user(username: str, password: str, role: str = "viewer") -> User:
     return u
 
 def delete_user(username: str):
+    from src.database import Job, get_session as get_job_session
+    # Delete all jobs belonging to this user first
+    job_session = get_job_session()
+    job_session.query(Job).filter(Job.discovered_by == username).delete()
+    job_session.commit()
+    job_session.close()
+    # Then delete the user
     session = SessionLocal()
     u = session.query(User).filter_by(username=username).first()
     if u:

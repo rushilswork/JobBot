@@ -115,6 +115,7 @@ class Job(Base):
 
     # Status tracking
     status = Column(String, default=JobStatus.NEW, index=True)
+    discovered_by = Column(String, nullable=True, index=True)  # username who triggered scan
     discovered_at = Column(DateTime, default=datetime.utcnow, index=True)
     reviewed_at = Column(DateTime)
     applied_at = Column(DateTime)

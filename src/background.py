@@ -167,11 +167,12 @@ def stop_discovery() -> None:
     log.info("[BG] Stop signal sent.")
 
 
-def trigger_now() -> bool:
+def trigger_now(triggered_by: str = "system") -> bool:
     """Skip the current sleep interval and run discovery immediately."""
     global _thread
     state    = _read_state()
     interval = state.get("interval_minutes", 60)
+    _write_state({"triggered_by": triggered_by})
 
     if _thread is None or not _thread.is_alive():
         _stop_event.clear()
