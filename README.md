@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # JobBot — Automated Job Discovery Pipeline
 
 A local-first job discovery engine that searches 9 portals by keyword and surfaces relevant software engineering roles.
@@ -28,6 +27,3 @@ Default credentials: `admin` / `jobbot@2024!`
 - **Frontend**: React 18 (CDN) + Babel standalone
 - **Scraping**: Playwright + aiohttp + BeautifulSoup
 - **Auth**: bcrypt + JWT (httpOnly cookies)
-=======
-# JobBot
->>>>>>> 286e403272e56a9b6f4b2514d621214fc90be169
