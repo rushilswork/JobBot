@@ -67,15 +67,20 @@ def startup():
 
 # ── Frontend ──────────────────────────────────────────────────────────────
 LOGIN  = PROJECT_ROOT / "dashboard" / "login.html"
+HOME   = PROJECT_ROOT / "dashboard" / "home.html"
+SIGNUP = PROJECT_ROOT / "dashboard" / "signup.html"
 
 @app.get("/login")
 def serve_login():
     return FileResponse(str(LOGIN))
 
+@app.get("/signup")
+def serve_signup():
+    return FileResponse(str(SIGNUP))
+
 @app.get("/")
-def serve_root():
-    from fastapi.responses import RedirectResponse
-    return RedirectResponse(url="/login", status_code=302)
+def serve_home():
+    return FileResponse(str(HOME))
 
 @app.get("/dashboard")
 def serve_frontend(request: Request):
@@ -90,6 +95,27 @@ def serve_frontend(request: Request):
         pass
     return RedirectResponse(url="/login", status_code=302)
 
+
+
+
+@app.post("/auth/signup")
+def public_signup(body: dict):
+    """Public signup — creates account. First user gets admin role, subsequent get viewer."""
+    from src.auth import create_user, list_users
+    from pydantic import BaseModel
+    username = body.get("username","").strip()
+    password = body.get("password","")
+    if not username or not password:
+        raise HTTPException(400, "Username and password required")
+    if len(password) < 8:
+        raise HTTPException(400, "Password must be at least 8 characters")
+    users = list_users()
+    role = "admin" if not users else "viewer"
+    try:
+        create_user(username, password, role)
+        return {"ok": True, "role": role}
+    except ValueError as e:
+        raise HTTPException(400, str(e))
 
 # ── Stats ─────────────────────────────────────────────────────────────────
 @app.get("/api/stats")
@@ -184,6 +210,20 @@ def list_jobs(
         q = session.query(Job).join(Company)
         if status and status != "all":
             q = q.filter(Job.status == status)
+            if status == "new":
+                from datetime import timedelta
+                from src.background import _read_state
+                state = _read_state()
+                # Use last scan start time if available, else 24h fallback
+                scan_ts = state.get("last_scan_completed_at")
+                if scan_ts:
+                    try:
+                        cutoff = datetime.fromisoformat(scan_ts)
+                    except Exception:
+                        cutoff = datetime.utcnow() - timedelta(hours=24)
+                else:
+                    cutoff = datetime.utcnow() - timedelta(hours=24)
+                q = q.filter(Job.discovered_at >= cutoff)
         jobs = q.order_by(Job.discovered_at.desc()).limit(2000).all()
 
         result = []
@@ -276,6 +316,8 @@ def update_job(job_id: int, body: StatusUpdate, current_user: dict = Depends(get
         return {"ok": True}
     finally:
         session.close()
+
+
 
 
 

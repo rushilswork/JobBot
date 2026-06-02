@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' https://unpkg.com https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https://unpkg.com https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://unpkg.com https://cdnjs.cloudflare.com;">
 <title>JobBot — Automated Pipeline</title>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -31,19 +31,19 @@
   --txt:#0a0a0a;--txt2:rgba(10,10,10,.65);--txt3:rgba(10,10,10,.4);
   --pur-lo:rgba(124,58,237,.07);--pur-glow:rgba(124,58,237,.15);
 }
-[data-theme="light"] .footer{background:rgba(240,240,240,.95);border-top:1px solid rgba(0,0,0,.1);}
+[data-theme="light"] .footer{background:rgba(240,240,240,.95);border-top:1px solid rgba(0,0,0,.1);padding:.5rem 2rem;}
 [data-theme="light"] .footer-brand{color:#0a0a0a;}
 [data-theme="light"] .footer-txt{color:rgba(10,10,10,.5);}
 [data-theme="light"] .nav{background:rgba(250,250,250,.88)!important;border-bottom:1px solid rgba(0,0,0,.08);}
 [data-theme="light"] .feed-col{background:#f0f0f0;border-left-color:rgba(0,0,0,.1);}
 [data-theme="light"] .jcard{background:#fff;border-color:rgba(0,0,0,.08);}
 [data-theme="light"] .jcard:hover{background:#f8f8f8;border-color:rgba(249,115,22,.3);}
-[data-theme="light"] .sticky-bar{background:#fafafa;}
+
 [data-theme="light"] .tabs{border-bottom-color:rgba(0,0,0,.1);}
 [data-theme="light"] select{background:#fff;color:#0a0a0a;}
 [data-theme="light"] .search-wrap input{background:#fff;color:#0a0a0a;}
 html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;min-height:100vh;overflow-x:hidden;cursor:default;-webkit-font-smoothing:antialiased;transition:background .35s,color .25s;}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;min-height:100vh;overflow-x:hidden;cursor:default;-webkit-font-smoothing:antialiased;transition:background .35s,color .25s;padding-top:var(--hh);}
 *{cursor:default;}
 a,button,select,input,label,[role="button"]{cursor:pointer!important;}
 #root{position:relative;z-index:1;}
@@ -65,7 +65,7 @@ a,button,select,input,label,[role="button"]{cursor:pointer!important;}
 .btn:hover{background:var(--surf2);border-color:var(--bdr2);color:var(--txt);}
 .btn:active{opacity:.8;}
 .btn:disabled{opacity:.38;pointer-events:none;}
-.btn-p{background:var(--accent);border-color:transparent;color:#fff;font-weight:600;}
+.btn-p{background:var(--accent);border-color:transparent;color:#fff;font-weight:600;overflow:visible;line-height:1.4;}
 .btn-p:hover{background:var(--accent2);color:#fff;}
 .btn-stop{border-color:rgba(239,68,68,.3);color:#f87171;}
 .btn-stop:hover{background:rgba(239,68,68,.09);border-color:rgba(239,68,68,.45);}
@@ -74,11 +74,11 @@ a,button,select,input,label,[role="button"]{cursor:pointer!important;}
 .btn-ok:hover{background:rgba(34,197,94,.09);border-color:rgba(34,197,94,.28);color:#4ade80;}
 .btn-no:hover{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.22);color:#f87171;}
 .btn-icon{padding:5px 9px;}
-.btn-ghost{background:transparent;border-color:transparent;color:var(--txt3);}
-.btn-ghost:hover{background:var(--surf);border-color:var(--bdr);color:var(--txt2);}
+.btn-ghost{background:transparent;border-color:transparent;color:var(--txt);opacity:.7;}
+.btn-ghost:hover{background:var(--surf2);border-color:var(--bdr);color:var(--txt);opacity:1;}
 .nav-group{display:flex;align-items:center;gap:4px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:3px;}
-.nav-group .btn{border:none;background:transparent;border-radius:7px;padding:5px 11px;}
-.nav-group .btn:hover{background:var(--surf2);}
+.nav-group .btn{border:none;background:transparent;border-radius:7px;padding:5px 11px;color:var(--txt);opacity:.75;font-size:.85rem;}
+.nav-group .btn:hover{background:var(--surf2);opacity:1;}
 /* Settings dropdown */
 .settings-wrap{position:relative;}
 .settings-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:210px;background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--r);padding:.45rem 0;z-index:300;box-shadow:0 12px 36px rgba(0,0,0,.5);}
@@ -103,11 +103,7 @@ a,button,select,input,label,[role="button"]{cursor:pointer!important;}
 .match-score.mid{background:rgba(245,158,11,.1);color:#fbbf24;border-color:rgba(245,158,11,.2);}
 .match-score.low{background:rgba(99,102,241,.09);color:#a5b4fc;border-color:rgba(99,102,241,.15);}
 /* Hero */
-.hero{padding:calc(var(--hh) + 2rem) 2rem 2rem;border-bottom:1px solid var(--bdr);position:relative;}
-.hero-eyebrow{font-size:.68rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:.9rem;}
-.hero-title{font-family:'Syne',sans-serif;font-size:clamp(2.6rem,5.5vw,4.8rem);font-weight:800;line-height:.95;letter-spacing:-3px;margin-bottom:.6rem;color:var(--txt);}
 .hero-title-accent{color:var(--accent);}
-.hero-sub{font-size:.88rem;color:var(--txt2);margin-bottom:2.5rem;max-width:520px;line-height:1.6;}
 .stats-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
 @media(max-width:900px){.stats-grid{grid-template-columns:repeat(4,1fr);}}
 @media(max-width:560px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
@@ -123,9 +119,9 @@ a,button,select,input,label,[role="button"]{cursor:pointer!important;}
 .sk-rm{margin-left:4px;cursor:pointer!important;opacity:.55;}
 .sk-rm:hover{opacity:1;}
 /* Layout */
-.body-wrap{display:flex;align-items:stretch;height:calc(100vh - var(--hh) - 52px);position:sticky;top:var(--hh);}
-.main-col{flex:1;min-width:0;padding:1.3rem 1.5rem;display:flex;flex-direction:column;overflow-x:hidden;overflow-y:hidden;}
-.feed-col{width:0;overflow:hidden;border-left:0 solid var(--bdr);background:var(--bg2);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:var(--hh);height:calc(100vh - var(--hh));transition:width .35s cubic-bezier(.16,1,.3,1),border-width .35s;}
+.body-wrap{display:flex;align-items:flex-start;min-height:calc(100vh - var(--hh));}
+.main-col{flex:1;min-width:0;padding:.75rem 1.5rem;}
+.feed-col{width:0;overflow:hidden;border-left:0 solid var(--bdr);background:var(--bg2);display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:var(--hh);height:calc(100vh - var(--hh) - 38px);transition:width .35s cubic-bezier(.16,1,.3,1),border-width .35s;}
 .feed-col.open{width:320px;border-left-width:1px;}
 @media(max-width:1100px){.feed-col.open{width:280px;}}
 @media(max-width:768px){.feed-col.open{position:fixed;right:0;top:var(--hh);bottom:0;width:300px!important;border-left-width:1px;z-index:40;box-shadow:-8px 0 32px rgba(0,0,0,.5);}}
@@ -170,7 +166,7 @@ select:focus{border-color:rgba(249,115,22,.4);}
 /* Feed */
 .feed-hdr{height:48px;padding:0 1rem;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bdr);}
 .feed-ttl{font-size:.65rem;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;color:var(--txt2);}
-.log{flex:1;overflow-y:auto;padding:.65rem .85rem;display:flex;flex-direction:column;gap:1px;font-family:var(--mono);font-size:.67rem;}
+.log{flex:1;overflow-y:auto;padding:.65rem .85rem 1.5rem;display:flex;flex-direction:column;gap:1px;font-family:var(--mono);font-size:.67rem;}
 .lrow{display:flex;gap:8px;padding:3px 0;border-bottom:1px solid rgba(128,128,128,.06);line-height:1.45;}
 .lt{color:var(--txt3);flex-shrink:0;min-width:52px;}
 .lm{color:var(--txt2);word-break:break-word;}
@@ -220,11 +216,11 @@ textarea:focus{border-color:rgba(249,115,22,.4);}
 .ac-item:hover{background:var(--surf2);color:var(--txt);}
 .tab-count{font-size:.6rem;font-weight:700;background:rgba(249,115,22,.15);color:var(--accent2);border-radius:10px;padding:1px 6px;margin-left:4px;font-family:var(--mono);}
 .filters-row{display:flex;gap:7px;margin-bottom:.85rem;align-items:center;flex-wrap:nowrap;}
-.job-scroll{flex:1;overflow-y:auto;padding-bottom:1rem;}
-.job-scroll::-webkit-scrollbar{width:5px;}
-.job-scroll::-webkit-scrollbar-track{background:transparent;}
-.job-scroll::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:10px;}
-.sticky-bar{flex-shrink:0;background:var(--bg);position:sticky;top:0;z-index:200;padding-bottom:2px;overflow:visible;}
+.job-scroll{padding-bottom:5rem;}
+
+
+
+.sticky-bar{padding-bottom:2px;overflow:visible;}
 .modal-form input{background:var(--surf);border:1px solid var(--bdr);color:var(--txt);font-size:.78rem;font-family:'Inter',sans-serif;padding:.45rem .75rem;border-radius:8px;outline:none;transition:border-color .15s;cursor:text!important;}
 .modal-form input:focus{border-color:rgba(249,115,22,.45);}
 .modal-form input::placeholder{color:var(--txt3);}
@@ -319,6 +315,30 @@ textarea:focus{border-color:rgba(249,115,22,.4);}
 .ai-score.low{background:rgba(128,128,128,.1);color:var(--txt3);}
 .ai-reasons{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
 .ai-reason-tag{font-size:.6rem;color:var(--txt3);background:var(--surf);border:1px solid var(--bdr);border-radius:6px;padding:1px 6px;font-family:var(--mono);}
+
+.go-top{position:fixed;bottom:60px;right:1.5rem;width:38px;height:38px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(249,115,22,.35);transition:opacity .2s,transform .2s;z-index:200;}
+.go-top:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(249,115,22,.45);}
+.go-top.hidden{opacity:0;pointer-events:none;transform:translateY(8px);}
+
+[data-theme="light"] .btn-ghost{color:#1a1a1a;opacity:.8;}
+[data-theme="light"] .btn-ghost:hover{color:#000;opacity:1;background:rgba(0,0,0,.06);}
+[data-theme="light"] .nav-group .btn{color:#1a1a1a;opacity:.8;}
+[data-theme="light"] .nav-group .btn:hover{color:#000;opacity:1;}
+[data-theme="light"] .nav-group{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.12);}
+
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(8px);z-index:700;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn .15s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.confirm-box{background:var(--bg2);border:1px solid var(--bdr2);border-radius:16px;padding:1.75rem;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:slideUp .18s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.confirm-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:1rem;}
+.confirm-icon.danger{background:rgba(239,68,68,.1);}
+.confirm-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--txt);margin-bottom:.4rem;}
+.confirm-msg{font-size:.8rem;color:var(--txt2);line-height:1.55;margin-bottom:1.4rem;}
+.confirm-btns{display:flex;gap:8px;justify-content:flex-end;}
+.confirm-btns .btn-cancel{background:var(--surf);border:1px solid var(--bdr);color:var(--txt2);padding:8px 18px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;}
+.confirm-btns .btn-cancel:hover{background:var(--surf2);}
+.confirm-btns .btn-confirm{background:var(--red);border:none;color:#fff;padding:8px 18px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;}
+.confirm-btns .btn-confirm:hover{background:#dc2626;}
 </style>
 </head>
 <body>
@@ -414,6 +434,24 @@ function SettingsMenu({onClose,onAccount}){
   );
 }
 
+
+
+function ConfirmDialog({icon,title,message,confirmLabel,onConfirm,onCancel}){
+  return(
+    <div className="confirm-overlay" onClick={e=>e.target===e.currentTarget&&onCancel()}>
+      <div className="confirm-box">
+        <div className={'confirm-icon danger'}>{icon||'⚠️'}</div>
+        <div className="confirm-title">{title}</div>
+        <div className="confirm-msg">{message}</div>
+        <div className="confirm-btns">
+          <button className="btn-cancel" onClick={onCancel}>Cancel</button>
+          <button className="btn-confirm" onClick={onConfirm}>{confirmLabel||'Confirm'}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 let _toast;
 function Toast(){
   const [st,setSt]=useState({msg:'',v:false});
@@ -424,7 +462,7 @@ function toast(m){_toast&&_toast(m);}
 
 function Badge({type,label}){return <span className={'bdg b-'+type}>{label}</span>;}
 
-function JobCard({job,onClick,onApprove,onSkip,onMarkApplied,onUnreview,resumeSkills,selected,onSelect,aiScore,aiReasons}){
+function JobCard({job,onClick,onApprove,onSkip,onMarkApplied,onUnreview,onOpen,resumeSkills,selected,onSelect,aiScore,aiReasons}){
   const unk=isUnknown(job.company);
   const [bg,color]=unk?['',null]:avColor(job.company);
   const match=scoreMatch(job,resumeSkills);
@@ -445,7 +483,7 @@ function JobCard({job,onClick,onApprove,onSkip,onMarkApplied,onUnreview,resumeSk
           {aiScore!==undefined&&<span className={'ai-score '+(aiScore>=50?'high':aiScore>=25?'mid':'low')}>✦{aiScore}</span>}
         </div>
         <div className="jacts" onClick={e=>e.stopPropagation()}>
-          <a href={job.job_url} target="_blank" rel="noreferrer"><button className="btn btn-link">↗ Open</button></a>
+          <a href={job.job_url} target="_blank" rel="noreferrer"><button className="btn btn-link" onClick={e=>{e.stopPropagation();onOpen&&onOpen(job);}}>↗ Open</button></a>
           {['new','failed'].includes(job.status)&&<button className="btn btn-ok" onClick={()=>onApprove(job)}>Approve</button>}
           {job.status==='reviewed'&&<button className="btn btn-icon" onClick={()=>onUnreview(job)} style={{fontSize:'.72rem',color:'var(--txt3)'}}>↩ Unreview</button>}
           {job.status==='applying'&&<button className="btn btn-ok" onClick={()=>onMarkApplied(job)}>Mark Applied</button>}
@@ -560,7 +598,7 @@ function Navbar({disc,feedOpen,isDark,hdrMeta,onStart,onStop,onScan,onRefresh,on
         {/* Primary action */}
         {isRunning
           ?<button className="btn btn-stop btn-icon" onClick={onStop} style={{padding:'6px 16px'}}>■ Stop</button>
-          :<button className="btn btn-p btn-icon" onClick={()=>{onStart();onScan();}} style={{padding:'6px 18px',letterSpacing:'.01em'}}>⚡ Scan</button>}
+          :<button className="btn btn-p btn-icon" onClick={()=>{onStart();onScan();}} style={{padding:'6px 18px',letterSpacing:'.01em'}}><svg width="11" height="14" viewBox="0 0 11 14" fill="none" style={{flexShrink:0}}><path d="M6.5 1L1 8h4.5L4.5 13L10 6H5.5L6.5 1Z" fill="white" stroke="white" strokeWidth=".5"/></svg> Scan</button>}
         {/* Secondary group */}
         <div className="nav-group">
           <button className="btn btn-ghost btn-icon" onClick={onRefresh} title="Refresh jobs">↻</button>
@@ -569,8 +607,8 @@ function Navbar({disc,feedOpen,isDark,hdrMeta,onStart,onStop,onScan,onRefresh,on
         </div>
         {/* Danger group */}
         <div className="nav-group">
-          <button className="btn btn-ghost btn-icon" onClick={onPurge} title="Purge suspicious jobs" style={{color:'rgba(239,68,68,.7)'}}>🗑</button>
-          <button className="btn btn-ghost btn-icon" onClick={onClearDb} title="Clear all jobs & rescan" style={{color:'rgba(239,68,68,.7)'}}>✕ DB</button>
+          <button className="btn btn-ghost btn-icon" onClick={onPurge} title="Purge suspicious jobs" style={{color:'rgba(239,68,68,.7)',fontSize:'.72rem',gap:4}}>🗂 Purge</button>
+          <button className="btn btn-ghost btn-icon" onClick={onClearDb} title="Clear all jobs & rescan" style={{color:'rgba(239,68,68,.7)',fontSize:'.72rem',gap:4}}>🗑 Clear DB</button>
         </div>
         {/* Settings */}
         <div className="settings-wrap">
@@ -922,6 +960,17 @@ function AISearch({onResults,onClear,active}){
   );
 }
 
+
+function GoTop(){
+  const [show,setShow]=useState(false);
+  useEffect(()=>{
+    const h=()=>setShow(window.scrollY>300);
+    window.addEventListener('scroll',h,{passive:true});
+    return()=>window.removeEventListener('scroll',h);
+  },[]);
+  return <button className={'go-top'+(show?'':' hidden')} onClick={()=>window.scrollTo({top:0,behavior:'smooth'})} title="Back to top">↑</button>;
+}
+
 function SkillAC({value,onChange}){
   const [open,setOpen]=useState(false);
   const [q,setQ]=useState(value||'');
@@ -1046,6 +1095,7 @@ function App(){
   const [showAbout,setShowAbout]=useState(false);
   const [showConfig,setShowConfig]=useState(false);
   const [showAccount,setShowAccount]=useState(false);
+  const [confirmDlg,setConfirmDlg]=useState(null);
   const [hdrMeta,setHdrMeta]=useState('');
   const feedRef=useRef([]);
   const feedPausedRef=useRef(false);
@@ -1130,8 +1180,8 @@ function App(){
   const stopDisc=async()=>{await fetch('/api/discovery/stop',{method:'POST'});setDisc(d=>({...d,status:'stopped'}));toast('Discovery stopped');};
   const scanNow=async()=>{await fetch('/api/discovery/trigger',{method:'POST'});setDisc(d=>({...d,status:'running'}));toast('Scanning now!');};
   const refresh=()=>{loadJobs();loadStats();toast('Refreshed');};
-  const purge=async()=>{if(!confirm('Delete all suspicious/mislabeled new jobs?'))return;const r=await fetch('/api/jobs/purge-suspicious',{method:'DELETE'});const d=await r.json();loadJobs();loadStats();toast('Purged '+d.deleted+' suspicious jobs');};
-  const clearDb=async()=>{if(!confirm('⚠️ This will delete ALL jobs and trigger a full rescan. Continue?'))return;const r=await fetch('/api/jobs/clear-all',{method:'DELETE'});const d=await r.json();loadJobs();loadStats();pollStatus();toast('Cleared '+d.deleted+' jobs — full scan started');};
+  const purge=()=>setConfirmDlg({icon:'🗂',title:'Purge Suspicious Jobs',message:'Remove all suspicious or mislabeled new jobs from the database? This cannot be undone.',confirmLabel:'Purge Jobs',onConfirm:async()=>{setConfirmDlg(null);const r=await fetch('/api/jobs/purge-suspicious',{method:'DELETE'});const d=await r.json();loadJobs();loadStats();toast('Purged '+d.deleted+' suspicious jobs');}});
+  const clearDb=()=>setConfirmDlg({icon:'🗑',title:'Clear Entire Database',message:'This will permanently delete ALL jobs and immediately trigger a full rescan across all portals.',confirmLabel:'Clear & Rescan',onConfirm:async()=>{setConfirmDlg(null);const r=await fetch('/api/jobs/clear-all',{method:'DELETE'});const d=await r.json();loadJobs();loadStats();pollStatus();toast('Cleared '+d.deleted+' jobs — full scan started');}});
   const toggleTheme=()=>{
     const next=!isDark;
     const t=next?'dark':'light';
@@ -1171,24 +1221,6 @@ function App(){
   const clearFeed=()=>{feedRef.current=[];setFeed([]);};
   const handleSearch=e=>{const v=e.target.value;setSearch(v);clearTimeout(searchTimer.current);searchTimer.current=setTimeout(()=>loadJobs({search:v}),280);};
   const handleTab=k=>{setTab(k);loadJobs({tab:k});};
-  const autoMarkTimer=useRef(null);
-  // When New tab is active and jobs load, auto-mark all as reviewed after 3s
-  useEffect(()=>{
-    if(autoMarkTimer.current)clearTimeout(autoMarkTimer.current);
-    if(tab==='new'&&jobs.length>0){
-      autoMarkTimer.current=setTimeout(async()=>{
-        const newJobs=jobs.filter(j=>j.status==='new');
-        if(!newJobs.length)return;
-        await Promise.all(newJobs.map(j=>
-          apiFetch('/api/jobs/'+j.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'reviewed'})})
-        ));
-        // Refresh stats but don't reload job list so user keeps seeing them
-        loadStats();
-        setJobs(prev=>prev.map(j=>j.status==='new'?{...j,status:'reviewed'}:j));
-      },3000);
-    }
-    return()=>{if(autoMarkTimer.current)clearTimeout(autoMarkTimer.current);};
-  },[tab,jobs.length]);
   const handleModeF=e=>{setModeF(e.target.value);loadJobs({modeF:e.target.value});};
   const handlePortalF=e=>{setPortalF(e.target.value);loadJobs({portalF:e.target.value});};
   const handleResume=async e=>{
@@ -1223,18 +1255,14 @@ function App(){
 
   return (<>
     <Toast/>
+    <GoTop/>
+    {confirmDlg&&<ConfirmDialog icon={confirmDlg.icon} title={confirmDlg.title} message={confirmDlg.message} confirmLabel={confirmDlg.confirmLabel} onConfirm={confirmDlg.onConfirm} onCancel={()=>setConfirmDlg(null)}/>}
     {showAbout&&<AboutModal onClose={()=>setShowAbout(false)}/>}
     {showAccount&&<AccountModal onClose={()=>setShowAccount(false)}/>}
     {showConfig&&<ConfigPanel onClose={()=>setShowConfig(false)}/>}
     {detail&&<DetailDrawer job={detail} onClose={()=>setDetail(null)} onApprove={j=>updateJob(j,'reviewed')} onSkip={j=>updateJob(j,'skipped')} onMarkApplied={j=>updateJob(j,'applied')} onUnreview={j=>updateJob(j,'new')}/>}
     <div style={{position:'relative',zIndex:1}}>
-      <Navbar disc={disc} feedOpen={feedOpen} isDark={isDark} hdrMeta={hdrMeta} onStart={startDisc} onStop={stopDisc} onScan={scanNow} onRefresh={refresh} onPurge={purge} onClearDb={clearDb} onAbout={()=>setShowAbout(true)} onConfigure={()=>setShowConfig(true)} onAccount={()=>setShowAccount(true)} onToggleFeed={toggleFeed} onToggleTheme={toggleTheme}/>
-      <div className="hero" ref={heroRef}>
-        <div className="hero-eyebrow">Automated Job Discovery</div>
-        <h1 className="hero-title">Your Pipeline.<br/><span className="hero-title-accent">Automated.</span></h1>
-        <p className="hero-sub" style={{fontSize:'.78rem'}}>Keyword-based discovery &middot; LinkedIn · Naukri · HiringCafe &middot; Remote-first</p>
-      </div>
-      <div className="body-wrap">
+      <Navbar disc={disc} feedOpen={feedOpen} isDark={isDark} hdrMeta={hdrMeta} onStart={startDisc} onStop={stopDisc} onScan={scanNow} onRefresh={refresh} onPurge={purge} onClearDb={clearDb} onAbout={()=>setShowAbout(true)} onConfigure={()=>setShowConfig(true)} onAccount={()=>setShowAccount(true)} onToggleFeed={toggleFeed} onToggleTheme={toggleTheme}/><div className="body-wrap">
         <main className="main-col">
           <div className="sticky-bar">
             <AISearch onResults={(res,q)=>{setAiResults(res);setAiQuery(q);}} onClear={()=>{setAiResults(null);setAiQuery('');}} active={!!aiResults}/>
@@ -1256,7 +1284,7 @@ function App(){
                 </div>
               </div>
             )}
-            <div className="tabs">{TABS.map(t=>{const cnt=t.k==='all'?(stats.total||0):(stats[t.k]||0);return(<button key={t.k} className={'tab'+(tab===t.k?' active':'')} onClick={()=>handleTab(t.k)}>{t.l}{tab===t.k&&cnt>0&&<span className="tab-count">{cnt}</span>}</button>);})}</div>
+            <div className="tabs">{TABS.map(t=>{const cnt=tab===t.k?(t.k==='all'?filteredJobs.length:filteredJobs.length):(t.k==='all'?(stats.total||0):(stats[t.k]||0));return(<button key={t.k} className={'tab'+(tab===t.k?' active':'')} onClick={()=>handleTab(t.k)}>{t.l}{tab===t.k&&cnt>0&&<span className="tab-count">{cnt}</span>}</button>);})}</div>
             <div style={{display:'flex',alignItems:'center',gap:10,padding:'.2rem 0 .6rem'}}>
             {!loading&&<span style={{fontSize:'.72rem',color:'var(--txt3)',fontFamily:'var(--mono)'}}>
               Showing {filteredJobs.length} of {stats.total||0} total

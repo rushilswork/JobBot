@@ -86,9 +86,11 @@ def _run_loop(interval_minutes: int, scan_immediately: bool = False) -> None:
         try:
             clear_progress()
             _trigger_event.clear()
+            scan_started = datetime.utcnow()
             _write_state({
                 "status":     "running",
-                "started_at": datetime.utcnow().isoformat(),
+                "started_at": scan_started.isoformat(),
+                "scan_started_at": scan_started.isoformat(),
                 "error":      None,
             })
             _add_progress(f"Discovery started at {datetime.utcnow().strftime('%H:%M:%S')}")
@@ -106,6 +108,7 @@ def _run_loop(interval_minutes: int, scan_immediately: bool = False) -> None:
                 _write_state({
                     "status":              "idle",
                     "last_run":            datetime.utcnow().isoformat(),
+                    "last_scan_completed_at": scan_started.isoformat(),
                     "last_new_count":      new_count,
                     "next_run_in_seconds": interval_minutes * 60,
                     "error":               None,

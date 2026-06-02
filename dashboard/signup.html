@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JobBot — Create Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#fafafa;color:#0a0a0a;font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;}
+.card{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:20px;padding:2.5rem;width:100%;max-width:400px;box-shadow:0 8px 32px rgba(0,0,0,.06);}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;color:rgba(10,10,10,.45);text-decoration:none;margin-bottom:1.5rem;transition:color .15s;}
+.back:hover{color:#f97316;}
+.logo{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;letter-spacing:-.5px;margin-bottom:.2rem;}
+.logo span{color:#f97316;}
+.sub{font-size:.82rem;color:rgba(10,10,10,.45);margin-bottom:2rem;}
+label{display:block;font-size:.72rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:rgba(10,10,10,.4);margin-bottom:.4rem;}
+input,select{width:100%;background:#f5f5f5;border:1.5px solid transparent;color:#0a0a0a !important;-webkit-text-fill-color:#0a0a0a;font-family:'Inter',sans-serif;font-size:.88rem;padding:.65rem .9rem;border-radius:9px;outline:none;transition:border-color .15s,background .15s;margin-bottom:1rem;}
+input:focus,select:focus{border-color:rgba(249,115,22,.5);background:#fff;}
+.pw-wrap{position:relative;margin-bottom:1rem;}
+.pw-wrap input{margin-bottom:0;}
+.pw-toggle{position:absolute;right:.8rem;top:50%;transform:translateY(-50%);cursor:pointer;font-size:.9rem;color:rgba(10,10,10,.35);transition:color .15s;}
+.pw-toggle:hover{color:#f97316;}
+button{width:100%;padding:.75rem;background:#f97316;border:none;border-radius:10px;color:#fff;font-family:'Inter',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .15s,transform .1s;margin-top:.25rem;}
+button:hover{background:#ea6c0a;transform:translateY(-1px);}
+button:disabled{opacity:.65;transform:none;}
+.err{color:#dc2626;font-size:.75rem;margin-top:.5rem;text-align:center;}
+.ok{color:#16a34a;font-size:.75rem;margin-top:.5rem;text-align:center;}
+.divider{text-align:center;font-size:.75rem;color:rgba(10,10,10,.35);margin:1.2rem 0;}
+.login-link{text-align:center;font-size:.8rem;color:rgba(10,10,10,.5);}
+.login-link a{color:#f97316;text-decoration:none;font-weight:600;}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="card">
+  <a href="/" class="back">← Back to home</a>
+  <div class="logo">Job<span>Bot</span></div>
+  <div class="sub">Create your account to get started</div>
+  <form id="form">
+    <label>Username</label>
+    <input id="user" type="text" placeholder="yourname" autocomplete="username" required/>
+    <label>Password</label>
+    <div class="pw-wrap">
+      <input id="pass" type="password" placeholder="Min 8 characters" autocomplete="new-password" required/>
+      <span class="pw-toggle" onclick="togglePw('pass',this)">👁</span>
+    </div>
+    <label>Confirm Password</label>
+    <div class="pw-wrap">
+      <input id="pass2" type="password" placeholder="Confirm password" autocomplete="new-password" required/>
+      <span class="pw-toggle" onclick="togglePw('pass2',this)">👁</span>
+    </div>
+    <button type="submit" id="btn">Create Account</button>
+    <div class="err" id="err"></div>
+    <div class="ok" id="ok"></div>
+  </form>
+  <div class="divider">Already have an account?</div>
+  <div class="login-link"><a href="/login">Sign in instead</a></div>
+</div>
+<script>
+function togglePw(id,el){
+  const i=document.getElementById(id);
+  i.type=i.type==='password'?'text':'password';
+  el.textContent=i.type==='password'?'👁':'🙈';
+}
+
+document.getElementById('form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const btn=document.getElementById('btn');
+  const err=document.getElementById('err');
+  const ok=document.getElementById('ok');
+  err.textContent='';ok.textContent='';
+  const user=document.getElementById('user').value.trim();
+  const pass=document.getElementById('pass').value;
+  const pass2=document.getElementById('pass2').value;
+  if(pass!==pass2){err.textContent='Passwords do not match';return;}
+  if(pass.length<8){err.textContent='Password must be at least 8 characters';return;}
+  btn.innerHTML='<span class="spinner"></span>Creating account...';btn.disabled=true;
+  try{
+    // Try to create user via admin endpoint first, else use self-signup
+    const r=await fetch('/auth/signup',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({username:user,password:pass})
+    });
+    const d=await r.json();
+    if(r.ok){
+      ok.textContent='Account created! Signing you in...';
+      // Auto login
+      const lr=await fetch('/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:user,password:pass})});
+      if(lr.ok)window.location.replace('/dashboard');
+      else window.location.replace('/login');
+    } else {
+      err.textContent=d.detail||'Could not create account';
+    }
+  }catch(e){err.textContent='Connection error';}
+  btn.innerHTML='Create Account';btn.disabled=false;
+});
+</script>
+</body>
+</html>
