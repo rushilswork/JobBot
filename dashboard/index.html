@@ -112,7 +112,7 @@ a,button,select,input,label,[role="button"]{cursor:pointer!important;}
 .stat-n{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;letter-spacing:-1.5px;line-height:1;}
 .stat-l{font-size:.59rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--txt2);margin-top:4px;}
 /* Resume bar */
-.resume-bar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:.55rem 1rem;background:rgba(249,115,22,.04);border-bottom:1px solid rgba(249,115,22,.1);font-size:.75rem;}
+.resume-bar{display:flex;align-items:flex-start;gap:7px;flex-wrap:wrap;padding:.55rem 1rem;background:rgba(249,115,22,.04);border-bottom:1px solid rgba(249,115,22,.1);font-size:.75rem;max-height:80px;overflow-y:auto;transition:max-height .25s ease;}.resume-bar.expanded{max-height:160px;}
 .resume-name{color:var(--accent2);font-family:var(--mono);font-size:.68rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px;}
 .skill-tags{display:flex;gap:4px;flex-wrap:wrap;align-items:center;flex:1;}
 .skill-tag{display:inline-flex;align-items:center;padding:1px 7px;border-radius:4px;font-size:.6rem;font-weight:600;font-family:var(--mono);background:rgba(249,115,22,.08);color:var(--accent2);border:1px solid rgba(249,115,22,.18);}
@@ -141,7 +141,7 @@ select:focus{border-color:rgba(249,115,22,.4);}
 .tab.active{color:var(--accent2);border-bottom-color:var(--accent);}
 /* Job list */
 .jlist{display:flex;flex-direction:column;gap:6px;}
-.jcard{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:1rem 1.1rem;cursor:pointer!important;display:flex;gap:.9rem;align-items:flex-start;transition:background .18s,border-color .18s,box-shadow .18s;position:relative;overflow:hidden;}
+.jcard{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:1rem 1.1rem;cursor:pointer;display:flex;gap:.9rem;align-items:flex-start;transition:background .18s,border-color .18s,box-shadow .18s;position:relative;overflow:hidden;}
 .jcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);opacity:0;transition:opacity .2s;}
 .jcard:hover{border-color:rgba(249,115,22,.25);background:rgba(249,115,22,.02);box-shadow:0 4px 20px rgba(0,0,0,.15);}
 .jcard:hover::before{opacity:1;}
@@ -348,8 +348,8 @@ const { useState, useEffect, useRef, useCallback } = React;
 
 const PORTALS={linkedin:'LinkedIn',naukri:'Naukri',glassdoor:'Glassdoor',indeed:'Indeed',monster:'Monster',hiring_cafe:'HiringCafe',instahire:'Instahire',greenhouse:'Greenhouse',lever:'Lever'};
 const PALETTE=[['#1a0f5e','#8b5cf6'],['#0a3350','#0ea5e9'],['#043422','#10b981'],['#3d0802','#f87171'],['#280d5a','#a855f7'],['#181460','#6366f1'],['#44061f','#ec4899'],['#3a1a06','#f59e0b'],['#0c1628','#38bdf8'],['#19093a','#c084fc'],['#1b0e04','#fb923c'],['#09251a','#4ade80']];
-const STAT_DEFS=[{k:'total',l:'Total'},{k:'new',l:'New'},{k:'reviewed',l:'Reviewed'},{k:'applying',l:'Applying'},{k:'applied',l:'Applied'},{k:'skipped',l:'Skipped'},{k:'failed',l:'Failed'}];
-const TABS=[{k:'all',l:'All'},{k:'new',l:'New'},{k:'reviewed',l:'Reviewed'},{k:'applying',l:'Applying'},{k:'applied',l:'Applied'},{k:'skipped',l:'Skipped'}];
+const STAT_DEFS=[{k:'total',l:'Total'},{k:'new',l:'New'},{k:'reviewed',l:'Reviewed'},{k:'applied',l:'Applied'},{k:'skipped',l:'Skipped'},{k:'failed',l:'Failed'}];
+const TABS=[{k:'inbox',l:'Inbox'},{k:'reviewed',l:'Reviewed'},{k:'applied',l:'Applied'},{k:'skipped',l:'Skipped'}];
 const LEVEL_KW={junior:['junior','jr.','entry level','entry-level','fresher','graduate','associate'],mid:['mid level','mid-level','intermediate'],senior:['senior','sr.','lead','staff','principal','architect']};
 const TECH_SKILLS=[
   // Job titles
@@ -436,7 +436,7 @@ function SettingsMenu({onClose,onAccount}){
 
 
 
-function ConfirmDialog({icon,title,message,confirmLabel,onConfirm,onCancel}){
+function ConfirmDialog({icon,title,message,confirmLabel,onConfirm,onCancel,altLabel,onAlt}){
   return(
     <div className="confirm-overlay" onClick={e=>e.target===e.currentTarget&&onCancel()}>
       <div className="confirm-box">
@@ -445,6 +445,7 @@ function ConfirmDialog({icon,title,message,confirmLabel,onConfirm,onCancel}){
         <div className="confirm-msg">{message}</div>
         <div className="confirm-btns">
           <button className="btn-cancel" onClick={onCancel}>Cancel</button>
+          {altLabel&&onAlt&&<button className="btn-cancel" onClick={onAlt} style={{borderColor:'rgba(239,68,68,.3)',color:'var(--red)'}}>{altLabel}</button>}
           <button className="btn-confirm" onClick={onConfirm}>{confirmLabel||'Confirm'}</button>
         </div>
       </div>
@@ -462,7 +463,7 @@ function toast(m){_toast&&_toast(m);}
 
 function Badge({type,label}){return <span className={'bdg b-'+type}>{label}</span>;}
 
-function JobCard({job,onClick,onApprove,onSkip,onMarkApplied,onUnreview,onOpen,resumeSkills,selected,onSelect,aiScore,aiReasons}){
+function JobCard({job,onClick,onApprove,onSkip,onMarkApplied,onUnreview,onRestore,onOpen,resumeSkills,selected,onSelect,aiScore,aiReasons,isNew}){
   const unk=isUnknown(job.company);
   const [bg,color]=unk?['',null]:avColor(job.company);
   const match=scoreMatch(job,resumeSkills);
@@ -478,15 +479,16 @@ function JobCard({job,onClick,onApprove,onSkip,onMarkApplied,onUnreview,onOpen,r
         <div className="jbdgs">
           {job.work_mode!=='unknown'&&<Badge type={job.work_mode} label={job.work_mode.toUpperCase()}/>}
           <Badge type="portal" label={PORTALS[job.portal]||job.portal}/>
-          <Badge type={job.status} label={job.status.toUpperCase()}/>
+          {job.status!=='new'&&<Badge type={job.status} label={job.status.toUpperCase()}/>}{isNew&&<span style={{background:'var(--accent)',color:'#fff',fontSize:'.58rem',fontWeight:800,padding:'2px 7px',borderRadius:10,letterSpacing:'.5px'}}>NEW</span>}
           {match>=0&&<span className={'match-score '+mc}>⚡{match}%</span>}
           {aiScore!==undefined&&<span className={'ai-score '+(aiScore>=50?'high':aiScore>=25?'mid':'low')}>✦{aiScore}</span>}
         </div>
         <div className="jacts" onClick={e=>e.stopPropagation()}>
           <a href={job.job_url} target="_blank" rel="noreferrer"><button className="btn btn-link" onClick={e=>{e.stopPropagation();onOpen&&onOpen(job);}}>↗ Open</button></a>
-          {['new','failed'].includes(job.status)&&<button className="btn btn-ok" onClick={()=>onApprove(job)}>Approve</button>}
-          {job.status==='reviewed'&&<button className="btn btn-icon" onClick={()=>onUnreview(job)} style={{fontSize:'.72rem',color:'var(--txt3)'}}>↩ Unreview</button>}
-          {job.status==='applying'&&<button className="btn btn-ok" onClick={()=>onMarkApplied(job)}>Mark Applied</button>}
+          
+          
+          
+          {job.status==='reviewed'&&<button className="btn btn-ok" onClick={()=>onMarkApplied(job)}>Applied</button>}{job.status==='applied'&&<button className="btn btn-icon" onClick={()=>onRestore(job)} style={{fontSize:'.72rem',color:'var(--txt3)'}}>↩ Undo</button>}{job.status==='skipped'&&<button className="btn btn-icon" onClick={()=>onRestore(job)} style={{fontSize:'.72rem',color:'var(--accent)'}}>↩ Undo</button>}
           {!['applied','skipped'].includes(job.status)&&<button className="btn btn-no" onClick={()=>onSkip(job)}>Skip</button>}
         </div>
       </div>
@@ -522,7 +524,7 @@ function LinkPreview({url}){
   );
 }
 
-function DetailDrawer({job,onClose,onApprove,onSkip,onMarkApplied,onUnreview}){
+function DetailDrawer({job,onClose,onApprove,onSkip,onMarkApplied,onUnreview,isNew=false}){
   const ref=useRef();
   const [preview,setPreview]=useState(false);
   useEffect(()=>{if(job&&ref.current)gsap.from(ref.current,{x:30,opacity:0,duration:.32,ease:'power2.out'});setPreview(false);},[job]);
@@ -538,18 +540,19 @@ function DetailDrawer({job,onClose,onApprove,onSkip,onMarkApplied,onUnreview}){
         <div style={{display:'flex',gap:4,flexWrap:'wrap',marginBottom:'.6rem'}}>
           {job.work_mode!=='unknown'&&<Badge type={job.work_mode} label={job.work_mode.toUpperCase()}/>}
           <Badge type="portal" label={PORTALS[job.portal]||job.portal}/>
-          <Badge type={job.status} label={job.status.toUpperCase()}/>
+          {job.status!=='new'&&<Badge type={job.status} label={job.status.toUpperCase()}/>}{isNew&&<span style={{background:'var(--accent)',color:'#fff',fontSize:'.58rem',fontWeight:800,padding:'2px 7px',borderRadius:10,letterSpacing:'.5px'}}>NEW</span>}
         </div>
         <div style={{fontSize:'.82rem',fontWeight:600,color:'var(--txt)',marginBottom:2}}>
           {unk?<span style={{color:'var(--txt3)',fontStyle:'italic',fontWeight:400}}>Unknown company</span>:job.company}
         </div>
         <div style={{fontSize:'.76rem',color:'var(--txt2)',marginBottom:'1rem'}}>{job.location||'Location TBD'}</div>
         <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:'1rem'}}>
-          <a href={job.job_url} target="_blank" rel="noreferrer"><button className="btn btn-p">Open posting ↗</button></a>
+          <a href={job.job_url} target="_blank" rel="noreferrer"><button className="btn btn-p" onClick={()=>{if(!["applied","skipped"].includes(job.status))onApprove(job);}}>Open posting ↗</button></a>
           <button className="btn" onClick={()=>setPreview(p=>!p)}>{preview?'Hide preview':'👁 Preview'}</button>
-          {['new','failed'].includes(job.status)&&<button className="btn btn-ok" onClick={()=>onApprove(job)}>Approve</button>}
-          {job.status==='reviewed'&&<button className="btn btn-icon" onClick={()=>onUnreview(job)} style={{fontSize:'.72rem',color:'var(--txt3)'}}>↩ Unreview</button>}
-          {job.status==='applying'&&<button className="btn btn-ok" onClick={()=>onMarkApplied(job)}>Mark Applied</button>}
+          
+          
+          
+          {job.status==='reviewed'&&<button className="btn btn-ok" onClick={()=>onMarkApplied(job)}>Applied</button>}{job.status==='applied'&&<button className="btn btn-icon" onClick={()=>onRestore(job)} style={{fontSize:'.72rem',color:'var(--txt3)'}}>↩ Undo</button>}{job.status==='skipped'&&<button className="btn btn-icon" onClick={()=>onRestore(job)} style={{fontSize:'.72rem',color:'var(--accent)'}}>↩ Undo</button>}
           {!['applied','skipped'].includes(job.status)&&<button className="btn btn-no" onClick={()=>onSkip(job)}>Skip</button>}
         </div>
         {preview&&<LinkPreview url={job.job_url}/>}
@@ -886,7 +889,7 @@ function AboutModal({onClose}){
     {icon:'⚡',title:'Real-time Feed',desc:'Live SSE stream shows exactly what each portal is doing as it happens.'},
     {icon:'📄',title:'Resume Matching',desc:'Upload PDF/DOCX resume — skills extracted server-side and matched to jobs.'},
     {icon:'🎯',title:'Smart Filters',desc:'Filter by level, work mode, portal, location, and skill keywords.'},
-    {icon:'🗂',title:'Pipeline Tracking',desc:'Move jobs through New → Reviewed → Applying → Applied → Skipped.'},
+    {icon:'🗂',title:'Pipeline Tracking',desc:'Move jobs through Inbox → Reviewed → Applied. Skip anytime.'},
     {icon:'🔒',title:'Local & Private',desc:'Everything runs on your machine. No data leaves your computer.'},
   ];
   return(
@@ -1064,11 +1067,11 @@ function FilterMenu({modeF,portalF,levelF,locationF,matchOnly,resumeFile,hasSkil
             </label>
           </div>
           <div className="fmenu-row">
-            <label className="btn btn-icon" style={{cursor:'pointer',fontSize:'.72rem'}}>
-              📎 {resumeFile||'Upload resume'}
+            <label className="btn btn-icon" style={{cursor:'pointer',fontSize:'.72rem',maxWidth:180,overflow:'hidden',textOverflow:'ellipsis'}}>
+              📎 {resumeFile?resumeFile:'Upload resume'}
               <input type="file" accept=".txt,.pdf,.doc,.docx,.rtf" onChange={onResume} style={{display:'none'}}/>
             </label>
-            {hasSkills&&<button className="btn btn-icon" onClick={onClearResume} style={{fontSize:'.72rem',color:'var(--txt3)'}}>✕ Clear</button>}
+            {(resumeFile||hasSkills)&&<button className="btn btn-icon" onClick={onClearResume} style={{fontSize:'.72rem',color:'var(--red)',flexShrink:0}}>✕ Remove</button>}
           </div>
         </div>
       )}
@@ -1085,14 +1088,16 @@ function App(){
   const [feedOpen,setFeedOpen]=useState(true);
   const [feedPaused,setFeedPaused]=useState(false);
   const [isDark,setIsDark]=useState(false);
-  const [tab,setTab]=useState('all');
+  const [tab,setTab]=useState('inbox');
   const [search,setSearch]=useState('');
   const [modeF,setModeF]=useState('all');
   const [portalF,setPortalF]=useState('all');
   const [levelF,setLevelF]=useState('all');
   const [skillsF,setSkillsF]=useState('');
-  const [locationF,setLocationF]=useState('india');
+  const [locationF,setLocationF]=useState('all');
+  const [sortBy,setSortBy]=useState('newest');
   const [resumeFile,setResumeFile]=useState(null);
+  const [showAllSkills,setShowAllSkills]=useState(false);
   const [resumeSkills,setResumeSkills]=useState([]);
   const [matchOnly,setMatchOnly]=useState(false);
   const [loading,setLoading]=useState(false);
@@ -1104,6 +1109,7 @@ function App(){
   const [showAccount,setShowAccount]=useState(false);
   const [confirmDlg,setConfirmDlg]=useState(null);
   const [hdrMeta,setHdrMeta]=useState('');
+  const [lastScanAt,setLastScanAt]=useState(null);
   const feedRef=useRef([]);
   const feedPausedRef=useRef(false);
   const heroRef=useRef();
@@ -1135,13 +1141,15 @@ function App(){
   const loadStats=useCallback(async()=>{try{const r=await apiFetch('/api/stats');if(r)setStats(await r.json());}catch(e){}},[apiFetch]);
   const loadJobs=useCallback(async(params={})=>{
     setLoading(true);
-    const p=new URLSearchParams({status:params.tab||tab,mode:params.modeF||modeF,portal:params.portalF||portalF,location:params.locationF!==undefined?params.locationF:locationF});
+    const currentTab=params.tab!==undefined?params.tab:tab;
+    const apiStatus=currentTab==='inbox'?'new':currentTab;
+    const p=new URLSearchParams({status:apiStatus,mode:params.modeF||modeF,portal:params.portalF||portalF,location:params.locationF!==undefined?params.locationF:locationF});
     const s=params.search!==undefined?params.search:search;if(s)p.set('search',s);
     try{const r=await apiFetch('/api/jobs?'+p);setJobs(await r.json());}catch(e){}
     setLoading(false);
   },[tab,modeF,portalF,search,locationF]);
   const pollStatus=useCallback(async()=>{
-    try{const r=await apiFetch('/api/discovery/status');const d=await r.json();setDisc(d);if(d.last_new_count!=null)setHdrMeta('+'+d.last_new_count+' last scan');}catch(e){}
+    try{const r=await apiFetch('/api/discovery/status');const d=await r.json();setDisc(d);if(d.last_new_count!=null&&d.last_new_count>0)setHdrMeta('+'+d.last_new_count+' last scan');else if(d.last_new_count===0)setHdrMeta('');if(d.last_scan_completed_at)setLastScanAt(d.last_scan_completed_at);}catch(e){}
   },[]);
 
   useEffect(()=>{
@@ -1149,7 +1157,7 @@ function App(){
     function connect(){
       es=new EventSource('/api/discovery/stream');
       es.onmessage=e=>{const en=JSON.parse(e.data);feedRef.current=[...feedRef.current,en].slice(-120);setFeed(prev=>feedPausedRef.current?prev:[...feedRef.current]);};
-      es.addEventListener('status',e=>{const d=JSON.parse(e.data);setDisc(prev=>{if(prev.status==='running'&&d.status!=='running'){loadStats();loadJobs();}return d;});if(d.last_new_count!=null)setHdrMeta('+'+d.last_new_count+' last scan');});
+      es.addEventListener('status',e=>{const d=JSON.parse(e.data);setDisc(prev=>{if(prev.status==='running'&&d.status!=='running'){loadStats();loadJobs();}return d;});if(d.last_new_count!=null&&d.last_new_count>0)setHdrMeta('+'+d.last_new_count+' last scan');else if(d.last_new_count===0)setHdrMeta('');});
       es.onerror=()=>{es.close();setTimeout(connect,6000);};
     }
     connect();return()=>es&&es.close();
@@ -1177,7 +1185,7 @@ function App(){
     toast(ids.length+' jobs marked as '+status);
   };
   const updateJob=async(job,status)=>{
-    await fetch('/api/jobs/'+job.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
+    await apiFetch('/api/jobs/'+job.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
     setJobs(prev=>prev.map(j=>j.id===job.id?{...j,status}:j));
     if(detail&&detail.id===job.id)setDetail({...detail,status});
     loadStats();toast('Marked as '+status);
@@ -1188,7 +1196,14 @@ function App(){
   const scanNow=async()=>{await fetch('/api/discovery/trigger',{method:'POST'});setDisc(d=>({...d,status:'running'}));toast('Scanning now!');};
   const refresh=()=>{loadJobs();loadStats();toast('Refreshed');};
   const purge=()=>setConfirmDlg({icon:'🗂',title:'Purge Suspicious Jobs',message:'Remove all suspicious or mislabeled new jobs from the database? This cannot be undone.',confirmLabel:'Purge Jobs',onConfirm:async()=>{setConfirmDlg(null);const r=await fetch('/api/jobs/purge-suspicious',{method:'DELETE'});const d=await r.json();loadJobs();loadStats();toast('Purged '+d.deleted+' suspicious jobs');}});
-  const clearDb=()=>setConfirmDlg({icon:'🗑',title:'Clear Entire Database',message:'This will permanently delete ALL jobs and immediately trigger a full rescan across all portals.',confirmLabel:'Clear & Rescan',onConfirm:async()=>{setConfirmDlg(null);const r=await fetch('/api/jobs/clear-all',{method:'DELETE'});const d=await r.json();loadJobs();loadStats();pollStatus();toast('Cleared '+d.deleted+' jobs — full scan started');}});
+  const clearDb=()=>setConfirmDlg({
+    icon:'🗑',title:'Clear Jobs Database',
+    message:'Permanently delete all your discovered jobs. Choose whether to trigger a new scan immediately after.',
+    confirmLabel:'Clear & Rescan',
+    onConfirm:async()=>{setConfirmDlg(null);const r=await fetch('/api/jobs/clear-all',{method:'DELETE'});const d=await r.json();setJobs([]);setHdrMeta('');setLastScanAt(null);setDisc(prev=>({...prev,last_new_count:0}));loadStats();pollStatus();toast('Cleared '+d.deleted+' jobs — scan started');setTimeout(loadJobs,500);},
+    altLabel:'Clear Only',
+    onAlt:async()=>{setConfirmDlg(null);const r=await fetch('/api/jobs/clear-only',{method:'DELETE'});const d=await r.json();setJobs([]);setHdrMeta('');setLastScanAt(null);setDisc(prev=>({...prev,last_new_count:0}));loadStats();toast('Cleared '+d.deleted+' jobs');}
+  });
   const toggleTheme=()=>{
     const next=!isDark;
     const t=next?'dark':'light';
@@ -1249,25 +1264,41 @@ function App(){
   };
   const removeSkill=sk=>{const next=resumeSkills.filter(s=>s!==sk);setResumeSkills(next);localStorage.setItem('jb-skills',JSON.stringify(next));};
 
-  const clearResume=()=>{setResumeFile(null);setResumeSkills([]);setMatchOnly(false);localStorage.removeItem('jb-skills');toast('Resume cleared');};
+  const clearResume=()=>{setResumeFile(null);setResumeSkills([]);setMatchOnly(false);setShowAllSkills(false);localStorage.removeItem('jb-skills');toast('Resume cleared');};
 
+  const getPrevStatus=(j)=>{
+    if(!j.notes)return 'new';
+    const m=j.notes.match(/prev_status:(\w+)/);
+    return m?m[1]:'new';
+  };
+  const isNewJob=(j)=>j.status==='new'&&lastScanAt&&j.discovered_at&&new Date(j.discovered_at)>=new Date(lastScanAt);
   const filteredJobs=jobs.filter(j=>{
+    // Inbox = new + reviewed jobs combined
+    if(tab==='inbox'&&!['new','reviewed'].includes(j.status))return false;
+    if(tab==='inbox'&&j.status!=='new')return false;
+    if(tab!=='inbox'&&j.status!==tab)return false;
     if(locationF&&locationF!=='all'){const jloc=(j.location||'').toLowerCase();if(!jloc.includes(locationF==='remote'?'remote':locationF.toLowerCase()))return false;}
     if(levelF!=='all'){const lv=detectLevel(j.title);if(lv!==levelF&&lv!=='unknown')return false;}
     if(skillsF.trim()){const sk=skillsF.toLowerCase().split(',').map(s=>s.trim()).filter(Boolean);const hay=(j.title+' '+(j.description||'')).toLowerCase();if(!sk.every(s=>hay.includes(s)))return false;}
     if(matchOnly&&resumeSkills.length>0&&scoreMatch(j,resumeSkills)<30)return false;
     return true;
+  }).sort((a,b)=>{
+    if(sortBy==='newest')return (new Date(b.discovered_at))-(new Date(a.discovered_at));
+    if(sortBy==='oldest')return (new Date(a.discovered_at))-(new Date(b.discovered_at));
+    if(sortBy==='company')return (a.company||'').localeCompare(b.company||'');
+    if(sortBy==='match')return (b.ai_score||0)-(a.ai_score||0);
+    return new Date(b.discovered_at)-new Date(a.discovered_at);
   });
   const isRunning=disc.status==='running'||disc.status==='starting';
 
   return (<>
     <Toast/>
     <GoTop/>
-    {confirmDlg&&<ConfirmDialog icon={confirmDlg.icon} title={confirmDlg.title} message={confirmDlg.message} confirmLabel={confirmDlg.confirmLabel} onConfirm={confirmDlg.onConfirm} onCancel={()=>setConfirmDlg(null)}/>}
+    {confirmDlg&&<ConfirmDialog icon={confirmDlg.icon} title={confirmDlg.title} message={confirmDlg.message} confirmLabel={confirmDlg.confirmLabel} onConfirm={confirmDlg.onConfirm} onCancel={()=>setConfirmDlg(null)} altLabel={confirmDlg.altLabel} onAlt={confirmDlg.onAlt}/>}
     {showAbout&&<AboutModal onClose={()=>setShowAbout(false)}/>}
     {showAccount&&<AccountModal onClose={()=>setShowAccount(false)}/>}
     {showConfig&&<ConfigPanel onClose={()=>setShowConfig(false)}/>}
-    {detail&&<DetailDrawer job={detail} onClose={()=>setDetail(null)} onApprove={j=>updateJob(j,'reviewed')} onSkip={j=>updateJob(j,'skipped')} onMarkApplied={j=>updateJob(j,'applied')} onUnreview={j=>updateJob(j,'new')}/>}
+    {detail&&<DetailDrawer job={detail} isNew={isNewJob(detail)} onClose={()=>setDetail(null)} onApprove={j=>updateJob(j,'reviewed')} onSkip={j=>updateJob(j,'skipped')} onMarkApplied={j=>updateJob(j,'applied')} onUnreview={j=>updateJob(j,'new')}/>}
     <div style={{position:'relative',zIndex:1}}>
       <Navbar disc={disc} feedOpen={feedOpen} isDark={isDark} hdrMeta={hdrMeta} onStart={startDisc} onStop={stopDisc} onScan={scanNow} onRefresh={refresh} onPurge={purge} onClearDb={clearDb} onAbout={()=>setShowAbout(true)} onConfigure={()=>setShowConfig(true)} onAccount={()=>setShowAccount(true)} onToggleFeed={toggleFeed} onToggleTheme={toggleTheme}/><div className="body-wrap">
         <main className="main-col">
@@ -1279,23 +1310,32 @@ function App(){
                 <input type="text" placeholder="Search title, company, location..." value={search} onChange={handleSearch}/>
               </div>
               <SkillAC value={skillsF} onChange={v=>setSkillsF(v)} />
-              <FilterMenu modeF={modeF} portalF={portalF} levelF={levelF} locationF={locationF} matchOnly={matchOnly} resumeFile={resumeFile} hasSkills={resumeSkills.length>0} onMode={v=>{setModeF(v);loadJobs({modeF:v});}} onPortal={v=>{setPortalF(v);loadJobs({portalF:v});}} onLevel={v=>setLevelF(v)} onLocation={v=>{setLocationF(v);loadJobs({locationF:v});}} onMatchOnly={v=>setMatchOnly(v)} onResume={handleResume} onClearResume={clearResume}/>
+              <select value={sortBy} onChange={e=>setSortBy(e.target.value)} style={{fontSize:'.75rem',padding:'6px 10px',borderRadius:8,border:'1px solid var(--bdr)',background:'var(--surf)',color:'var(--txt)',fontFamily:'Inter,sans-serif',cursor:'pointer'}}>
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="company">Company A–Z</option>
+              <option value="match">Best match</option>
+            </select>
+            <FilterMenu modeF={modeF} portalF={portalF} levelF={levelF} locationF={locationF} matchOnly={matchOnly} resumeFile={resumeFile} hasSkills={resumeSkills.length>0} onMode={v=>{setModeF(v);loadJobs({modeF:v});}} onPortal={v=>{setPortalF(v);loadJobs({portalF:v});}} onLevel={v=>setLevelF(v)} onLocation={v=>{setLocationF(v);loadJobs({locationF:v});}} onMatchOnly={v=>setMatchOnly(v)} onResume={handleResume} onClearResume={clearResume}/>
             </div>
-            {resumeSkills.length>0&&(
-              <div className="resume-bar">
+            {(resumeFile||resumeSkills.length>0)&&(
+              <div className={"resume-bar"+(showAllSkills?" expanded":"")}>
                 <span>📄</span>
-                {resumeFile&&<span className="resume-name" title={resumeFile}>{resumeFile}</span>}
-                <div className="skill-tags">
-                  {resumeSkills.slice(0,10).map(s=><span key={s} className="skill-tag">{s}<span className="sk-rm" onClick={()=>removeSkill(s)}>✕</span></span>)}
-                  {resumeSkills.length>10&&<span style={{fontSize:'.65rem',color:'var(--txt3)'}}>+{resumeSkills.length-10} more</span>}
-                </div>
+                <span className="resume-name" title={resumeFile}>{resumeFile||'Resume'}</span>
+                {resumeSkills.length>0?(
+                  <div className="skill-tags" style={{flex:1}}>
+                    {resumeSkills.slice(0,showAllSkills?resumeSkills.length:8).map(s=><span key={s} className="skill-tag">{s}<span className="sk-rm" onClick={()=>removeSkill(s)}>✕</span></span>)}
+                    {resumeSkills.length>8&&<span style={{fontSize:'.65rem',color:'var(--accent)',cursor:'pointer',fontWeight:600}} onClick={()=>setShowAllSkills(p=>!p)}>{showAllSkills?'show less':'+'+( resumeSkills.length-8)+' more'}</span>}
+                  </div>
+                ):<span style={{fontSize:'.72rem',color:'var(--txt3)',fontStyle:'italic'}}>Parsing...</span>}
+                <button className="btn btn-icon" onClick={clearResume} style={{padding:'2px 8px',fontSize:'.68rem',flexShrink:0,color:'var(--txt3)'}}>✕ Remove</button>
               </div>
             )}
-            <div className="tabs">{TABS.map(t=>{const cnt=tab===t.k?(t.k==='all'?filteredJobs.length:filteredJobs.length):(t.k==='all'?(stats.total||0):(stats[t.k]||0));return(<button key={t.k} className={'tab'+(tab===t.k?' active':'')} onClick={()=>handleTab(t.k)}>{t.l}{tab===t.k&&cnt>0&&<span className="tab-count">{cnt}</span>}</button>);})}</div>
+            <div className="tabs">{TABS.map(t=>{const cnt=tab===t.k?filteredJobs.length:(stats[t.k]||0);return(<button key={t.k} className={'tab'+(tab===t.k?' active':'')} onClick={()=>handleTab(t.k)}>{t.l}{tab===t.k&&cnt>0&&<span className="tab-count">{cnt}</span>}</button>);})}</div>
             <div style={{display:'flex',alignItems:'center',gap:10,padding:'.2rem 0 .6rem'}}>
             {!loading&&<span style={{fontSize:'.72rem',color:'var(--txt3)',fontFamily:'var(--mono)'}}>
-              Showing {filteredJobs.length} of {stats.total||0} total
-              {tab!=='all'?<span style={{color:'var(--accent)',marginLeft:4}}>· {tab}</span>:null}
+              Showing {filteredJobs.length} job{filteredJobs.length!==1?'s':''}
+              
             </span>}
             {!loading&&filteredJobs.length>0&&<button className="btn btn-ghost" style={{fontSize:'.68rem',padding:'2px 8px'}} onClick={selectedIds.size===filteredJobs.length?clearSelection:selectAll}>{selectedIds.size===filteredJobs.length?'Deselect all':'Select all'}</button>}
           </div>
@@ -1303,9 +1343,15 @@ function App(){
           <div className="job-scroll" ref={jobListRef}>
             {loading&&<div style={{textAlign:'center',padding:'2.5rem'}}><div className="spin" style={{width:20,height:20,border:'2.5px solid var(--bdr2)',borderTopColor:'var(--pur)',display:'inline-block'}}/></div>}
             {aiResults&&<div className="ai-result-hdr"><span>✦ AI results for <b style={{color:'var(--txt)'}}>"{aiQuery}"</b></span><span style={{marginLeft:'auto'}}>{aiResults.length} matches</span></div>}
-            {selectedIds.size>0&&<div className="bulk-bar"><span className="bb-count">{selectedIds.size} selected</span><button onClick={()=>bulkAction('new')}>↩ Unreview all</button><button onClick={()=>bulkAction('skipped')}>Skip all</button><button onClick={()=>bulkAction('reviewed')}>Approve all</button><button className="bb-desel" onClick={clearSelection}>✕</button></div>}
-            {!loading&&(aiResults||filteredJobs).length>0&&<div className="jlist">{(aiResults||filteredJobs).map(j=><JobCard key={j.id} job={j} onClick={()=>setDetail(j)} resumeSkills={resumeSkills} selected={selectedIds.has(j.id)} onSelect={toggleSelect} onApprove={job=>updateJob(job,'reviewed')} onSkip={job=>updateJob(job,'skipped')} onMarkApplied={job=>updateJob(job,'applied')} onUnreview={job=>updateJob(job,'new')} aiScore={j.ai_score} aiReasons={j.ai_reasons}/>)}</div>}
-            {!loading&&filteredJobs.length===0&&<div className="empty"><div className="empty-ico">🔭</div><div className="empty-t">{tab==='new'?'No new jobs yet':'Nothing here'}</div><div className="empty-s">{tab==='new'?'Hit Scan to run discovery':'Try a different tab or filter'}</div></div>}
+            {(()=>{const vs=[...selectedIds].filter(id=>filteredJobs.some(j=>j.id===id));return vs.length>0&&<div className="bulk-bar"><span className="bb-count">{vs.length} selected</span>{tab==='inbox'&&<><button onClick={()=>bulkAction('reviewed')}>✓ Approve all</button><button onClick={()=>bulkAction('skipped')}>Skip all</button></> }
+                    {tab==='new'&&<><button onClick={()=>bulkAction('reviewed')}>✓ Approve all</button><button onClick={()=>bulkAction('skipped')}>Skip all</button></>}
+                    {tab==='reviewed'&&<><button onClick={()=>bulkAction('applied')}>✓ Applied</button><button onClick={()=>bulkAction('new')}>↩ Unreview all</button><button onClick={()=>bulkAction('skipped')}>Skip all</button></> }
+                    {tab==='applied'&&<button onClick={()=>bulkAction('reviewed')}>↩ Undo Applied</button>}
+                    {tab==='skipped'&&<button onClick={()=>bulkAction('new')}>↩ Undo all</button>}
+                    
+                    <button className="bb-desel" onClick={clearSelection}>✕</button></div>;})()}
+            {!loading&&(aiResults||filteredJobs).length>0&&<div className="jlist">{(aiResults||filteredJobs).map(j=><JobCard key={j.id} job={j} isNew={isNewJob(j)} onClick={()=>setDetail(j)} resumeSkills={resumeSkills} selected={selectedIds.has(j.id)} onSelect={toggleSelect} onApprove={job=>updateJob(job,'reviewed')} onSkip={job=>updateJob(job,'skipped')} onMarkApplied={job=>updateJob(job,'applied')} onUnreview={job=>updateJob(job,'new')} onRestore={job=>updateJob(job,getPrevStatus(job))} onOpen={async job=>{ try{ await fetch('/api/jobs/'+job.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'reviewed'})}); setJobs(prev=>prev.map(j=>j.id===job.id?{...j,status:'reviewed'}:j)); loadStats(); }catch(e){} }} aiScore={j.ai_score} aiReasons={j.ai_reasons}/>)}</div>}
+            {!loading&&filteredJobs.length===0&&<div className="empty"><div className="empty-ico">🔭</div><div className="empty-t">{tab==='inbox'?'Inbox is empty':'Nothing here'}</div><div className="empty-s">{tab==='inbox'?'Run a scan to populate your inbox':'Try a different tab or filter'}</div></div>}
           </div>
         </main>
         <FeedPanel feed={feed} isOpen={feedOpen} onClose={toggleFeed} isRunning={isRunning} onStop={stopDisc} paused={feedPaused} onTogglePause={toggleFeedPause} onClear={clearFeed}/>

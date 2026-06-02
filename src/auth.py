@@ -87,7 +87,7 @@ def create_refresh_token(username: str) -> str:
 def decode_token(token: str) -> dict:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        if payload.get("iss") != "jobbot" and payload.get("type") == "access":
+        if payload.get("type") == "access" and payload.get("iss") != "jobbot":
             raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid token issuer")
         return payload
     except JWTError:

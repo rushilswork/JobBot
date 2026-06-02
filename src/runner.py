@@ -139,7 +139,7 @@ async def run_discovery(headed: bool = False, on_progress=None) -> int:
                         listings = await asyncio.wait_for(
                             discoverer.discover(ctx), timeout=PORTAL_TIMEOUT
                         )
-                        n = _save(session, listings)
+                        n = _save(session, listings, triggered_by)
                         total_new += n
                         _prog(f"[{key.upper()}] +{n} new jobs ({len(listings)} found)")
                     except asyncio.TimeoutError:

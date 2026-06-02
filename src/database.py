@@ -170,17 +170,26 @@ def init_db() -> None:
 def upsert_job(session: Session, job_data: dict) -> tuple[Job, bool]:
     """
     Insert a job if job_url is new; skip if already exists.
+    Handles concurrent inserts gracefully (UNIQUE constraint race condition).
     Returns (job, created_new).
     """
     existing = session.query(Job).filter_by(job_url=job_data["job_url"]).first()
     if existing:
         return existing, False
 
-    job = Job(**job_data)
-    session.add(job)
-    session.commit()
-    session.refresh(job)
-    return job, True
+    try:
+        job = Job(**job_data)
+        session.add(job)
+        session.commit()
+        session.refresh(job)
+        return job, True
+    except Exception:
+        session.rollback()
+        # Another thread inserted the same URL — fetch and return it
+        existing = session.query(Job).filter_by(job_url=job_data["job_url"]).first()
+        if existing:
+            return existing, False
+        raise
 
 
 def get_jobs_by_status(session: Session, status: JobStatus) -> list[Job]:

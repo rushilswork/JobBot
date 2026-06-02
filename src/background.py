@@ -87,12 +87,15 @@ def _run_loop(interval_minutes: int, scan_immediately: bool = False) -> None:
             clear_progress()
             _trigger_event.clear()
             scan_started = datetime.utcnow()
+            triggered_by = _read_state().get("triggered_by", "system")
             _write_state({
                 "status":     "running",
                 "started_at": scan_started.isoformat(),
                 "scan_started_at": scan_started.isoformat(),
                 "error":      None,
             })
+            # Old 'new' jobs naturally fall out of New tab via scan timestamp filter
+            # No status change needed - they remain discoverable in All tab
             _add_progress(f"Discovery started at {datetime.utcnow().strftime('%H:%M:%S')}")
             log.info("[BG] Starting discovery run…")
 

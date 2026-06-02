@@ -49,7 +49,9 @@ async def security_headers(request, call_next):
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
-    return JSONResponse(status_code=500, content={"detail": str(exc)})
+    from src.utils import log
+    log.error(f"Unhandled exception: {exc}", exc_info=True)
+    return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 @app.exception_handler(RequestValidationError)
 async def validation_handler(request, exc):
@@ -63,6 +65,7 @@ def startup():
     # Reset stale running state from previous session
     from src.background import _write_state
     _write_state({"status": "idle", "error": None})
+    # New tab filtering is handled by scan timestamp — no status changes needed on startup
 
 
 # ── Frontend ──────────────────────────────────────────────────────────────
@@ -290,6 +293,8 @@ def clear_all_jobs(current_user: dict = Depends(require_admin)):
         deleted = session.query(Job).filter(Job.discovered_by == current_user["username"]).delete()
         session.commit()
         trigger_now(triggered_by=current_user["username"])
+        from src.background import _write_state
+        _write_state({"last_new_count": 0})
         return {"deleted": deleted}
     finally:
         session.close()
@@ -303,11 +308,32 @@ def update_job(job_id: int, body: StatusUpdate, current_user: dict = Depends(get
         job = session.get(Job, job_id)
         if not job:
             raise HTTPException(404, "Job not found")
+        if job.discovered_by != current_user["username"]:
+            raise HTTPException(403, "Forbidden")
         kwargs = {}
         if body.status == "reviewed":
             kwargs["reviewed_at"] = datetime.utcnow()
         elif body.status == "applied":
             kwargs["applied_at"] = datetime.utcnow()
+            # Save previous status for undo
+            prev = job.status
+            notes = job.notes or ""
+            import re
+            if "prev_status:" in notes:
+                notes = re.sub(r'prev_status:\w+', f'prev_status:{prev}', notes)
+            else:
+                notes = (notes + f" prev_status:{prev}").strip()
+            kwargs["notes"] = notes
+        elif body.status == "skipped":
+            # Save previous status so we can restore later
+            prev = job.status
+            notes = job.notes or ""
+            if "prev_status:" in notes:
+                import re
+                notes = re.sub(r'prev_status:\w+', f'prev_status:{prev}', notes)
+            else:
+                notes = (notes + f" prev_status:{prev}").strip()
+            kwargs["notes"] = notes
         mark_job(session, job_id, body.status, **kwargs)
         return {"ok": True}
     finally:
@@ -337,7 +363,7 @@ async def parse_resume(request: Request, current_user: dict = Depends(get_curren
         else:
             text = content.decode("utf-8", errors="ignore")
     except Exception as e:
-        raise HTTPException(500, f"Could not parse file: {e}")
+        raise HTTPException(500, "Could not parse resume file — ensure it is a valid PDF, DOCX, or TXT")
     SKILLS = ["python","java","javascript","typescript","golang","rust","c++","c#","kotlin","swift",
         "scala","react","vue","angular","next.js","node.js","django","flask","fastapi","spring",
         "sql","postgresql","mysql","mongodb","redis","elasticsearch","kafka","cassandra","dynamodb",
@@ -407,3 +433,15 @@ def update_config(body: ConfigUpdate, current_user: dict = Depends(require_admin
     with open(CONFIG_YAML, "w") as f:
         yaml.dump(cfg, f, allow_unicode=True, sort_keys=False)
     return {"ok": True}
+
+
+@app.delete("/api/jobs/clear-only")
+def clear_jobs_only(current_user: dict = Depends(require_admin)):
+    """Delete all jobs without triggering a rescan."""
+    session = get_session()
+    try:
+        deleted = session.query(Job).filter(Job.discovered_by == current_user["username"]).delete()
+        session.commit()
+        return {"deleted": deleted}
+    finally:
+        session.close()
