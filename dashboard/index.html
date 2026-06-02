@@ -685,9 +685,12 @@ function AccountModal({onClose}){
   const [delConfirm,setDelConfirm]=useState(null);
   const deleteUser=(username)=>setDelConfirm(username);
   const confirmDelete=async()=>{
-    await fetch('/auth/users/'+encodeURIComponent(delConfirm),{method:'DELETE'});
-    setUsers(prev=>prev.filter(u=>u.username!==delConfirm));
+    const r=await fetch('/auth/users/'+encodeURIComponent(delConfirm),{method:'DELETE'});
     setDelConfirm(null);
+    if(r.ok){
+      // Re-fetch from server to get accurate list
+      fetch('/auth/users').then(r=>r.json()).then(setUsers);
+    }
   };
 
   const logout=async()=>{await fetch('/auth/logout',{method:'POST'});window.location.href='/';};

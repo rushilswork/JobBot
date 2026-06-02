@@ -133,7 +133,7 @@ def get_user(username: str, bust_cache: bool = False) -> Optional[User]:
 
 def list_users() -> list[dict]:
     session = SessionLocal()
-    users = session.query(User).all()
+    users = session.query(User).filter_by(active=True).all()
     result = [{"username": u.username, "role": u.role, "active": u.active, "created_at": u.created_at.isoformat()} for u in users]
     session.close()
     return result
