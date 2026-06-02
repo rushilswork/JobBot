@@ -20,7 +20,7 @@ python main.py dashboard
 
 Visit `http://127.0.0.1:8000`
 
-Default credentials: `admin` / `jobbot@2024!`
+On first run, visit `/signup` to create your admin account.
 
 ## Stack
 - **Backend**: FastAPI + SQLAlchemy + SQLite

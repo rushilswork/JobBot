@@ -153,7 +153,7 @@ def delete_user(username: str):
     session = SessionLocal()
     u = session.query(User).filter_by(username=username).first()
     if u:
-        u.active = False
+        session.delete(u)
         session.commit()
     session.close()
 
