@@ -420,7 +420,7 @@ function extractSkills(text){const lo=text.toLowerCase();return TECH_SKILLS.filt
 function SettingsMenu({onClose,onAccount}){
   const wr=useRef();
   useEffect(()=>{const h=e=>{if(wr.current&&!wr.current.contains(e.target))onClose();};setTimeout(()=>document.addEventListener('mousedown',h),0);return()=>document.removeEventListener('mousedown',h);},[onClose]);
-  const logout=async()=>{await fetch('/auth/logout',{method:'POST'});window.location.href='/login';};
+  const logout=async()=>{await fetch('/auth/logout',{method:'POST'});window.location.href='/';};
   return(
     <div className="settings-menu" ref={wr}>
       <div className="smenu-row" onClick={()=>{onAccount&&onAccount();onClose();}}>
@@ -688,7 +688,7 @@ function AccountModal({onClose}){
     setUsers(prev=>prev.filter(u=>u.username!==username));
   };
 
-  const logout=async()=>{await fetch('/auth/logout',{method:'POST'});window.location.href='/login';};
+  const logout=async()=>{await fetch('/auth/logout',{method:'POST'});window.location.href='/';};
 
   const isAdmin=user?.role==='admin';
 
@@ -1118,9 +1118,9 @@ function App(){
       if(ref.ok){
         // Retry the original request with the new cookie
         r=await fetch(url,opts);
-        if(r.status===401){window.location.href='/login';return null;}
+        if(r.status===401){window.location.href='/';return null;}
       } else {
-        window.location.href='/login';return null;
+        window.location.href='/';return null;
       }
     }
     return r;
