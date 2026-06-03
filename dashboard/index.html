@@ -197,7 +197,7 @@ textarea:focus{border-color:rgba(249,115,22,.4);}
 .fmenu-wrap{position:relative;overflow:visible;z-index:300;}
 .fmenu-btn{position:relative;}
 .fmenu-dot{position:absolute;top:-3px;right:-3px;width:7px;height:7px;border-radius:50%;background:var(--accent2);border:1.5px solid var(--bg);}
-.fmenu{position:fixed;width:300px;max-height:70vh;overflow-y:auto;overscroll-behavior:contain;background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--r);padding:.6rem 0;z-index:9999;box-shadow:0 12px 40px rgba(0,0,0,.2);}.fmenu::-webkit-scrollbar{width:4px;}.fmenu::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:4px;}
+.fmenu{position:fixed;width:300px;max-height:70vh;overflow-y:auto;overscroll-behavior:contain;background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--r);padding:.6rem 0;z-index:200;box-shadow:0 12px 40px rgba(0,0,0,.2);}.fmenu::-webkit-scrollbar{width:4px;}.fmenu::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:4px;}
 .fmenu-sec{padding:.3rem .9rem .1rem;font-size:.58rem;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--txt3);margin-top:.3rem;}
 .fmenu-row{display:flex;align-items:center;gap:10px;padding:.38rem .9rem;font-size:.78rem;color:var(--txt2);}
 .fmenu-row label{font-size:.73rem;color:var(--txt2);min-width:60px;}
@@ -479,7 +479,7 @@ function JobCard({job,onClick,onApprove,onSkip,onMarkApplied,onUnreview,onRestor
         <div className="jbdgs">
           {job.work_mode!=='unknown'&&<Badge type={job.work_mode} label={job.work_mode.toUpperCase()}/>}
           <Badge type="portal" label={PORTALS[job.portal]||job.portal}/>
-          {job.status!=='new'&&<Badge type={job.status} label={job.status.toUpperCase()}/>}{isNew&&<span style={{background:'var(--accent)',color:'#fff',fontSize:'.58rem',fontWeight:800,padding:'2px 7px',borderRadius:10,letterSpacing:'.5px'}}>NEW</span>}
+          {job.status!=='new'&&<Badge type={job.status} label={job.status.toUpperCase()}/>}{isNew&&<span style={{background:'var(--accent)',color:'#fff',fontSize:'.65rem',fontWeight:800,padding:'3px 9px',borderRadius:10,letterSpacing:'.8px',display:'inline-flex',alignItems:'center',lineHeight:1}}>NEW</span>}
           {match>=0&&<span className={'match-score '+mc}>⚡{match}%</span>}
           {aiScore!==undefined&&<span className={'ai-score '+(aiScore>=50?'high':aiScore>=25?'mid':'low')}>✦{aiScore}</span>}
         </div>
@@ -492,7 +492,7 @@ function JobCard({job,onClick,onApprove,onSkip,onMarkApplied,onUnreview,onRestor
           {!['applied','skipped'].includes(job.status)&&<button className="btn btn-no" onClick={()=>onSkip(job)}>Skip</button>}
         </div>
       </div>
-      <div className="jright"><span className="jtime">{ago(job.discovered_at)}</span></div>
+      <div className="jright"><span className="jtime" title={"Discovered: "+ago(job.discovered_at)}>{job.posted_at?"Posted "+ago(job.posted_at):ago(job.discovered_at)}</span></div>
     </div>
   );
 }
@@ -524,7 +524,7 @@ function LinkPreview({url}){
   );
 }
 
-function DetailDrawer({job,onClose,onApprove,onSkip,onMarkApplied,onUnreview,isNew=false}){
+function DetailDrawer({job,onClose,onApprove,onSkip,onMarkApplied,onUnreview,onRestore,isNew=false}){
   const ref=useRef();
   const [preview,setPreview]=useState(false);
   useEffect(()=>{if(job&&ref.current)gsap.from(ref.current,{x:30,opacity:0,duration:.32,ease:'power2.out'});setPreview(false);},[job]);
@@ -540,7 +540,7 @@ function DetailDrawer({job,onClose,onApprove,onSkip,onMarkApplied,onUnreview,isN
         <div style={{display:'flex',gap:4,flexWrap:'wrap',marginBottom:'.6rem'}}>
           {job.work_mode!=='unknown'&&<Badge type={job.work_mode} label={job.work_mode.toUpperCase()}/>}
           <Badge type="portal" label={PORTALS[job.portal]||job.portal}/>
-          {job.status!=='new'&&<Badge type={job.status} label={job.status.toUpperCase()}/>}{isNew&&<span style={{background:'var(--accent)',color:'#fff',fontSize:'.58rem',fontWeight:800,padding:'2px 7px',borderRadius:10,letterSpacing:'.5px'}}>NEW</span>}
+          {job.status!=='new'&&<Badge type={job.status} label={job.status.toUpperCase()}/>}{isNew&&<span style={{background:'var(--accent)',color:'#fff',fontSize:'.65rem',fontWeight:800,padding:'3px 9px',borderRadius:10,letterSpacing:'.8px',display:'inline-flex',alignItems:'center',lineHeight:1}}>NEW</span>}
         </div>
         <div style={{fontSize:'.82rem',fontWeight:600,color:'var(--txt)',marginBottom:2}}>
           {unk?<span style={{color:'var(--txt3)',fontStyle:'italic',fontWeight:400}}>Unknown company</span>:job.company}
@@ -558,7 +558,8 @@ function DetailDrawer({job,onClose,onApprove,onSkip,onMarkApplied,onUnreview,isN
         {preview&&<LinkPreview url={job.job_url}/>}
         {job.description&&<div className="dp-sec"><div className="dp-lbl">Description</div><div className="dp-val">{job.description}</div></div>}
         {job.cover_letter&&<div className="dp-sec"><div className="dp-lbl">Cover Letter</div><textarea rows={8} readOnly defaultValue={job.cover_letter}/></div>}
-        <div className="dp-sec"><div className="dp-lbl">Discovered</div><div className="dp-val">{ago(job.discovered_at)}</div></div>
+        {job.posted_at&&<div className="dp-sec"><div className="dp-lbl">Posted</div><div className="dp-val">{ago(job.posted_at)}</div></div>}
+        <div className="dp-sec"><div className="dp-lbl">Discovered by JobBot</div><div className="dp-val">{ago(job.discovered_at)}</div></div>
       </div>
     </div>
   );
@@ -989,7 +990,11 @@ function SkillAC({value,onChange}){
     ?TECH_SKILLS.filter(s=>s.toLowerCase().includes(q.toLowerCase())&&s.toLowerCase()!==q.toLowerCase()).slice(0,10)
     :[];
   useEffect(()=>{
-    const h=e=>{if(ref.current&&!ref.current.contains(e.target))setOpen(false);};
+    const h=e=>{
+      const fmenu=document.querySelector('.fmenu');
+      if(fmenu&&fmenu.contains(e.target))return;
+      if(ref.current&&!ref.current.contains(e.target))setOpen(false);
+    };
     const s=e=>{
       // Only close if scroll is outside the skill autocomplete itself
       if(ref.current&&ref.current.contains(e.target))return;
@@ -1015,16 +1020,32 @@ function SkillAC({value,onChange}){
 }
 
 function FilterMenu({modeF,portalF,levelF,locationF,matchOnly,resumeFile,hasSkills,onMode,onPortal,onLevel,onLocation,onMatchOnly,onResume,onClearResume}){
+  const toggle=(arr,val,setter,reload)=>{
+    let next;
+    if(val==='all'||val.startsWith('all')){next=['all'+val.slice(3)];}  // all modes/levels/portals
+    else if(arr.includes(val)){next=arr.filter(x=>x!==val);if(!next.length)next=['all'];}
+    else{next=[...arr.filter(x=>!x.startsWith('all')),val];}
+    setter(next);if(reload)reload(next);
+  };
   const [open,setOpen]=useState(false);
   const ref=useRef();
-  const hasFilters=modeF!=='all'||portalF!=='all'||levelF!=='all'||locationF!=='all'||matchOnly;
+  const hasFilters=(!modeF.includes('all')&&modeF.length>0)||(!portalF.includes('all')&&portalF.length>0)||(!levelF.includes('all')&&levelF.length>0)||(!locationF.includes('all')&&locationF.length>0)||matchOnly;
   useEffect(()=>{
-    const h=e=>{if(ref.current&&!ref.current.contains(e.target))setOpen(false);};
+    const h=e=>{
+      const fmenu=document.querySelector('.fmenu');
+      if(fmenu&&fmenu.contains(e.target))return;
+      if(ref.current&&!ref.current.contains(e.target))setOpen(false);
+    };
+    let userScrolled=false;
     const s=e=>{
-      // Only close if scroll is outside the filter pane itself
-      const menu=ref.current?.querySelector('.fmenu');
-      if(menu&&menu.contains(e.target))return;
-      setOpen(false);
+      // Only close on user-initiated scroll of main content
+      const fmenu=document.querySelector('.fmenu');
+      if(fmenu&&fmenu.contains(e.target))return;
+      if(ref.current&&ref.current.contains(e.target))return;
+      // Only close if it's the window/body scrolling, not job list internal scroll
+      const jobScroll=document.querySelector('.job-scroll');
+      if(jobScroll&&jobScroll.contains(e.target))return;
+      if(e.target===document||e.target===document.body||e.target===document.documentElement)setOpen(false);
     };
     document.addEventListener('mousedown',h);
     window.addEventListener('scroll',s,true);
@@ -1042,22 +1063,22 @@ function FilterMenu({modeF,portalF,levelF,locationF,matchOnly,resumeFile,hasSkil
         <div className="fmenu" ref={el=>{if(el){const btn=ref.current?.querySelector('.fmenu-btn');if(btn){const r=btn.getBoundingClientRect();el.style.top=(r.bottom+6)+'px';el.style.right=(window.innerWidth-r.right)+'px';}}}}>
           <div className="fmenu-sec">Work mode</div>
           <div className="fmenu-chips">
-            {MODES.map(([v,l])=><span key={v} className={'fchip'+(modeF===v?' on':'')} onClick={()=>onMode(v)}>{l}</span>)}
+            {MODES.map(([v,l])=><span key={v} className={'fchip'+(modeF.includes(v)?' on':'')} onClick={()=>toggle(modeF,v,onMode)}>{l}</span>)}
           </div>
           <div className="fmenu-div"/>
           <div className="fmenu-sec">Level</div>
           <div className="fmenu-chips">
-            {LEVELS.map(([v,l])=><span key={v} className={'fchip'+(levelF===v?' on':'')} onClick={()=>onLevel(v)}>{l}</span>)}
+            {LEVELS.map(([v,l])=><span key={v} className={'fchip'+(levelF.includes(v)?' on':'')} onClick={()=>toggle(levelF,v,onLevel)}>{l}</span>)}
           </div>
           <div className="fmenu-div"/>
           <div className="fmenu-sec">Portal</div>
           <div className="fmenu-chips">
-            {PORTAL_LIST.map(([v,l])=><span key={v} className={'fchip'+(portalF===v?' on':'')} onClick={()=>onPortal(v)}>{l}</span>)}
+            {PORTAL_LIST.map(([v,l])=><span key={v} className={'fchip'+(portalF.includes(v)?' on':'')} onClick={()=>toggle(portalF,v,onPortal)}>{l}</span>)}
           </div>
           <div className="fmenu-div"/>
           <div className="fmenu-sec">Location</div>
           <div className="fmenu-chips">
-            {[['all','All'],['india','India'],['hyderabad','Hyderabad'],['bengaluru','Bengaluru'],['mumbai','Mumbai'],['remote','Remote'],['us','USA'],['uk','UK']].map(([v,l])=><span key={v} className={'fchip'+(locationF===v?' on':'')} onClick={()=>onLocation(v)}>{l}</span>)}
+            {[['india','India'],['hyderabad','Hyderabad'],['bengaluru','Bengaluru'],['mumbai','Mumbai'],['pune','Pune'],['chennai','Chennai'],['us','USA'],['uk','UK']].map(([v,l])=><span key={v} className={'fchip'+(locationF.includes(v)?' on':'')} onClick={()=>toggle(locationF,v,onLocation)}>{l}</span>)}
           </div>
           <div className="fmenu-div"/>
           <div className="fmenu-sec">Resume match</div>
@@ -1090,11 +1111,11 @@ function App(){
   const [isDark,setIsDark]=useState(false);
   const [tab,setTab]=useState('inbox');
   const [search,setSearch]=useState('');
-  const [modeF,setModeF]=useState('all');
-  const [portalF,setPortalF]=useState('all');
-  const [levelF,setLevelF]=useState('all');
+  const [modeF,setModeF]=useState(['all']);
+  const [portalF,setPortalF]=useState(['all']);
+  const [levelF,setLevelF]=useState(['all']);
   const [skillsF,setSkillsF]=useState('');
-  const [locationF,setLocationF]=useState('all');
+  const [locationF,setLocationF]=useState(['india']);
   const [sortBy,setSortBy]=useState('newest');
   const [resumeFile,setResumeFile]=useState(null);
   const [showAllSkills,setShowAllSkills]=useState(false);
@@ -1109,6 +1130,8 @@ function App(){
   const [showAccount,setShowAccount]=useState(false);
   const [confirmDlg,setConfirmDlg]=useState(null);
   const [hdrMeta,setHdrMeta]=useState('');
+  const [tick,setTick]=useState(0);
+  useEffect(()=>{const t=setInterval(()=>setTick(n=>n+1),60000);return()=>clearInterval(t);},[]);
   const [lastScanAt,setLastScanAt]=useState(null);
   const feedRef=useRef([]);
   const feedPausedRef=useRef(false);
@@ -1142,8 +1165,12 @@ function App(){
   const loadJobs=useCallback(async(params={})=>{
     setLoading(true);
     const currentTab=params.tab!==undefined?params.tab:tab;
-    const apiStatus=currentTab==='inbox'?'new':currentTab;
-    const p=new URLSearchParams({status:apiStatus,mode:params.modeF||modeF,portal:params.portalF||portalF,location:params.locationF!==undefined?params.locationF:locationF});
+    const apiStatus=currentTab==='inbox'?'all_new':currentTab;
+    const _modeF=params.modeF||modeF;const _portalF=params.portalF||portalF;const _locF=params.locationF!==undefined?params.locationF:locationF;
+    const p=new URLSearchParams({status:apiStatus});
+    // Single-value API optimization; multi-select handled client-side
+    if(_modeF.length===1&&!_modeF.includes('all'))p.set('mode',_modeF[0]);
+    if(_portalF.length===1&&!_portalF.includes('all'))p.set('portal',_portalF[0]);
     const s=params.search!==undefined?params.search:search;if(s)p.set('search',s);
     try{const r=await apiFetch('/api/jobs?'+p);setJobs(await r.json());}catch(e){}
     setLoading(false);
@@ -1271,15 +1298,18 @@ function App(){
     const m=j.notes.match(/prev_status:(\w+)/);
     return m?m[1]:'new';
   };
-  const isNewJob=(j)=>j.status==='new'&&lastScanAt&&j.discovered_at&&new Date(j.discovered_at)>=new Date(lastScanAt);
+  const isNewJob=(j)=>j.status==='new'&&j.discovered_at&&(Date.now()-new Date(j.discovered_at).getTime())<86400000;
   const filteredJobs=jobs.filter(j=>{
     // Inbox = new + reviewed jobs combined
     if(tab==='inbox'&&!['new','reviewed'].includes(j.status))return false;
     if(tab==='inbox'&&j.status!=='new')return false;
     if(tab!=='inbox'&&j.status!==tab)return false;
-    if(locationF&&locationF!=='all'){const jloc=(j.location||'').toLowerCase();if(!jloc.includes(locationF==='remote'?'remote':locationF.toLowerCase()))return false;}
-    if(levelF!=='all'){const lv=detectLevel(j.title);if(lv!==levelF&&lv!=='unknown')return false;}
+    const LOC_TERMS={india:['india','hyderabad','bengaluru','bangalore','mumbai','pune','chennai','delhi','noida','gurgaon','gurugram','kolkata','ahmedabad','telangana','karnataka','maharashtra','rajasthan','kerala','andhra','tamil'],us:['united states','usa',',us','us,','(us)','new york','san francisco','seattle','boston','austin','chicago','los angeles','california','texas','washington'],uk:['united kingdom','uk','england','london','manchester','birmingham','leeds','bristol','scotland','wales'],remote:['remote','anywhere','worldwide','work from home','wfh','distributed']};
+    if(locationF.length>0&&!locationF.includes('all')){const jloc=(j.location||'').toLowerCase();const match=locationF.some(loc=>{const terms=LOC_TERMS[loc]||[loc.toLowerCase()];return terms.some(t=>jloc.includes(t));});if(!match)return false;}
+    if(levelF.length>0&&!levelF.includes('all')){const lv=detectLevel(j.title);if(lv!=='unknown'&&!levelF.includes(lv))return false;}
     if(skillsF.trim()){const sk=skillsF.toLowerCase().split(',').map(s=>s.trim()).filter(Boolean);const hay=(j.title+' '+(j.description||'')).toLowerCase();if(!sk.every(s=>hay.includes(s)))return false;}
+    if(portalF.length>0&&!portalF.includes('all')){if(!portalF.includes((j.portal||'').toLowerCase()))return false;}
+    if(modeF.length>0&&!modeF.includes('all')){const wm=j.work_mode||'unknown';if(wm!=='unknown'&&!modeF.includes(wm))return false;}
     if(matchOnly&&resumeSkills.length>0&&scoreMatch(j,resumeSkills)<30)return false;
     return true;
   }).sort((a,b)=>{
@@ -1298,7 +1328,7 @@ function App(){
     {showAbout&&<AboutModal onClose={()=>setShowAbout(false)}/>}
     {showAccount&&<AccountModal onClose={()=>setShowAccount(false)}/>}
     {showConfig&&<ConfigPanel onClose={()=>setShowConfig(false)}/>}
-    {detail&&<DetailDrawer job={detail} isNew={isNewJob(detail)} onClose={()=>setDetail(null)} onApprove={j=>updateJob(j,'reviewed')} onSkip={j=>updateJob(j,'skipped')} onMarkApplied={j=>updateJob(j,'applied')} onUnreview={j=>updateJob(j,'new')}/>}
+    {detail&&<DetailDrawer job={detail} isNew={isNewJob(detail)} onClose={()=>setDetail(null)} onApprove={j=>updateJob(j,'reviewed')} onSkip={j=>updateJob(j,'skipped')} onMarkApplied={j=>updateJob(j,'applied')} onUnreview={j=>updateJob(j,'new')} onRestore={j=>updateJob(j,getPrevStatus(j))}/>}
     <div style={{position:'relative',zIndex:1}}>
       <Navbar disc={disc} feedOpen={feedOpen} isDark={isDark} hdrMeta={hdrMeta} onStart={startDisc} onStop={stopDisc} onScan={scanNow} onRefresh={refresh} onPurge={purge} onClearDb={clearDb} onAbout={()=>setShowAbout(true)} onConfigure={()=>setShowConfig(true)} onAccount={()=>setShowAccount(true)} onToggleFeed={toggleFeed} onToggleTheme={toggleTheme}/><div className="body-wrap">
         <main className="main-col">
@@ -1344,7 +1374,6 @@ function App(){
             {loading&&<div style={{textAlign:'center',padding:'2.5rem'}}><div className="spin" style={{width:20,height:20,border:'2.5px solid var(--bdr2)',borderTopColor:'var(--pur)',display:'inline-block'}}/></div>}
             {aiResults&&<div className="ai-result-hdr"><span>✦ AI results for <b style={{color:'var(--txt)'}}>"{aiQuery}"</b></span><span style={{marginLeft:'auto'}}>{aiResults.length} matches</span></div>}
             {(()=>{const vs=[...selectedIds].filter(id=>filteredJobs.some(j=>j.id===id));return vs.length>0&&<div className="bulk-bar"><span className="bb-count">{vs.length} selected</span>{tab==='inbox'&&<><button onClick={()=>bulkAction('reviewed')}>✓ Approve all</button><button onClick={()=>bulkAction('skipped')}>Skip all</button></> }
-                    {tab==='new'&&<><button onClick={()=>bulkAction('reviewed')}>✓ Approve all</button><button onClick={()=>bulkAction('skipped')}>Skip all</button></>}
                     {tab==='reviewed'&&<><button onClick={()=>bulkAction('applied')}>✓ Applied</button><button onClick={()=>bulkAction('new')}>↩ Unreview all</button><button onClick={()=>bulkAction('skipped')}>Skip all</button></> }
                     {tab==='applied'&&<button onClick={()=>bulkAction('reviewed')}>↩ Undo Applied</button>}
                     {tab==='skipped'&&<button onClick={()=>bulkAction('new')}>↩ Undo all</button>}

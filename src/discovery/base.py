@@ -94,6 +94,7 @@ class JobListing:
     external_job_id: str = ""
     work_mode: str = "unknown"
     is_active: bool = True
+    posted_at: object = None  # datetime or None
     extra: dict = field(default_factory=dict)
 
 

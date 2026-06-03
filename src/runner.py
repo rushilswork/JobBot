@@ -56,6 +56,7 @@ def _save(session, listings, discovered_by="system") -> int:
             "discovered_at":   datetime.utcnow(),
             "notes":           f"work_mode:{l.work_mode}",
             "discovered_by":   discovered_by,
+            "posted_at":       l.posted_at,
         })
         if created:
             count += 1

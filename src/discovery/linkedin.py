@@ -107,12 +107,53 @@ class LinkedInDiscoverer(BaseDiscoverer):
                     if part.isdigit():
                         ext_id = part; break
 
+                # Extract posting date from LinkedIn card
+                posted_at = None
+                try:
+                    from datetime import datetime as dt, timedelta
+                    # Try datetime attribute first
+                    time_el = (card.select_one("time.job-search-card__listdate") or
+                               card.select_one("time.job-search-card__listdate--new") or
+                               card.select_one("time[datetime]"))
+                    if time_el and time_el.get("datetime"):
+                        raw = time_el.get("datetime","").replace("Z","").split("+")[0].split(".")[0]
+                        posted_at = dt.fromisoformat(raw)
+                    else:
+                        # Fallback: parse text like "2 days ago", "1 week ago"
+                        txt = (time_el.get_text(strip=True) if time_el else "").lower()
+                        if not txt:
+                            # Try finding any time-related text in card
+                            for el in card.select("time,span[class*='time'],span[class*='date']"):
+                                t = el.get_text(strip=True).lower()
+                                if any(w in t for w in ['ago','hour','day','week','month']):
+                                    txt = t; break
+                        now = dt.utcnow()
+                        if 'second' in txt or 'just' in txt: posted_at = now
+                        elif 'minute' in txt:
+                            m = int(''.join(filter(str.isdigit,txt)) or '1')
+                            posted_at = now - timedelta(minutes=m)
+                        elif 'hour' in txt:
+                            h = int(''.join(filter(str.isdigit,txt)) or '1')
+                            posted_at = now - timedelta(hours=h)
+                        elif 'day' in txt:
+                            d = int(''.join(filter(str.isdigit,txt)) or '1')
+                            posted_at = now - timedelta(days=d)
+                        elif 'week' in txt:
+                            w = int(''.join(filter(str.isdigit,txt)) or '1')
+                            posted_at = now - timedelta(weeks=w)
+                        elif 'month' in txt:
+                            mo = int(''.join(filter(str.isdigit,txt)) or '1')
+                            posted_at = now - timedelta(days=mo*30)
+                except Exception:
+                    pass
+
                 listings.append(JobListing(
                     title=title, company_name=company,
                     job_url=href, portal="linkedin", location=loc_txt,
                     external_job_id=ext_id,
                     work_mode=detect_work_mode(title, loc_txt),
                     is_active=(closed_el is None),
+                    posted_at=posted_at,
                 ))
             except Exception as e:
                 log.debug(f"[LinkedIn] Card parse error: {e}")

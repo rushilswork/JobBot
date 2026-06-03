@@ -83,10 +83,33 @@ class NaukriDiscoverer(BaseDiscoverer):
                 if not self.matches_filters(title, loc_text):
                     continue
 
+                posted_at = None
+                try:
+                    t = await card.query_selector("[class*='date'],[class*='freshness'],time")
+                    if t:
+                        txt = (await t.inner_text()).strip().lower()
+                        from datetime import datetime as dt2, timedelta
+                        now = dt2.utcnow()
+                        if 'today' in txt or 'just' in txt: posted_at = now
+                        elif 'hour' in txt:
+                            h = int(''.join(filter(str.isdigit, txt)) or '1')
+                            posted_at = now - timedelta(hours=h)
+                        elif 'day' in txt:
+                            d = int(''.join(filter(str.isdigit, txt)) or '1')
+                            posted_at = now - timedelta(days=d)
+                        elif 'week' in txt:
+                            w = int(''.join(filter(str.isdigit, txt)) or '1')
+                            posted_at = now - timedelta(weeks=w)
+                        elif 'month' in txt:
+                            mo = int(''.join(filter(str.isdigit, txt)) or '1')
+                            posted_at = now - timedelta(days=mo*30)
+                except Exception: pass
+
                 listings.append(JobListing(
                     title=title, company_name=company,
                     job_url=href.split("?")[0], portal="naukri",
                     location=loc_text, work_mode=detect_work_mode(title, loc_text),
+                    posted_at=posted_at,
                 ))
             except Exception as e:
                 log.debug(f"[Naukri] Card error: {e}")

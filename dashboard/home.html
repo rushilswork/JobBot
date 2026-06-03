@@ -156,6 +156,21 @@ footer{padding:2rem;text-align:center;border-top:1px solid var(--bdr);font-size:
 </footer>
 
 <script>
+// Apply saved theme
+(function(){
+  const t=localStorage.getItem('jb-theme')||'light';
+  if(t==='dark'){
+    document.documentElement.style.setProperty('--bg','#080808');
+    document.documentElement.style.setProperty('--bg2','#0f0f0f');
+    document.documentElement.style.setProperty('--txt','#f5f5f7');
+    document.documentElement.style.setProperty('--txt2','rgba(245,245,247,.65)');
+    document.documentElement.style.setProperty('--txt3','rgba(245,245,247,.35)');
+    document.documentElement.style.setProperty('--bdr','rgba(255,255,255,.08)');
+    document.body.style.background='#080808';
+    document.body.style.color='#f5f5f7';
+    document.querySelector('nav').style.background='rgba(8,8,8,.88)';
+  }
+})();
 // If already logged in, show dashboard button in nav
 fetch('/auth/me').then(r=>{
   if(r.ok){

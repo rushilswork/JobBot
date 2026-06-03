@@ -117,6 +117,7 @@ class Job(Base):
     status = Column(String, default=JobStatus.NEW, index=True)
     discovered_by = Column(String, nullable=True, index=True)  # username who triggered scan
     discovered_at = Column(DateTime, default=datetime.utcnow, index=True)
+    posted_at = Column(DateTime, nullable=True)  # when job was originally posted on portal
     reviewed_at = Column(DateTime)
     applied_at = Column(DateTime)
     notes = Column(Text)

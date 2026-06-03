@@ -79,10 +79,19 @@ class IndeedDiscoverer(BaseDiscoverer):
                 if not self.matches_filters(title, loc_txt):
                     continue
 
+                posted_at = None
+                try:
+                    t = card.select_one("span.date,time[datetime],[class*='date']")
+                    if t and t.get("datetime"):
+                        from datetime import datetime as dt
+                        posted_at = dt.fromisoformat(t["datetime"].replace("Z","").split("+")[0].split(".")[0])
+                except Exception: pass
+
                 listings.append(JobListing(
                     title=title, company_name=company,
                     job_url=href, portal="indeed", location=loc_txt,
                     work_mode=detect_work_mode(title, loc_txt),
+                    posted_at=posted_at,
                 ))
             except Exception as e:
                 log.debug(f"[Indeed] Card error: {e}")

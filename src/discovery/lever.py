@@ -66,6 +66,7 @@ class LeverDiscoverer(BaseDiscoverer):
                     description=description,
                     external_job_id=external_id,
                     extra={"team": team},
+                    posted_at=__import__('datetime').datetime.utcfromtimestamp(job.get('createdAt',0)/1000) if job.get('createdAt') else None,
                 )
             )
 

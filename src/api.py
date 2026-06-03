@@ -134,7 +134,7 @@ def get_stats(current_user: dict = Depends(get_current_user)):
     session = get_session()
     try:
         jobs = session.query(Job).filter(Job.discovered_by == current_user["username"]).all()
-        counts = {s: 0 for s in ["new", "reviewed", "applying", "applied", "skipped", "failed"]}
+        counts = {s: 0 for s in ["new", "reviewed", "applied", "skipped", "failed"]}
         for j in jobs:
             if j.status in counts:
                 counts[j.status] += 1
@@ -214,7 +214,10 @@ def list_jobs(
     session = get_session()
     try:
         q = session.query(Job).join(Company).filter(Job.discovered_by == current_user["username"])
-        if status and status != "all":
+        if status == "all_new":
+            # Inbox: all new status jobs regardless of scan timestamp
+            q = q.filter(Job.status == "new")
+        elif status and status != "all":
             q = q.filter(Job.status == status)
             if status == "new":
                 from datetime import timedelta
@@ -250,6 +253,7 @@ def list_jobs(
                 "work_mode": work_mode, "job_url": j.job_url,
                 "discovered_at": j.discovered_at.isoformat() if j.discovered_at else None,
                 "applied_at": j.applied_at.isoformat() if j.applied_at else None,
+                "posted_at": j.posted_at.isoformat() if j.posted_at else None,
                 "description": (j.description or "")[:600],
                 "cover_letter": j.cover_letter or "",
             })
@@ -261,7 +265,7 @@ def list_jobs(
 class StatusUpdate(BaseModel):
     status: str
 
-ALLOWED_STATUSES = ["new","reviewed","applying","applied","skipped","failed"]
+ALLOWED_STATUSES = ["new","reviewed","applied","skipped","failed"]
 
 @app.delete("/api/jobs/purge-suspicious")
 def purge_suspicious_jobs(current_user: dict = Depends(require_admin)):

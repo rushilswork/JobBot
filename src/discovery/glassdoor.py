@@ -83,10 +83,21 @@ class GlassdoorDiscoverer(BaseDiscoverer):
                 if not self.matches_filters(title, loc_txt):
                     continue
 
+                posted_at = None
+                try:
+                    t = await card.query_selector("time[datetime],[data-test*='job-age'],[class*='age'],[class*='date']")
+                    if t:
+                        dt_val = await t.get_attribute("datetime") or await t.inner_text()
+                        if dt_val and 'T' in str(dt_val):
+                            from datetime import datetime as dt2
+                            posted_at = dt2.fromisoformat(str(dt_val).replace("Z","").split("+")[0])
+                except Exception: pass
+
                 listings.append(JobListing(
                     title=title, company_name=company,
                     job_url=href, portal="glassdoor", location=loc_txt,
                     work_mode=detect_work_mode(title, loc_txt),
+                    posted_at=posted_at,
                 ))
             except Exception as e:
                 log.debug(f"[Glassdoor] Card error: {e}")
