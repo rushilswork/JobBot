@@ -1,107 +1,48 @@
-# Your profile — used to auto-fill application forms
+# Your personal profile for auto-fill
+# Fill in your actual details before using auto-apply
 
 personal:
   first_name: Rushil
   last_name: Pillamari
-  email: rushilswork@gmail.com
-  phone: "+91 96402 44891"
-  location: "Hyderabad, TG"
-  linkedin_url: "https://linkedin.com/in/rushilpillamari"
-  github_url: "https://github.com/rushilswork"
+  full_name: Rushil Pillamari
+  email: pillamari.rushil@insightsoftware.com
+  phone: ""                    # e.g. +91-9999999999
+  linkedin_url: ""             # e.g. linkedin.com/in/rushilpillamari
+  github_url: ""               # e.g. github.com/rushilswork
   portfolio_url: ""
-  resume_path: "data/resume.pdf"
+  location:
+    city: Hyderabad
+    state: Telangana
+    country: India
+    zip: ""
 
-# Work authorization
-work_authorization:
-  authorized_to_work_in_us: false
-  requires_sponsorship: true
-  citizenship_status: "Indian Citizen"
+professional:
+  years_experience: 2          # total years
+  current_title: Associate Software Engineer
+  current_company: insightsoftware
+  notice_period_days: 30
+  expected_ctc: ""             # e.g. 15 LPA
+  current_ctc: ""
+  willing_to_relocate: true
+  authorized_to_work_india: true
 
-# Salary expectations
-salary:
-  desired_min: 1400000
-  desired_max: 1800000
-  currency: INR
-
-# Education (most recent first)
 education:
-  - degree: Bachelor of Technology
-    field: Computer Science
-    institution: "Mahindra University"
-    graduation_year: 2024
-    gpa: "8.45"
+  degree: B.Tech
+  field: Computer Science
+  university: ""
+  graduation_year: 2023
+  gpa: ""
 
-# Work experience (most recent first)
-experience:
-  - title: "Associate Software Engineer"
-    company: insightsoftware
-    start_date: "2024-07"
-    end_date: present
-    description: >
-      Delivered enterprise-grade SSO for TM1 Cubeware connector via Kerberos/SPNEGO.
-      Fixed 5+ complex Data-DDL defects, achieved 20-30% OLAP performance gains,
-      resolved 50+ critical production issues across 4+ products, automated DigiSign
-      code signing in CI/CD, and designed a dynamic hierarchical subset filter system.
-  - title: "Software Engineering Intern"
-    company: insightsoftware
-    start_date: "2024-02"
-    end_date: "2024-06"
-    description: >
-      Improved filter search using regex-based multi-keyword matching, reducing result
-      sets by 35-40%. Enhanced export functionality across PDF, Excel, CSV, and PPT formats.
-
-# Skills
-skills:
-  languages:
-    - C++
-    - C#
-    - Java
-    - Python
-    - JavaScript
-    - C
-    - SQL
-  frameworks:
-    - React.js
-    - Node.js
-    - Express
-    - ASP.NET MVC
-    - Bootstrap
-    - jQuery
-  tools:
-    - Git
-    - Azure DevOps
-    - CI/CD
-    - Jira
-    - Postman
-    - Linux
-    - DigiSign Code Signing
+resume:
+  path: data/resume.pdf        # path to your resume PDF
 
 # Common screening question answers
-screening_answers:
-  years_of_experience: 2
-  willing_to_relocate: true
-  available_start_date: "2 weeks notice"
-  heard_about_company: "Online research"
-
-  why_this_company: >
-    I'm drawn to the company's approach to building developer tools and
-    its focus on user experience. I want to contribute to products
-    that make a real difference in how people work.
-
-  biggest_strength: >
-    I thrive at the intersection of systems-level thinking and product
-    delivery — whether that's diagnosing complex multi-step defects,
-    optimizing OLAP query performance, or automating CI/CD pipelines end-to-end.
-
-  biggest_weakness: >
-    I sometimes spend too much time trying to find the perfect solution
-    before shipping. I've been actively working on balancing quality
-    with velocity.
-
-# Cover letter base template
-cover_letter_template: >
-  I am excited to apply for the {role} position at {company}.
-  {why_company_specific}
-  In my current role at insightsoftware, I have {relevant_experience}.
-  I believe my background in {skills} makes me a strong fit for this role.
-  I look forward to the opportunity to contribute to {company}'s mission.
+answers:
+  work_authorization: "Yes, I am authorized to work in India"
+  gender: "Prefer not to say"
+  veteran_status: "I am not a veteran"
+  disability: "I do not have a disability"
+  notice_period: "30 days"
+  earliest_start: "30 days"
+  salary_expectation: "As per company norms"
+  remote_preference: "Open to hybrid or remote"

@@ -23,6 +23,7 @@ STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
 _lock          = threading.Lock()
 _thread: threading.Thread | None = None
 _stop_event    = threading.Event()      # set → loop exits after current run
+_current_loop  = None                    # running asyncio loop for cancellation
 _trigger_event = threading.Event()     # set → skip current sleep, run now
 
 # Live progress log — last 60 messages, thread-safe
@@ -103,9 +104,33 @@ def _run_loop(interval_minutes: int, scan_immediately: bool = False) -> None:
                 from src.runner import run_discovery
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
-                new_count = loop.run_until_complete(
-                    run_discovery(headed=False, on_progress=_add_progress)
-                )
+                _current_loop = loop  # Store so stop_discovery can interrupt it
+
+                async def _cancellable_run():
+                    return await run_discovery(headed=False, on_progress=_add_progress)
+
+                task = loop.create_task(_cancellable_run())
+
+                def _check_stop():
+                    if _stop_event.is_set() and not task.done():
+                        task.cancel()
+                        _add_progress("Discovery stopped by user")
+
+                # Check stop signal every 0.5s
+                async def _run_with_stop_check():
+                    while not task.done():
+                        if _stop_event.is_set():
+                            task.cancel()
+                            _add_progress("Discovery stopped by user")
+                            break
+                        await asyncio.sleep(0.5)
+                    try:
+                        return await task
+                    except asyncio.CancelledError:
+                        return 0
+
+                new_count = loop.run_until_complete(_run_with_stop_check())
+                _current_loop = None
                 loop.close()
 
                 _write_state({
@@ -162,12 +187,15 @@ def ensure_running(interval_minutes: int = 60) -> None:
 
 
 def stop_discovery() -> None:
-    """Signal the daemon to stop. Current run finishes; no new runs start."""
-    global _thread
+    """Signal the daemon to stop and cancel any in-progress scan immediately."""
+    global _thread, _current_loop
     _stop_event.set()
-    _trigger_event.set()   # Wake the sleep so it exits immediately
-    _write_state({"status": "stopped"})
-    log.info("[BG] Stop signal sent.")
+    _trigger_event.set()
+    # Cancel the running asyncio loop if active
+    if _current_loop is not None and _current_loop.is_running():
+        _current_loop.call_soon_threadsafe(_current_loop.stop)
+    _write_state({"status": "idle"})
+    log.info("[BG] Stop signal sent — scan cancelled.")
 
 
 def trigger_now(triggered_by: str = "system") -> bool:

@@ -133,7 +133,7 @@ def parse_query(query: str) -> ParsedQuery:
 
     # Match levels
     for kw, canonical in LEVEL_KEYWORDS.items():
-        if re.search(r'\b' + re.escape(re.escape(kw)) + r'\b', lo_clean) or kw in lo_clean:
+        if re.search(r'\b' + re.escape(kw) + r'\b', lo_clean) or kw in lo_clean:
             if canonical not in pq.levels:
                 pq.levels.append(canonical)
 

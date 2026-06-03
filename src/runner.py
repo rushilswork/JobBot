@@ -16,6 +16,7 @@ from pathlib import Path
 
 from playwright.async_api import async_playwright
 
+from src.background import _stop_event
 from src.database import Company, JobStatus, get_session, init_db, upsert_job
 from src.discovery import (
     LinkedInDiscoverer, NaukriDiscoverer, IndeedDiscoverer,
@@ -88,7 +89,6 @@ async def run_discovery(headed: bool = False, on_progress=None) -> int:
         ("linkedin",    LinkedInDiscoverer),
         ("indeed",      IndeedDiscoverer),
         ("monster",     MonsterDiscoverer),
-        ("hiring_cafe", HiringCafeDiscoverer),
         ("greenhouse",  GreenhouseDiscoverer),
         ("uplers",      UplersDiscoverer),
     ]
@@ -107,6 +107,7 @@ async def run_discovery(headed: bool = False, on_progress=None) -> int:
 
     # ── Browser portals ───────────────────────────────────────────────────
     browser_map = [
+        ("hiring_cafe", HiringCafeDiscoverer),
         ("naukri",    NaukriDiscoverer),
         ("glassdoor", GlassdoorDiscoverer),
         ("instahire", InstahireDiscoverer),
@@ -150,7 +151,12 @@ async def run_discovery(headed: bool = False, on_progress=None) -> int:
                     finally:
                         await ctx.close()
 
-            await asyncio.gather(*[portal_task(k, d) for k, d in browser_portals])
+            # Run portals sequentially so stop/pause signal is respected
+            for k, d in browser_portals:
+                if _stop_event.is_set():
+                    _prog("Discovery stopped")
+                    break
+                await portal_task(k, d)
             await browser.close()
 
     _prog(f"Starting — {len(http_portals)} HTTP portals, {len(browser_portals)} browser portals")
@@ -159,7 +165,9 @@ async def run_discovery(headed: bool = False, on_progress=None) -> int:
         run_browser_portals(),
     )
 
-    session.commit()
-    session.close()
+    try:
+        session.commit()
+    finally:
+        session.close()
     _prog(f"Complete — {total_new} new job(s) added")
     return total_new

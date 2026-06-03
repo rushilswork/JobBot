@@ -197,7 +197,7 @@ textarea:focus{border-color:rgba(249,115,22,.4);}
 .fmenu-wrap{position:relative;overflow:visible;z-index:300;}
 .fmenu-btn{position:relative;}
 .fmenu-dot{position:absolute;top:-3px;right:-3px;width:7px;height:7px;border-radius:50%;background:var(--accent2);border:1.5px solid var(--bg);}
-.fmenu{position:fixed;width:300px;max-height:70vh;overflow-y:auto;overscroll-behavior:contain;background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--r);padding:.6rem 0;z-index:200;box-shadow:0 12px 40px rgba(0,0,0,.2);}.fmenu::-webkit-scrollbar{width:4px;}.fmenu::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:4px;}
+.fmenu{position:fixed;width:300px;max-height:70vh;overflow-y:auto;overscroll-behavior:contain;background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--r);padding:.6rem 0;z-index:50;box-shadow:0 12px 40px rgba(0,0,0,.2);}.fmenu::-webkit-scrollbar{width:4px;}.fmenu::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:4px;}
 .fmenu-sec{padding:.3rem .9rem .1rem;font-size:.58rem;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--txt3);margin-top:.3rem;}
 .fmenu-row{display:flex;align-items:center;gap:10px;padding:.38rem .9rem;font-size:.78rem;color:var(--txt2);}
 .fmenu-row label{font-size:.73rem;color:var(--txt2);min-width:60px;}
@@ -339,6 +339,21 @@ textarea:focus{border-color:rgba(249,115,22,.4);}
 .confirm-btns .btn-cancel:hover{background:var(--surf2);}
 .confirm-btns .btn-confirm{background:var(--red);border:none;color:#fff;padding:8px 18px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;}
 .confirm-btns .btn-confirm:hover{background:#dc2626;}
+
+.apply-modal{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(12px);z-index:700;display:flex;align-items:center;justify-content:center;padding:1rem;}
+.apply-card{background:var(--bg2);border:1px solid var(--bdr2);border-radius:20px;padding:1.75rem;max-width:640px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.4);}
+.apply-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.apply-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;}
+.apply-screenshot{width:100%;border-radius:10px;border:1px solid var(--bdr);margin:1rem 0;max-height:400px;object-fit:contain;background:var(--bg3);}
+.apply-fields{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:1rem;}
+.apply-field{font-size:.72rem;padding:4px 10px;border-radius:6px;background:rgba(34,197,94,.08);color:#16a34a;border:1px solid rgba(34,197,94,.2);}
+.apply-manual{font-size:.72rem;padding:4px 10px;border-radius:6px;background:rgba(249,115,22,.08);color:var(--accent);border:1px solid rgba(249,115,22,.2);}
+.apply-btns{display:flex;gap:8px;margin-top:1rem;}
+.apply-btns .btn-submit{flex:1;padding:.75rem;background:#16a34a;border:none;border-radius:10px;color:#fff;font-weight:700;font-size:.9rem;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;}
+.apply-btns .btn-submit:hover{background:#15803d;}
+.apply-btns .btn-cancel-apply{padding:.75rem 1.5rem;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;color:var(--txt2);font-weight:600;font-size:.9rem;cursor:pointer;font-family:'Inter',sans-serif;}
+.apply-status{text-align:center;padding:2rem;font-size:.85rem;color:var(--txt2);}
+.apply-spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--bdr2);border-top-color:var(--accent);border-radius:50%;animation:rot .6s linear infinite;margin-bottom:.75rem;}
 </style>
 </head>
 <body>
@@ -524,7 +539,7 @@ function LinkPreview({url}){
   );
 }
 
-function DetailDrawer({job,onClose,onApprove,onSkip,onMarkApplied,onUnreview,onRestore,isNew=false}){
+function DetailDrawer({job,onClose,onApprove,onSkip,onMarkApplied,onUnreview,onRestore,onAutoApply,isNew=false}){
   const ref=useRef();
   const [preview,setPreview]=useState(false);
   useEffect(()=>{if(job&&ref.current)gsap.from(ref.current,{x:30,opacity:0,duration:.32,ease:'power2.out'});setPreview(false);},[job]);
@@ -547,7 +562,10 @@ function DetailDrawer({job,onClose,onApprove,onSkip,onMarkApplied,onUnreview,onR
         </div>
         <div style={{fontSize:'.76rem',color:'var(--txt2)',marginBottom:'1rem'}}>{job.location||'Location TBD'}</div>
         <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:'1rem'}}>
-          <a href={job.job_url} target="_blank" rel="noreferrer"><button className="btn btn-p" onClick={()=>{if(!["applied","skipped"].includes(job.status))onApprove(job);}}>Open posting ↗</button></a>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"stretch"}}>
+            <a href={job.job_url} target="_blank" rel="noreferrer"><button className="btn btn-p" onClick={()=>{if(!["applied","skipped"].includes(job.status))onApprove(job);}}>Open posting ↗</button></a>
+            {onAutoApply&&!["applied","skipped"].includes(job.status)&&<button className="btn btn-p" style={{background:"#16a34a",borderColor:"transparent",display:"inline-flex",alignItems:"center",gap:5,fontWeight:700}} onClick={()=>onAutoApply(job)}><span>⚡</span><span>Auto Apply</span></button>}
+          </div>
           <button className="btn" onClick={()=>setPreview(p=>!p)}>{preview?'Hide preview':'👁 Preview'}</button>
           
           
@@ -568,15 +586,18 @@ function DetailDrawer({job,onClose,onApprove,onSkip,onMarkApplied,onUnreview,onR
 function FeedPanel({feed,isOpen,onClose,isRunning,onStop,paused,onTogglePause,onClear}){
   const logRef=useRef();
   useEffect(()=>{if(!paused&&logRef.current)logRef.current.scrollTop=logRef.current.scrollHeight;},[feed,paused]);
+  const hasContent=feed.length>0;
   return (
     <aside className={'feed-col'+(isOpen?' open':'')}>
       <div className="feed-hdr">
-        <span className="feed-ttl">Live Feed</span>
-        <div style={{display:'flex',gap:5,alignItems:'center'}}>
-          {isRunning&&<div className="spin" style={{width:10,height:10,border:'2px solid rgba(255,255,255,.12)',borderTopColor:'var(--grn)'}}/>}
-          {isRunning&&<button className="btn btn-icon" onClick={onStop} title="Stop discovery" style={{padding:'2px 7px',fontSize:'.67rem',color:'var(--red)',borderColor:'rgba(239,68,68,.25)'}}>■ Stop</button>}
-          <button className="btn btn-icon" onClick={onTogglePause} title={paused?'Resume feed':'Pause feed'} style={{padding:'2px 7px',fontSize:'.67rem'}}>{paused?'▶ Resume':'⏸ Pause'}</button>
-          <button className="btn btn-icon" onClick={onClear} title="Clear feed log" style={{padding:'2px 7px',fontSize:'.67rem'}}>🗑</button>
+        <span className="feed-ttl" style={{display:'flex',alignItems:'center',gap:6}}>
+          Live Feed
+          {isRunning&&<div className="spin" style={{width:8,height:8,border:'2px solid rgba(255,255,255,.15)',borderTopColor:'var(--grn)',flexShrink:0}}/>}
+        </span>
+        <div style={{display:'flex',gap:4,alignItems:'center'}}>
+          {isRunning&&<button className="btn btn-icon" onClick={()=>{onStop();}} style={{padding:'2px 7px',fontSize:'.67rem',color:'var(--red)',borderColor:'rgba(239,68,68,.25)',display:'inline-flex',alignItems:'center',gap:4}}><svg width='7' height='7' viewBox='0 0 7 7'><rect width='7' height='7' rx='1' fill='#f87171'/></svg>Stop</button>}
+          {hasContent&&<button className="btn btn-icon" onClick={onClear} style={{padding:'2px 7px',fontSize:'.67rem',color:'var(--txt3)'}} title="Clear log">Clear</button>}
+          {hasContent&&<button className="btn btn-icon" onClick={onTogglePause} style={{padding:'2px 7px',fontSize:'.67rem'}} title={paused?'Resume feed updates':'Pause feed updates'}>{paused?'▶ Resume':'⏸ Pause'}</button>}
           <button className="btn btn-icon" onClick={onClose} style={{padding:'3px 7px'}}>✕</button>
         </div>
       </div>
@@ -591,8 +612,8 @@ function FeedPanel({feed,isOpen,onClose,isRunning,onStop,paused,onTogglePause,on
 function Navbar({disc,feedOpen,isDark,hdrMeta,onStart,onStop,onScan,onRefresh,onToggleFeed,onToggleTheme,onPurge,onClearDb,onAbout,onConfigure,onAccount}){
   const [sOpen,setSOpen]=useState(false);
   const isRunning=disc.status==='running'||disc.status==='starting';
-  const dotCls=isRunning?'s-run':disc.status==='stopped'?'s-stop':disc.error?'s-err':'s-idle';
-  const stTxt=isRunning?'Scanning...':disc.last_run?'Last: '+ago(disc.last_run):'Ready';
+  const dotCls=isRunning?'s-run':disc.status==='paused'?'s-stop':disc.status==='stopped'?'s-stop':disc.error?'s-err':'s-idle';
+  const stTxt=isRunning?'Scanning...':disc.status==='paused'?'Paused':disc.last_run?'Last: '+ago(disc.last_run):'Ready';
   return (
     <nav className="nav">
       <div className="logo" onClick={onAbout} style={{cursor:'pointer'}}>Job<span className="logo-em">Bot</span></div>
@@ -601,7 +622,7 @@ function Navbar({disc,feedOpen,isDark,hdrMeta,onStart,onStop,onScan,onRefresh,on
       <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:8}}>
         {/* Primary action */}
         {isRunning
-          ?<button className="btn btn-stop btn-icon" onClick={onStop} style={{padding:'6px 16px'}}>■ Stop</button>
+          ?<button className="btn btn-stop btn-icon" onClick={onStop} style={{padding:'6px 18px',display:'inline-flex',alignItems:'center',gap:5}}><svg width="8" height="8" viewBox="0 0 8 8" style={{flexShrink:0,marginTop:1}}><rect width="8" height="8" rx="1.5" fill="#f87171"/></svg>Stop</button>
           :<button className="btn btn-p btn-icon" onClick={()=>{onStart();onScan();}} style={{padding:'6px 18px',letterSpacing:'.01em'}}><svg width="11" height="14" viewBox="0 0 11 14" fill="none" style={{flexShrink:0}}><path d="M6.5 1L1 8h4.5L4.5 13L10 6H5.5L6.5 1Z" fill="white" stroke="white" strokeWidth=".5"/></svg> Scan</button>}
         {/* Secondary group */}
         <div className="nav-group">
@@ -620,7 +641,7 @@ function Navbar({disc,feedOpen,isDark,hdrMeta,onStart,onStop,onScan,onRefresh,on
           <button className="btn btn-ghost btn-icon" onClick={()=>setSOpen(o=>!o)} title="Settings">⚙</button>
           {sOpen&&<SettingsMenu onClose={()=>setSOpen(false)} onAccount={onAccount}/>}
         </div>
-        <button className="btn btn-ghost btn-icon" onClick={onConfigure} style={{fontSize:'.72rem',letterSpacing:'.02em'}}>Configure</button>
+        <button className="btn btn-ghost btn-icon" onClick={onConfigure} style={{fontSize:'.72rem',letterSpacing:'.02em'}}>Scan Settings</button>
         <button className="btn btn-ghost btn-icon" onClick={onAbout} style={{fontSize:'.72rem',letterSpacing:'.02em'}}>About</button>
       </div>
     </nav>
@@ -828,7 +849,7 @@ function ConfigPanel({onClose}){
     <div className="cfg-modal" onClick={e=>e.target===e.currentTarget&&onClose()}>
       <div className="cfg-card">
         <div className="cfg-hdr">
-          <div className="cfg-title">⚙ Search Configuration</div>
+          <div className="cfg-title">⚙ Scan Settings</div>
           <button className="btn btn-ghost" onClick={onClose} style={{padding:'4px 10px'}}>✕</button>
         </div>
 
@@ -982,6 +1003,97 @@ function GoTop(){
   return <button className={'go-top'+(show?'':' hidden')} onClick={()=>window.scrollTo({top:0,behavior:'smooth'})} title="Back to top">↑</button>;
 }
 
+
+function ApplyModal({job, onClose, onApplied}){
+  const [status,setStatus]=useState('starting');
+  const [data,setData]=useState(null);
+  const [polling,setPolling]=useState(true);
+
+  useEffect(()=>{
+    // Start autofill
+    fetch('/api/jobs/'+job.id+'/apply',{method:'POST'})
+      .then(r=>r.json()).then(d=>{if(!d.ok)setStatus('error');})
+      .catch(()=>setStatus('error'));
+    // Poll for status
+    const iv=setInterval(async()=>{
+      try{
+        const r=await fetch('/api/jobs/'+job.id+'/apply/status');
+        const d=await r.json();
+        setData(d);
+        if(d.status==='waiting_confirm'){setStatus('ready');clearInterval(iv);setPolling(false);}
+        else if(d.status==='submitted'){setStatus('submitted');clearInterval(iv);setPolling(false);onApplied&&onApplied(job);}
+        else if(d.status==='error'||d.status==='cancelled'){setStatus(d.status);clearInterval(iv);setPolling(false);}
+      }catch(e){}
+    },2000);
+    return()=>clearInterval(iv);
+  },[]);
+
+  const confirm=async()=>{
+    setStatus('submitting');
+    await fetch('/api/jobs/'+job.id+'/apply/confirm',{method:'POST'});
+    // Resume polling to get final submitted/error status
+    const iv2=setInterval(async()=>{
+      try{const r=await fetch('/api/jobs/'+job.id+'/apply/status');const d=await r.json();
+        if(d.status==='submitted'){setStatus('submitted');clearInterval(iv2);onApplied&&onApplied(job);}
+        else if(['submit_error','error'].includes(d.status)){setStatus('error');setData(d);clearInterval(iv2);}
+      }catch(e){}
+    },1500);
+    setTimeout(()=>clearInterval(iv2),30000);
+  };
+  const cancel=async()=>{
+    await fetch('/api/jobs/'+job.id+'/apply/cancel',{method:'POST'});
+    onClose();
+  };
+
+  return(
+    <div className="apply-modal" onClick={e=>e.target===e.currentTarget&&cancel()}>
+      <div className="apply-card">
+        <div className="apply-hdr">
+          <div className="apply-title">Auto-Apply — {job.company}</div>
+          <button className="btn btn-ghost" onClick={cancel} style={{padding:'4px 10px'}}>✕</button>
+        </div>
+        <div style={{fontSize:'.8rem',color:'var(--txt2)',marginBottom:'.5rem'}}>{job.title}</div>
+
+        {(status==='starting'||status==='filling')&&(
+          <div className="apply-status">
+            <div className="apply-spinner"/>
+            <div>Filling your application...</div>
+            <div style={{fontSize:'.72rem',color:'var(--txt3)',marginTop:'.3rem'}}>A browser window has opened</div>
+          </div>
+        )}
+
+        {status==='ready'&&data&&(
+          <>
+            <div style={{fontSize:'.75rem',color:'var(--txt3)',marginBottom:'.5rem'}}>Review the filled form before submitting:</div>
+            {data.screenshot_url&&<img src={data.screenshot_url} className="apply-screenshot" alt="Filled form"/>}
+            {data.filled?.length>0&&(
+              <div style={{marginBottom:'.5rem'}}>
+                <div style={{fontSize:'.65rem',fontWeight:700,letterSpacing:'1px',textTransform:'uppercase',color:'var(--txt3)',marginBottom:4}}>Auto-filled ({data.filled.length})</div>
+                <div className="apply-fields">{data.filled.map(f=><span key={f} className="apply-field">✓ {f}</span>)}</div>
+              </div>
+            )}
+            {data.needs_manual?.length>0&&(
+              <div style={{marginBottom:'.5rem'}}>
+                <div style={{fontSize:'.65rem',fontWeight:700,letterSpacing:'1px',textTransform:'uppercase',color:'var(--txt3)',marginBottom:4}}>Needs your input ({data.needs_manual.length})</div>
+                <div className="apply-fields">{data.needs_manual.map(f=><span key={f} className="apply-manual">⚠ {f}</span>)}</div>
+              </div>
+            )}
+            <div className="apply-btns">
+              <button className="btn-cancel-apply" onClick={cancel}>Cancel</button>
+              <button className="btn-submit" onClick={confirm}>Submit Application →</button>
+            </div>
+          </>
+        )}
+
+        {status==='submitting'&&<div className="apply-status"><div className="apply-spinner"/><div>Submitting...</div></div>}
+        {status==='submitted'&&<div className="apply-status" style={{color:'#16a34a'}}>✓ Application submitted!</div>}
+        {status==='error'&&<div className="apply-status" style={{color:'var(--red)'}}>Error starting autofill. Make sure your profile.yaml is filled in.</div>}
+        {status==='cancelled'&&<div className="apply-status">Cancelled.</div>}
+      </div>
+    </div>
+  );
+}
+
 function SkillAC({value,onChange}){
   const [open,setOpen]=useState(false);
   const [q,setQ]=useState(value||'');
@@ -1060,7 +1172,7 @@ function FilterMenu({modeF,portalF,levelF,locationF,matchOnly,resumeFile,hasSkil
         ⚙ Filters{hasFilters&&<span className="fmenu-dot"/>}
       </button>
       {open&&(
-        <div className="fmenu" ref={el=>{if(el){const btn=ref.current?.querySelector('.fmenu-btn');if(btn){const r=btn.getBoundingClientRect();el.style.top=(r.bottom+6)+'px';el.style.right=(window.innerWidth-r.right)+'px';}}}}>
+        <div className="fmenu" ref={el=>{if(el){const btn=ref.current?.querySelector('.fmenu-btn');if(btn){const r=btn.getBoundingClientRect();const navH=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--hh')||'64');el.style.top=Math.max(navH+4,r.bottom+6)+'px';el.style.right=(window.innerWidth-r.right)+'px';}}}}>
           <div className="fmenu-sec">Work mode</div>
           <div className="fmenu-chips">
             {MODES.map(([v,l])=><span key={v} className={'fchip'+(modeF.includes(v)?' on':'')} onClick={()=>toggle(modeF,v,onMode)}>{l}</span>)}
@@ -1128,6 +1240,7 @@ function App(){
   const [showAbout,setShowAbout]=useState(false);
   const [showConfig,setShowConfig]=useState(false);
   const [showAccount,setShowAccount]=useState(false);
+  const [applyJob,setApplyJob]=useState(null);
   const [confirmDlg,setConfirmDlg]=useState(null);
   const [hdrMeta,setHdrMeta]=useState('');
   const [tick,setTick]=useState(0);
@@ -1218,18 +1331,18 @@ function App(){
     loadStats();toast('Marked as '+status);
     if(['skipped','reviewed','applied'].includes(status))loadJobs();
   };
-  const startDisc=async()=>{await fetch('/api/discovery/start',{method:'POST'});setDisc(d=>({...d,status:'starting'}));toast('Discovery started');};
+  const startDisc=async()=>{await fetch('/api/discovery/start',{method:'POST'});setDisc(d=>({...d,status:'starting'}));setFeedPaused(false);feedPausedRef.current=false;toast('Discovery started');};
   const stopDisc=async()=>{await fetch('/api/discovery/stop',{method:'POST'});setDisc(d=>({...d,status:'stopped'}));toast('Discovery stopped');};
-  const scanNow=async()=>{await fetch('/api/discovery/trigger',{method:'POST'});setDisc(d=>({...d,status:'running'}));toast('Scanning now!');};
+  const scanNow=async()=>{await fetch('/api/discovery/trigger',{method:'POST'});setDisc(d=>({...d,status:'running'}));setFeedPaused(false);feedPausedRef.current=false;toast('Scanning now!');};
   const refresh=()=>{loadJobs();loadStats();toast('Refreshed');};
   const purge=()=>setConfirmDlg({icon:'🗂',title:'Purge Suspicious Jobs',message:'Remove all suspicious or mislabeled new jobs from the database? This cannot be undone.',confirmLabel:'Purge Jobs',onConfirm:async()=>{setConfirmDlg(null);const r=await fetch('/api/jobs/purge-suspicious',{method:'DELETE'});const d=await r.json();loadJobs();loadStats();toast('Purged '+d.deleted+' suspicious jobs');}});
   const clearDb=()=>setConfirmDlg({
     icon:'🗑',title:'Clear Jobs Database',
     message:'Permanently delete all your discovered jobs. Choose whether to trigger a new scan immediately after.',
     confirmLabel:'Clear & Rescan',
-    onConfirm:async()=>{setConfirmDlg(null);const r=await fetch('/api/jobs/clear-all',{method:'DELETE'});const d=await r.json();setJobs([]);setHdrMeta('');setLastScanAt(null);setDisc(prev=>({...prev,last_new_count:0}));loadStats();pollStatus();toast('Cleared '+d.deleted+' jobs — scan started');setTimeout(loadJobs,500);},
+    onConfirm:async()=>{setConfirmDlg(null);const r=await fetch('/api/jobs/clear-all',{method:'DELETE'});const d=await r.json();setJobs([]);setHdrMeta('');setLastScanAt(null);setDisc(prev=>({...prev,last_new_count:0}));clearFeed();loadStats();pollStatus();toast('Cleared '+d.deleted+' jobs — scanning now...');setTimeout(()=>{scanNow();loadJobs();},800);},
     altLabel:'Clear Only',
-    onAlt:async()=>{setConfirmDlg(null);const r=await fetch('/api/jobs/clear-only',{method:'DELETE'});const d=await r.json();setJobs([]);setHdrMeta('');setLastScanAt(null);setDisc(prev=>({...prev,last_new_count:0}));loadStats();toast('Cleared '+d.deleted+' jobs');}
+    onAlt:async()=>{setConfirmDlg(null);const r=await fetch('/api/jobs/clear-only',{method:'DELETE'});const d=await r.json();setJobs([]);setHdrMeta('');setLastScanAt(null);setDisc(prev=>({...prev,last_new_count:0,status:'idle'}));clearFeed();loadStats();toast('Cleared '+d.deleted+' jobs');}
   });
   const toggleTheme=()=>{
     const next=!isDark;
@@ -1266,8 +1379,22 @@ function App(){
     }, dur);
   };
   const toggleFeed=()=>{setFeedOpen(o=>{localStorage.setItem('jb-feed',o?'0':'1');return !o;});};
-  const toggleFeedPause=()=>{setFeedPaused(p=>{feedPausedRef.current=!p;return !p;});};
-  const clearFeed=()=>{feedRef.current=[];setFeed([]);};
+  const toggleFeedPause=async()=>{
+    if(feedPaused){
+      // Resume — start discovery again
+      setFeedPaused(false);feedPausedRef.current=false;
+      await fetch('/api/discovery/trigger',{method:'POST'});
+      setDisc(d=>({...d,status:'running'}));
+      toast('Discovery resumed');
+    } else {
+      // Pause — stop discovery, keep feed visible
+      setFeedPaused(true);feedPausedRef.current=true;
+      await fetch('/api/discovery/pause',{method:'POST'});
+      setDisc(d=>({...d,status:'paused'}));
+      toast('Discovery paused');
+    }
+  };
+  const clearFeed=()=>{feedRef.current=[];setFeed([]);fetch('/api/discovery/progress/clear',{method:'POST'}).catch(()=>{});};
   const handleSearch=e=>{const v=e.target.value;setSearch(v);clearTimeout(searchTimer.current);searchTimer.current=setTimeout(()=>loadJobs({search:v}),280);};
   const handleTab=k=>{setTab(k);loadJobs({tab:k});};
   const handleModeF=e=>{setModeF(e.target.value);loadJobs({modeF:e.target.value});};
@@ -1300,8 +1427,7 @@ function App(){
   };
   const isNewJob=(j)=>j.status==='new'&&j.discovered_at&&(Date.now()-new Date(j.discovered_at).getTime())<86400000;
   const filteredJobs=jobs.filter(j=>{
-    // Inbox = new + reviewed jobs combined
-    if(tab==='inbox'&&!['new','reviewed'].includes(j.status))return false;
+    // Inbox = only new (unreviewed) jobs
     if(tab==='inbox'&&j.status!=='new')return false;
     if(tab!=='inbox'&&j.status!==tab)return false;
     const LOC_TERMS={india:['india','hyderabad','bengaluru','bangalore','mumbai','pune','chennai','delhi','noida','gurgaon','gurugram','kolkata','ahmedabad','telangana','karnataka','maharashtra','rajasthan','kerala','andhra','tamil'],us:['united states','usa',',us','us,','(us)','new york','san francisco','seattle','boston','austin','chicago','los angeles','california','texas','washington'],uk:['united kingdom','uk','england','london','manchester','birmingham','leeds','bristol','scotland','wales'],remote:['remote','anywhere','worldwide','work from home','wfh','distributed']};
@@ -1325,10 +1451,11 @@ function App(){
     <Toast/>
     <GoTop/>
     {confirmDlg&&<ConfirmDialog icon={confirmDlg.icon} title={confirmDlg.title} message={confirmDlg.message} confirmLabel={confirmDlg.confirmLabel} onConfirm={confirmDlg.onConfirm} onCancel={()=>setConfirmDlg(null)} altLabel={confirmDlg.altLabel} onAlt={confirmDlg.onAlt}/>}
+    {applyJob&&<ApplyModal job={applyJob} onClose={()=>setApplyJob(null)} onApplied={j=>{updateJob(j,"applied");setApplyJob(null);}}/> }
     {showAbout&&<AboutModal onClose={()=>setShowAbout(false)}/>}
     {showAccount&&<AccountModal onClose={()=>setShowAccount(false)}/>}
     {showConfig&&<ConfigPanel onClose={()=>setShowConfig(false)}/>}
-    {detail&&<DetailDrawer job={detail} isNew={isNewJob(detail)} onClose={()=>setDetail(null)} onApprove={j=>updateJob(j,'reviewed')} onSkip={j=>updateJob(j,'skipped')} onMarkApplied={j=>updateJob(j,'applied')} onUnreview={j=>updateJob(j,'new')} onRestore={j=>updateJob(j,getPrevStatus(j))}/>}
+    {detail&&<DetailDrawer job={detail} isNew={isNewJob(detail)} onClose={()=>setDetail(null)} onApprove={j=>updateJob(j,'reviewed')} onSkip={j=>updateJob(j,'skipped')} onMarkApplied={j=>updateJob(j,'applied')} onUnreview={j=>updateJob(j,'new')} onRestore={j=>updateJob(j,getPrevStatus(j))} onAutoApply={j=>{setDetail(null);if(j.status==='new')updateJob(j,'reviewed');setApplyJob(j);}}/>}
     <div style={{position:'relative',zIndex:1}}>
       <Navbar disc={disc} feedOpen={feedOpen} isDark={isDark} hdrMeta={hdrMeta} onStart={startDisc} onStop={stopDisc} onScan={scanNow} onRefresh={refresh} onPurge={purge} onClearDb={clearDb} onAbout={()=>setShowAbout(true)} onConfigure={()=>setShowConfig(true)} onAccount={()=>setShowAccount(true)} onToggleFeed={toggleFeed} onToggleTheme={toggleTheme}/><div className="body-wrap">
         <main className="main-col">
@@ -1401,3 +1528,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
+                                                                             

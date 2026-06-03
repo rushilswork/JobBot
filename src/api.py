@@ -158,6 +158,15 @@ def discovery_trigger(current_user: dict = Depends(get_current_user)):
     trigger_now(triggered_by=current_user["username"])
     return {"ok": True}
 
+
+
+@app.post("/api/discovery/pause")
+def discovery_pause(current_user: dict = Depends(get_current_user)):
+    stop_discovery()
+    from src.background import _write_state
+    _write_state({"status": "paused"})
+    return {"ok": True}
+
 @app.post("/api/discovery/stop")
 def discovery_stop(current_user: dict = Depends(get_current_user)):
     stop_discovery()
@@ -296,9 +305,10 @@ def clear_all_jobs(current_user: dict = Depends(require_admin)):
     try:
         deleted = session.query(Job).filter(Job.discovered_by == current_user["username"]).delete()
         session.commit()
-        trigger_now(triggered_by=current_user["username"])
+        # Stop any running scan first, then reset state
+        stop_discovery()
         from src.background import _write_state
-        _write_state({"last_new_count": 0})
+        _write_state({"last_new_count": 0, "status": "idle"})
         return {"deleted": deleted}
     finally:
         session.close()
@@ -446,6 +456,109 @@ def clear_jobs_only(current_user: dict = Depends(require_admin)):
     try:
         deleted = session.query(Job).filter(Job.discovered_by == current_user["username"]).delete()
         session.commit()
+        stop_discovery()
+        from src.background import _write_state
+        _write_state({"last_new_count": 0, "status": "idle"})
         return {"deleted": deleted}
     finally:
         session.close()
+
+
+# ── Autofill / Auto-apply ─────────────────────────────────────────────────
+import threading as _threading
+
+@app.post("/api/jobs/{job_id}/apply")
+def start_apply(job_id: int, current_user: dict = Depends(get_current_user)):
+    """Start autofill for a job. Returns immediately; progress via SSE."""
+    session = get_session()
+    try:
+        job = session.get(Job, job_id)
+        if not job:
+            raise HTTPException(404, "Job not found")
+        if job.discovered_by != current_user["username"]:
+            raise HTTPException(403, "Forbidden")
+    finally:
+        session.close()
+
+    from src.autofill.runner import run_autofill, _sessions
+    if job_id in _sessions:
+        raise HTTPException(400, "Autofill already in progress for this job")
+
+    # Run in background thread
+    _results = {}
+    def _run():
+        import asyncio
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        result = loop.run_until_complete(
+            run_autofill(job_id, job.job_url, job.portal or "generic")
+        )
+        _results[job_id] = result
+        loop.close()
+
+    t = _threading.Thread(target=_run, daemon=True)
+    t.start()
+    return {"ok": True, "job_id": job_id, "message": "Autofill started — check the review modal"}
+
+
+@app.get("/api/jobs/{job_id}/apply/status")
+def apply_status(job_id: int, current_user: dict = Depends(get_current_user)):
+    """Get current autofill status and screenshot path."""
+    from src.autofill.runner import get_session as get_af_session
+    af = get_af_session(job_id)
+    if not af:
+        return {"status": "not_started"}
+    r = af.get("result", {})
+    # Return screenshot as relative path
+    ss = r.get("screenshot_path", "")
+    if ss:
+        ss = "/api/screenshots/" + __import__('pathlib').Path(ss).name
+    return {
+        "status": r.get("status", "running"),
+        "screenshot_url": ss,
+        "filled": r.get("filled", []),
+        "needs_manual": r.get("needs_manual", []),
+        "error": r.get("error"),
+    }
+
+
+@app.post("/api/jobs/{job_id}/apply/confirm")
+def confirm_apply(job_id: int, current_user: dict = Depends(get_current_user)):
+    """User confirmed — submit the application."""
+    from src.autofill.runner import confirm_apply as _confirm
+    _confirm(job_id)
+    # Mark job as applied in DB
+    session = get_session()
+    try:
+        mark_job(session, job_id, "applied", applied_at=datetime.utcnow())
+    finally:
+        session.close()
+    return {"ok": True}
+
+
+@app.post("/api/jobs/{job_id}/apply/cancel")
+def cancel_apply(job_id: int, current_user: dict = Depends(get_current_user)):
+    """User cancelled — close browser without submitting."""
+    from src.autofill.runner import cancel_apply as _cancel
+    _cancel(job_id)
+    return {"ok": True}
+
+
+@app.get("/api/screenshots/{filename}")
+def serve_screenshot(filename: str, current_user: dict = Depends(get_current_user)):
+    """Serve screenshot files."""
+    from fastapi.responses import FileResponse as FR
+    import re
+    if not re.match(r'^[\w\-\.]+\.png$', filename):
+        raise HTTPException(400, "Invalid filename")
+    path = PROJECT_ROOT / "data" / "screenshots" / filename
+    if not path.exists():
+        raise HTTPException(404, "Screenshot not found")
+    return FR(str(path))
+
+
+@app.post("/api/discovery/progress/clear")
+def clear_progress_log(current_user: dict = Depends(get_current_user)):
+    from src.background import clear_progress
+    clear_progress()
+    return {"ok": True}
