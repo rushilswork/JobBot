@@ -1,115 +1,149 @@
 """
-Generic form filler — works on any ATS or job application form.
-Detects fields by label text, fills using profile data.
+Generic form filler — works on any ATS or job board.
+Skips nav/search chrome, handles text/select/radio/checkbox, AI fallback for unknown fields.
 """
 from __future__ import annotations
 import asyncio, random
 from playwright.async_api import Page
-from .base import resolve_field, fill_text_field, select_option, take_screenshot, human_type
+from .base import (
+    get_field_label, resolve_field, is_in_nav, is_noise_label, is_chrome_label,
+    fill_text_field, fill_select, fill_checkbox, fill_radio_group,
+    dismiss_popups, upload_resume, take_screenshot,
+)
 from src.utils import log
 
 
-async def fill_generic_form(page: Page, profile: dict, job_id: int) -> dict:
-    """
-    Detect and fill all form fields on current page.
-    Returns dict with results: {filled, skipped, needs_manual, screenshot_path}
-    """
-    filled = []
-    skipped = []
-    needs_manual = []
+async def fill_generic_form(
+    page: Page,
+    profile: dict,
+    job_id: int,
+    ai=None,
+    job_context: dict = None,
+) -> dict:
+    filled, skipped, needs_manual = [], [], []
 
-    # Dismiss cookie/GDPR banners first
-    try:
-        for sel in [
-            "button:has-text('Accept all')", "button:has-text('Accept All')",
-            "button:has-text('Accept cookies')", "button:has-text('I Accept')",
-            "button:has-text('Agree')", "button:has-text('Got it')",
-            "[id*='cookie'] button", "[class*='cookie'] button[class*='accept']",
-            "[class*='consent'] button[class*='accept']",
-        ]:
-            btn = await page.query_selector(sel)
-            if btn:
-                await btn.click()
-                await asyncio.sleep(0.5)
-                break
-    except Exception: pass
+    await dismiss_popups(page)
+    await asyncio.sleep(0.5)
 
-    # Upload resume if there's a file input
-    try:
-        resume_input = await page.query_selector("input[type='file']")
-        if resume_input:
-            resume_path = profile.get("resume", {}).get("path", "")
-            if resume_path:
-                import os
-                from pathlib import Path
-                full_path = Path(__file__).resolve().parent.parent.parent / resume_path
-                if full_path.exists():
-                    await resume_input.set_input_files(str(full_path))
-                    filled.append("Resume")
-                    await asyncio.sleep(1)
-    except Exception as e:
-        log.debug(f"[Autofill] Resume upload: {e}")
+    # Upload resume first (before filling text fields)
+    resume_path = profile.get("resume_path", "")
+    if resume_path:
+        ok = await upload_resume(page, resume_path)
+        if ok:
+            filled.append("Resume")
 
-    # Find all form fields
-    fields = await page.query_selector_all("input:not([type='hidden']):not([type='submit']):not([type='button']), textarea, select")
+    # Collect all interactive form fields
+    fields = await page.query_selector_all(
+        "input:not([type='hidden']):not([type='submit']):not([type='button']):not([type='image']),"
+        "textarea, select"
+    )
+
+    seen_radio_names: set[str] = set()
 
     for field in fields:
         try:
-            # Get the label for this field
-            field_id = await field.get_attribute("id") or ""
-            field_name = await field.get_attribute("name") or ""
-            field_placeholder = await field.get_attribute("placeholder") or ""
-            aria_label = await field.get_attribute("aria-label") or ""
-
-            # Try to find associated label element
-            label_text = ""
-            if field_id:
-                lbl = await page.query_selector(f"label[for='{field_id}']")
-                if lbl:
-                    label_text = (await lbl.inner_text()).strip()
-
-            # Use best available label
-            label = label_text or aria_label or field_placeholder or field_name
-
-            if not label:
-                skipped.append(f"unlabeled field")
+            # Skip invisible fields
+            if not await field.is_visible():
                 continue
 
-            # Skip cookie consent, GDPR, tracking fields - not part of job application
-            NOISE_PATTERNS = [
-                'cookie', 'gdpr', 'consent', 'tracking', 'analytics', 'marketing',
-                'functional', 'performance', 'targeting', 'tothr', 'checkbox label',
-                'privacy policy', 'terms', 'subscribe', 'newsletter', 'captcha',
-            ]
-            if any(n in label.lower() for n in NOISE_PATTERNS):
+            # Skip nav/search chrome inputs
+            if await is_in_nav(field):
+                continue
+
+            input_type = (await field.get_attribute("type") or "text").lower()
+            tag        = await field.evaluate("e => e.tagName.toLowerCase()")
+
+            # Handle radio buttons as a group
+            if input_type == "radio":
+                name = await field.get_attribute("name") or ""
+                if not name or name in seen_radio_names:
+                    continue
+                seen_radio_names.add(name)
+                label = await get_field_label(page, field)
+                if not label or is_chrome_label(label) or is_noise_label(label):
+                    continue
+                value = resolve_field(label, profile)
+                if not value and ai:
+                    value = await _ask_ai(label, profile, ai, job_context)
+                if value:
+                    ok = await fill_radio_group(page, name, value)
+                    (filled if ok else needs_manual).append(label)
+                else:
+                    needs_manual.append(label)
+                continue
+
+            # Skip file inputs (handled by upload_resume above)
+            if input_type == "file":
+                continue
+
+            # Get label
+            label = await get_field_label(page, field)
+            if not label:
+                continue
+
+            if is_chrome_label(label) or is_noise_label(label):
                 skipped.append(label)
                 continue
 
-            # Resolve value from profile
+            # Resolve value
             value = resolve_field(label, profile)
 
-            if value:
-                tag = await field.evaluate("e => e.tagName.toLowerCase()")
-                if tag == "select":
-                    ok = await select_option(page, field, value)
-                else:
-                    ok = await fill_text_field(page, field, value)
-                if ok:
-                    filled.append(label)
-                    await asyncio.sleep(random.uniform(0.1, 0.3))
-                else:
-                    skipped.append(label)
+            if not value and ai:
+                value = await _ask_ai(label, profile, ai, job_context)
+
+            if not value:
+                needs_manual.append(label)
+                continue
+
+            # Fill by field type
+            if tag == "select":
+                ok = await fill_select(field, value)
+            elif input_type == "checkbox":
+                ok = await fill_checkbox(field, value)
+            else:
+                ok = await fill_text_field(field, value)
+
+            if ok:
+                filled.append(label)
+                await asyncio.sleep(random.uniform(0.08, 0.2))
             else:
                 needs_manual.append(label)
 
         except Exception as e:
-            log.debug(f"[Autofill] Field error: {e}")
+            log.debug(f"[Generic] Field error: {e}")
 
-    screenshot_path = await take_screenshot(page, job_id, "filled")
-
+    screenshot_path = await take_screenshot(page, job_id, "generic_filled")
     return {
-        "filled": filled,
-        "skipped": skipped,
-        "needs_manual": needs_manual,
+        "filled":          filled,
+        "skipped":         skipped,
+        "needs_manual":    needs_manual,
         "screenshot_path": screenshot_path,
     }
+
+
+async def _ask_ai(label: str, profile: dict, ai, job_context: dict = None) -> str:
+    """Ask AI to answer an unknown form field given the candidate's profile."""
+    if not ai:
+        return ""
+    try:
+        ctx = job_context or {}
+        prompt = (
+            f"You are filling a job application form for: {ctx.get('title','')} at {ctx.get('company','')}.\n"
+            f"Candidate profile:\n"
+            f"  Name: {profile.get('full_name','')}\n"
+            f"  Skills: {profile.get('skills_str','')}\n"
+            f"  Experience: {profile.get('years_experience','')} years\n"
+            f"  Current title: {profile.get('current_title','')}\n"
+            f"  Notice period: {profile.get('notice_period','')}\n"
+            f"  Work auth: {profile.get('work_authorization','')}\n\n"
+            f"Form field label: \"{label}\"\n"
+            f"Provide a SHORT, direct answer (1-2 sentences max). "
+            f"If it's a yes/no question, answer Yes or No. "
+            f"If you don't know, reply: SKIP"
+        )
+        answer = ai.generate_text(prompt)
+        if answer and "SKIP" not in answer.upper():
+            return answer.strip()[:200]
+    except Exception as e:
+        log.debug(f"[AI field] {e}")
+    return ""

@@ -1675,7 +1675,19 @@ function ApplyModal({job, onClose, onApplied}){
           <div className="apply-status">
             <div className="apply-spinner"/>
             <div>Filling your application...</div>
-            <div style={{fontSize:'.72rem',color:'var(--txt3)',marginTop:'.3rem'}}>A browser window has opened</div>
+            <div style={{fontSize:'.72rem',color:'var(--txt3)',marginTop:'.3rem'}}>A browser window should have opened</div>
+            <div style={{display:'flex',gap:8,marginTop:'1.1rem',justifyContent:'center',flexWrap:'wrap'}}>
+              <button className="btn" style={{fontSize:'.72rem',padding:'5px 14px'}}
+                onClick={async()=>{await fetch('/api/jobs/'+job.id+'/apply/focus',{method:'POST'});}}>
+                Bring to front
+              </button>
+              <a href={job.job_url} target="_blank" rel="noopener noreferrer"
+                style={{fontSize:'.72rem',padding:'5px 14px',display:'inline-flex',alignItems:'center',
+                  border:'1px solid var(--bdr)',borderRadius:8,color:'var(--txt2)',textDecoration:'none',
+                  background:'var(--surf)',cursor:'pointer'}}>
+                Open job page ↗
+              </a>
+            </div>
           </div>
         )}
 
@@ -1704,7 +1716,7 @@ function ApplyModal({job, onClose, onApplied}){
 
         {status==='submitting'&&<div className="apply-status"><div className="apply-spinner"/><div>Submitting...</div></div>}
         {status==='submitted'&&<div className="apply-status" style={{color:'#16a34a'}}>✓ Application submitted!</div>}
-        {status==='error'&&<div className="apply-status" style={{color:'var(--red)'}}>Error starting autofill. Make sure your profile.yaml is filled in.</div>}
+        {status==='error'&&<div className="apply-status" style={{color:'var(--red)'}}>⚠ {data?.error||'Autofill failed — check that your Profile is filled and the server is running.'}</div>}
         {status==='cancelled'&&<div className="apply-status">Cancelled.</div>}
       </div>
     </div>

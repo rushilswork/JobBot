@@ -785,53 +785,80 @@ def start_apply(job_id: int, current_user: dict = Depends(get_current_user)):
         session.close()
 
     from src.autofill.runner import run_autofill, _sessions
+    # Clear stale terminal sessions
     if job_id in _sessions:
-        raise HTTPException(400, "Autofill already in progress for this job")
+        st = _sessions[job_id].get("result", {}).get("status", "running")
+        if st in ("error", "submitted", "cancelled", "starting"):
+            _sessions.pop(job_id, None)
+        else:
+            raise HTTPException(400, "Autofill already in progress for this job")
 
     username = current_user["username"]
 
-    def _run():
-        # Step 1: Generate AI content if not already present
-        try:
-            from src.ai.service import AIService
-            from src.ai.generator import generate_cover_letter, generate_screening_answers
-            from src.utils import load_profile
-            ai = AIService.for_user(username)
-            if ai.is_configured():
-                profile = load_profile()
-                if not cover_letter:
-                    try:
-                        cl = generate_cover_letter(profile, job_title, company, description, ai)
-                        _save_job_field(job_id, "cover_letter", cl)
-                    except Exception as e:
-                        from src.utils import log
-                        log.warning(f"Cover letter generation skipped: {e}")
-                if not screening:
-                    try:
-                        common_qs = [
-                            "Are you authorized to work in India?",
-                            "Are you willing to relocate?",
-                            "What is your notice period?",
-                            "What are your salary expectations?",
-                            "How many years of experience do you have?",
-                        ]
-                        answers = generate_screening_answers(profile, job_title, company, common_qs, ai)
-                        _save_job_field(job_id, "screening_answers", json.dumps(answers))
-                    except Exception as e:
-                        from src.utils import log
-                        log.warning(f"Screening answers skipped: {e}")
-        except Exception as e:
-            from src.utils import log
-            log.warning(f"AI pre-generation skipped: {e}")
+    # Pre-register so status endpoint always has something to return
+    _sessions[job_id] = {"result": {"status": "starting", "filled": [], "needs_manual": []}}
 
-        # Step 2: Launch browser autofill
-        import asyncio
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
+    def _run():
+        from src.utils import log as _log
+        from src.autofill.profile_adapter import load_autofill_profile
+
         try:
-            loop.run_until_complete(run_autofill(job_id, job_url, job_portal))
-        finally:
-            loop.close()
+            profile = load_autofill_profile(username)
+            job_ctx = {
+                "title":        job_title,
+                "company":      company,
+                "description":  description,
+                "cover_letter": cover_letter,
+            }
+
+            ai = None
+            try:
+                from src.ai.service import AIService
+                from src.ai.generator import generate_cover_letter, generate_screening_answers
+                _ai = AIService.for_user(username)
+                if _ai.is_configured():
+                    ai = _ai
+                    if not cover_letter:
+                        try:
+                            cl = generate_cover_letter(profile, job_title, company, description, ai)
+                            _save_job_field(job_id, "cover_letter", cl)
+                            job_ctx["cover_letter"] = cl
+                        except Exception as e:
+                            _log.warning(f"Cover letter skipped: {e}")
+                    if not screening:
+                        try:
+                            common_qs = [
+                                "Are you authorized to work in India?",
+                                "Are you willing to relocate?",
+                                "What is your notice period?",
+                                "What are your salary expectations?",
+                                "How many years of experience do you have?",
+                            ]
+                            answers = generate_screening_answers(profile, job_title, company, common_qs, ai)
+                            _save_job_field(job_id, "screening_answers", json.dumps(answers))
+                        except Exception as e:
+                            _log.warning(f"Screening answers skipped: {e}")
+            except Exception as e:
+                _log.warning(f"AI setup skipped: {e}")
+
+            import asyncio
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                loop.run_until_complete(run_autofill(
+                    job_id, job_url, job_portal,
+                    username=username,
+                    ai=ai,
+                    job_context=job_ctx,
+                ))
+            finally:
+                loop.close()
+
+        except Exception as e:
+            _log.error(f"[Autofill] Startup error for job {job_id}: {e}")
+            if job_id in _sessions:
+                _sessions[job_id]["result"]["status"] = "error"
+                _sessions[job_id]["result"]["error"]  = str(e)
 
     t = _threading.Thread(target=_run, daemon=True)
     t.start()
@@ -885,6 +912,24 @@ def cancel_apply(job_id: int, current_user: dict = Depends(get_current_user)):
     from src.autofill.runner import cancel_apply as _cancel
     _cancel(job_id)
     return {"ok": True}
+
+
+@app.post("/api/jobs/{job_id}/apply/focus")
+def focus_apply_window(job_id: int, current_user: dict = Depends(get_current_user)):
+    """Bring the Playwright browser window to front."""
+    from src.autofill.runner import _sessions
+    sess = _sessions.get(job_id)
+    if not sess:
+        return {"ok": False, "reason": "no_session"}
+    page = sess.get("page")
+    if not page:
+        return {"ok": False, "reason": "no_page"}
+    loop = sess.get("loop")
+    if loop and loop.is_running():
+        import asyncio
+        asyncio.run_coroutine_threadsafe(page.bring_to_front(), loop)
+        return {"ok": True}
+    return {"ok": False, "reason": "loop_not_running"}
 
 
 @app.get("/api/screenshots/{filename}")
