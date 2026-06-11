@@ -20,7 +20,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.database import Job, Company, JobStatus, UserSettings, get_session, init_db, mark_job
 from src.background import ensure_running, get_status, trigger_now, get_progress, stop_discovery, clear_progress
-from src.utils import load_config, load_profile
+from src.utils import load_config
 from src.autofill.profile_adapter import load_autofill_profile
 from src.auth import init_users, get_current_user, require_admin
 from src.auth_routes import router as auth_router
