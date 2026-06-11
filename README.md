@@ -12,12 +12,11 @@ Self-hosted job search automation. JobBot scans 9 portals, scores jobs against y
 
 | Feature | Description |
 |---|---|
-| **Multi-Portal Discovery** | Scans 9 job portals on demand or on a schedule |
+| **Multi-Portal Discovery** | Scans 9 job portals on demand |
 | **Smart Inbox** | Jobs arrive filtered, sorted, and ready to review |
-| **Auto Apply** | Fills and submits application forms hands-free |
-| **Skill-Based Filtering** | Upload resume → filter jobs by skill match |
+| **Auto Apply** | Fills and submits application forms hands-free on 5 portals |
 | **Rich Profile** | Stores personal info, work experience, skills, education, preferences |
-| **Keyword Filters** | Include/exclude keywords, target locations, level filters |
+| **Keyword Filters** | Include/exclude keywords, target locations — all configurable from the dashboard |
 | **Live Activity Feed** | Real-time scan log streamed to your browser |
 | **Bulk Actions** | Approve all / skip all / mark applied in one click |
 | **Multi-User Support** | Admin and viewer accounts, fully isolated per user |
@@ -42,22 +41,22 @@ Self-hosted job search automation. JobBot scans 9 portals, scores jobs against y
 ## Supported Portals
 
 ### Discovery + Auto-Apply (5 portals)
-| Portal | Notes |
+| Portal | Type |
 |---|---|
-| **LinkedIn** | Job listings + LinkedIn Easy Apply |
-| **Naukri** | India's largest job board, full form-fill |
-| **Glassdoor** | Company-verified listings |
-| **Indeed** | Global listings, Indeed Apply |
-| **HiringCafe** | Aggregator with apply support |
+| **LinkedIn** | HTTP — LinkedIn Easy Apply |
+| **Naukri** | Browser — full form-fill |
+| **Glassdoor** | Browser — full form-fill |
+| **Greenhouse** | HTTP — ATS form-fill |
+| **Lever** | HTTP — ATS form-fill |
 
-### Discovery Only (5 portals)
-| Portal | Notes |
+### Discovery Only (4 portals)
+| Portal | Type |
 |---|---|
-| **Monster** | Global job aggregator |
-| **Greenhouse** | ATS-hosted company listings |
-| **Lever** | ATS-hosted listings via public JSON API |
-| **Instahire** | India-focused portal |
-| **Uplers** | Remote-first India talent platform |
+| **Indeed** | HTTP |
+| **Monster** | HTTP |
+| **HiringCafe** | Browser |
+| **Instahire** | Browser |
+| **Uplers** | HTTP |
 
 ---
 
@@ -65,66 +64,29 @@ Self-hosted job search automation. JobBot scans 9 portals, scores jobs against y
 
 ### Requirements
 - Python 3.11+
-- Playwright for browser-based portals
 
-### Install
+### Windows — One Click
+
+Double-click **`setup.bat`**. It installs all dependencies, installs the Playwright browser, and launches the dashboard automatically. Nothing else to do.
+
+### Mac / Linux
 
 ```bash
 git clone https://github.com/yourname/jobbot
 cd jobbot
-pip install -r requirements.txt
-playwright install chromium
-```
-
-### Configure
-
-Edit `config/config.yaml`:
-
-```yaml
-filters:
-  keywords:
-    - software engineer
-    - backend engineer
-    - full stack developer
-  locations:
-    - India
-    - Remote
-    - Hyderabad
-  exclude_keywords:
-    - intern
-    - senior staff
-    - data scientist
-
-portals:
-  linkedin:
-    enabled: true
-  naukri:
-    enabled: true
-  indeed:
-    enabled: true
-  glassdoor:
-    enabled: true
-  monster:
-    enabled: true
-  greenhouse:
-    enabled: true
-  lever:
-    enabled: false
-  hiring_cafe:
-    enabled: true
-  instahire:
-    enabled: false
-  uplers:
-    enabled: false
-```
-
-### Run
-
-```bash
-python main.py
+bash scripts/setup.sh
+python main.py dashboard
 ```
 
 Open **http://localhost:8000**. First user to sign up becomes admin.
+
+---
+
+## Configure
+
+No manual config editing needed. From the dashboard, open the ⚙ **Config** panel to set keywords, locations, exclude filters, and toggle portals on/off — all saved automatically.
+
+`config/config.yaml` is the backing file and ships with sensible defaults. You only need to edit it directly if you want to pre-configure before first launch.
 
 ---
 
@@ -164,13 +126,13 @@ AI features are completely optional. Discovery and auto-apply work without any A
 
 ### 1. Build Your Profile
 
-**Profile** icon in navbar:
+Click the **Profile** icon in the navbar:
 - Fill Personal Info, Professional details, Skills, Education, Work Experience
-- **Shortcut:** Upload resume (PDF/DOCX) → AI fills everything automatically
+- **With AI:** Upload resume (PDF/DOCX) → AI fills everything automatically
 
 ### 2. Run a Discovery Scan
 
-Click **▶ Start** in the navbar. The live feed shows every portal hit, job found, and new job count in real time. Scan runs in the background — close the feed panel and it keeps going.
+Click **⚡ Scan** in the navbar. The live feed shows every portal hit, job found, and new job count in real time. Scan runs in the background — close the feed panel and it keeps going.
 
 ### 3. Review Your Inbox
 
@@ -241,22 +203,29 @@ Finds relevant jobs even without exact keyword matches.
 
 | Variable | Default | Description |
 |---|---|---|
-| `JOBBOT_ADMIN_USER` | `admin` | Default admin username |
-| `JOBBOT_ADMIN_PASS` | `adminadmin` | Default admin password — **change on first run** |
-| `JOBBOT_HOST` | `0.0.0.0` | Bind address |
-| `JOBBOT_PORT` | `8000` | Port |
+| `JOBBOT_ADMIN_USER` | `admin` | Admin username created on first run |
+| `JOBBOT_ADMIN_PASS` | `adminadmin` | Admin password — **change this** |
+| `JOBBOT_HEADED` | _(unset)_ | Set to `1` to run browser portals in visible mode (useful for debugging) |
+
+Host and port are CLI options, not env vars:
+```bash
+python main.py dashboard --host 127.0.0.1 --port 8000
+```
 
 ### Database
 
 SQLite at `data/jobs.db`.
 
 ```bash
-# Delete all jobs (keep users and settings)
-sqlite3 data/jobs.db "DELETE FROM jobs; DELETE FROM companies;"
+# Delete all jobs (keep users and settings) — Linux/Mac
+sqlite3 data/jobs.db "DELETE FROM jobs;"
 
-# Full reset
-rm data/jobs.db
-rm data/.jwt_secret   # forces new JWT secret on next start
+# Delete all jobs — Windows
+python -c "import sqlite3; c=sqlite3.connect('data/jobs.db'); c.execute('DELETE FROM jobs'); c.commit()"
+
+# Full reset (deletes everything)
+# Linux/Mac:  rm data/jobs.db
+# Windows:    del data\jobs.db
 ```
 
 ---
@@ -265,31 +234,35 @@ rm data/.jwt_secret   # forces new JWT secret on next start
 
 ```
 jobbot/
-├── main.py
+├── main.py                    # CLI entry point (dashboard / discover / status)
+├── setup.bat                  # Windows one-click setup + launch
+├── scripts/
+│   └── setup.sh               # Mac/Linux setup script
+├── requirements.txt
 ├── config/
-│   ├── config.yaml            # Portal toggles and keyword filters
-│   ├── profile.yaml           # Fallback profile (DB takes priority)
-│   └── credentials.yaml       # Optional portal login credentials
+│   ├── config.yaml            # Portal toggles and keyword filters (editable from dashboard)
+│   ├── profile.example.yaml   # Profile template — copy to profile.yaml and fill in
+│   └── credentials.yaml       # Portal login credentials (gitignored)
 ├── src/
 │   ├── api.py                 # All FastAPI routes
-│   ├── auth.py                # JWT, bcrypt, user store
+│   ├── auth.py                # JWT, bcrypt, user management
 │   ├── auth_routes.py         # /auth/* endpoints
 │   ├── background.py          # Scan thread lifecycle
 │   ├── runner.py              # Discovery orchestration (9 portals)
 │   ├── apply.py               # Auto-apply orchestration
 │   ├── database.py            # SQLAlchemy models (Job, User, UserSettings)
 │   ├── utils.py               # Config and profile helpers
-│   ├── ai_search.py           # Semantic search (works without AI key)
+│   ├── ai_search.py           # Semantic search
 │   ├── ai/
 │   │   ├── service.py         # Groq/Gemini client wrapper
 │   │   └── generator.py       # Cover letter, scoring, skill gap, interview prep
-│   ├── discovery/             # One file per portal (9 total)
+│   ├── discovery/             # One file per portal (9 portals)
 │   └── autofill/
 │       ├── profile_adapter.py # Normalises DB/YAML profile for form-fill
 │       ├── runner.py          # Playwright browser coordinator
 │       └── *.py               # Per-portal form-fill handlers (5 portals)
 └── dashboard/
-    ├── index.html             # Main dashboard (React 18 via CDN, no build)
+    ├── index.html             # Main dashboard (React 18 via CDN, no build step)
     ├── home.html              # Landing page
     ├── login.html             # Sign in
     └── signup.html            # Create account

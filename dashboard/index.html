@@ -14,7 +14,7 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#0c0c0c;--bg2:#111111;--bg3:#161616;
+  --bg:#141414;--bg2:#1f1f1f;--bg3:#252525;
   --surf:rgba(255,255,255,.04);--surf2:rgba(255,255,255,.07);--surf3:rgba(255,255,255,.11);
   --bdr:rgba(255,255,255,.07);--bdr2:rgba(255,255,255,.12);--bdr3:rgba(255,255,255,.2);
   --txt:#f0ece4;--txt2:rgba(240,236,228,.65);--txt3:rgba(240,236,228,.38);
@@ -2372,7 +2372,7 @@ function App(){
   const toggleTheme=()=>{
     const next=!isDark;const t=next?'dark':'light';
     const overlay=document.getElementById('theme-overlay');const scanLine=overlay.querySelector('.scan-line');const dur=480;
-    overlay.style.background=next?'#0c0c0c':'#f8fafc';overlay.style.transition='none';overlay.style.transform='translateY(-100%)';void overlay.offsetWidth;
+    overlay.style.background=next?'#141414':'#f8fafc';overlay.style.transition='none';overlay.style.transform='translateY(-100%)';void overlay.offsetWidth;
     overlay.style.transition=`transform ${dur}ms cubic-bezier(.4,0,.2,1)`;overlay.style.transform='translateY(0%)';
     if(scanLine){scanLine.style.transition='none';scanLine.style.top='0px';void scanLine.offsetWidth;scanLine.style.transition=`top ${dur}ms cubic-bezier(.4,0,.2,1)`;scanLine.style.top='100vh';}
     setTimeout(()=>{setIsDark(next);document.getElementById('app-html').setAttribute('data-theme',t);localStorage.setItem('jb-theme',t);},dur*0.55);
