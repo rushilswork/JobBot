@@ -165,8 +165,10 @@ class AIService:
         cfg = genai.GenerationConfig(max_output_tokens=max_tokens, temperature=0.35)
         model = genai.GenerativeModel(
             self.model,
-            system_instruction=system if system else None,
+            system_instruction=system or "",
+        )
+        response = model.generate_content(
+            prompt,
             generation_config=cfg,
         )
-        resp = model.generate_content(prompt)
-        return resp.text.strip()
+        return response.text.strip()

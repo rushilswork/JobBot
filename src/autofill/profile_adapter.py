@@ -30,7 +30,7 @@ def _load_raw(username: str) -> dict:
     # 1. DB
     try:
         from src.database import get_session
-        from src.models import UserSettings
+        from src.database import UserSettings
         session = get_session()
         try:
             row = session.query(UserSettings).filter_by(username=username).first()
@@ -197,7 +197,7 @@ def _find_resume(raw: dict) -> Optional[str]:
     Locate the resume file:
     1. resume_meta.file_path stored in DB profile (set when user uploads via Profile page)
     2. Most-recently-modified file in data/resumes/
-    3. Generic fallback paths
+     3. Generic fallback paths
     """
     # 1. DB-stored path
     if raw:

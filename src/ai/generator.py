@@ -239,7 +239,8 @@ Return a JSON object with these exact keys:
   "prep_tips": ["<specific preparation tip for this role>"]
 }}
 
-Include 4 behavioral, 4 technical, 3 role-specific questions, 3 questions to ask, 3 prep tips."""
+Include 3-5 behavioral questions, 3-5 technical questions, 3 role-specific questions, \
+3 questions to ask the interviewer, and 3 prep tips."""
 
     try:
         return ai.generate_json(prompt)

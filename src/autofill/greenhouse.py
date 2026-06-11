@@ -75,3 +75,4 @@ async def apply_greenhouse(
 
     result["screenshot_path"] = await take_screenshot(page, job_id, "greenhouse_filled")
     return result
+

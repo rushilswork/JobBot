@@ -112,7 +112,7 @@ def init_users():
     if not session.query(User).first():
         admin = User(
             username  = os.environ.get("JOBBOT_ADMIN_USER", "admin"),
-            hashed_pw = hash_password(os.environ.get("JOBBOT_ADMIN_PASS", "jobbot@2024!")),
+            hashed_pw = hash_password(os.environ.get("JOBBOT_ADMIN_PASS", "adminadmin")),
             role      = "admin",
         )
         session.add(admin)

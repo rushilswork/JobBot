@@ -76,3 +76,4 @@ async def apply_naukri(
 
     result["screenshot_path"] = await take_screenshot(page, job_id, "naukri_filled")
     return result
+

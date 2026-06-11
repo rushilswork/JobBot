@@ -75,6 +75,7 @@ def clear_progress() -> None:
 
 def _run_loop(interval_minutes: int, scan_immediately: bool = False) -> None:
     """Worker loop: sleep → discover → repeat. Exits when _stop_event is set."""
+    global _current_loop
     # Sleep first unless explicitly told to scan immediately (trigger_now)
     if not scan_immediately:
         for _ in range(interval_minutes * 60):

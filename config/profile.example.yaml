@@ -1,0 +1,48 @@
+# Your personal profile for auto-fill
+# Copy this file to profile.yaml and fill in your actual details
+
+personal:
+  first_name: John
+  last_name: Doe
+  full_name: John Doe
+  email: john.doe@example.com
+  phone: ""                    # e.g. +91-9999999999
+  linkedin_url: ""             # e.g. linkedin.com/in/johndoe
+  github_url: ""               # e.g. github.com/johndoe
+  portfolio_url: ""
+  location:
+    city: Hyderabad
+    state: Telangana
+    country: India
+    zip: ""
+
+professional:
+  years_experience: 2          # total years
+  current_title: Software Engineer
+  current_company: ""
+  notice_period_days: 30
+  expected_ctc: ""             # e.g. 15 LPA
+  current_ctc: ""
+  willing_to_relocate: true
+  authorized_to_work_india: true
+
+education:
+  degree: B.Tech
+  field: Computer Science
+  university: ""
+  graduation_year: 2023
+  gpa: ""
+
+resume:
+  path: data/resume.pdf        # path to your resume PDF
+
+# Common screening question answers
+answers:
+  work_authorization: "Yes, I am authorized to work in India"
+  gender: "Prefer not to say"
+  veteran_status: "I am not a veteran"
+  disability: "I do not have a disability"
+  notice_period: "30 days"
+  earliest_start: "30 days"
+  salary_expectation: "As per company norms"
+  remote_preference: "Open to hybrid or remote"

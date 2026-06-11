@@ -21,6 +21,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from src.database import Job, Company, JobStatus, UserSettings, get_session, init_db, mark_job
 from src.background import ensure_running, get_status, trigger_now, get_progress, stop_discovery
 from src.utils import load_config, load_profile
+from src.autofill.profile_adapter import load_autofill_profile
 from src.auth import init_users, get_current_user, require_admin
 from src.auth_routes import router as auth_router
 
@@ -495,7 +496,7 @@ def job_match_score(job_id: int, current_user: dict = Depends(get_current_user))
         if job.ai_match_data:
             return json.loads(job.ai_match_data)
 
-        profile = load_profile()
+        profile = load_autofill_profile(current_user["username"])
         ai = AIService.for_user(current_user["username"])
         if not ai.is_configured():
             raise HTTPException(400, "AI not configured. Go to AI Settings to add your API key.")
@@ -529,7 +530,7 @@ def job_skill_gap(job_id: int, current_user: dict = Depends(get_current_user)):
 
     session, job = _get_job_for_user(job_id, current_user["username"])
     try:
-        profile = load_profile()
+        profile = load_autofill_profile(current_user["username"])
         ai = AIService.for_user(current_user["username"])
         if not ai.is_configured():
             raise HTTPException(400, "AI not configured. Go to AI Settings to add your API key.")
@@ -559,7 +560,7 @@ def job_interview_prep(job_id: int, current_user: dict = Depends(get_current_use
 
     session, job = _get_job_for_user(job_id, current_user["username"])
     try:
-        profile = load_profile()
+        profile = load_autofill_profile(current_user["username"])
         ai = AIService.for_user(current_user["username"])
         if not ai.is_configured():
             raise HTTPException(400, "AI not configured. Go to AI Settings to add your API key.")
@@ -588,7 +589,7 @@ def job_cover_letter(job_id: int, current_user: dict = Depends(get_current_user)
 
     session, job = _get_job_for_user(job_id, current_user["username"])
     try:
-        profile = load_profile()
+        profile = load_autofill_profile(current_user["username"])
         ai = AIService.for_user(current_user["username"])
         if not ai.is_configured():
             raise HTTPException(400, "AI not configured. Go to AI Settings to add your API key.")

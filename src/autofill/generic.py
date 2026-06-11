@@ -141,7 +141,7 @@ async def _ask_ai(label: str, profile: dict, ai, job_context: dict = None) -> st
             f"If it's a yes/no question, answer Yes or No. "
             f"If you don't know, reply: SKIP"
         )
-        answer = ai.generate_text(prompt)
+        answer = ai.generate(prompt)
         if answer and "SKIP" not in answer.upper():
             return answer.strip()[:200]
     except Exception as e:
