@@ -16,3 +16,4 @@ rich>=13.0.0
 # AI providers (free tiers available)
 groq>=0.9.0
 google-generativeai>=0.8.0
+python-multipart>=0.0.9

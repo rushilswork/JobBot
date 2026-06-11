@@ -139,7 +139,7 @@ async def run_autofill(
               f"{len(result.get('needs_manual',[]))} need manual input")
 
         # Register session and wait for confirm / cancel (10 min timeout)
-        loop          = asyncio.get_event_loop()
+        loop          = asyncio.get_running_loop()
         confirmed_evt = asyncio.Event()
         cancelled_evt = asyncio.Event()
         _sessions[job_id] = {

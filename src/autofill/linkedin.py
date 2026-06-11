@@ -93,4 +93,3 @@ async def apply_linkedin(
             break
 
     return result
-sult

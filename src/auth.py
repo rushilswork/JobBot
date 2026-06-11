@@ -2,7 +2,7 @@
 Authentication & Authorization for JobBot.
 
 - Passwords hashed with bcrypt (cost factor 8)
-- JWT access tokens (HS256, 1h expiry) + refresh tokens (7d expiry)
+- JWT access tokens (HS256, 30d expiry) + refresh tokens (90d expiry)
 - Tokens stored in httpOnly, SameSite=Strict cookies (not localStorage)
 - Roles: admin (full access), viewer (read-only, no purge/clear/scan)
 - User store: SQLite via SQLAlchemy (same DB as jobs)
@@ -27,14 +27,13 @@ def _load_secret() -> str:
     _KEY_FILE.parent.mkdir(parents=True, exist_ok=True)
     if _KEY_FILE.exists():
         secret = _KEY_FILE.read_text().strip()
-        _KEY_FILE.chmod(0o600)  # enforce permissions on every load
+        _KEY_FILE.chmod(0o600)
         if len(secret) < 32:
-            # Key too short — regenerate
             secret = secrets.token_hex(64)
             _KEY_FILE.write_text(secret)
             _KEY_FILE.chmod(0o600)
         return secret
-    secret = secrets.token_hex(64)   # 512-bit random secret
+    secret = secrets.token_hex(64)
     _KEY_FILE.write_text(secret)
     _KEY_FILE.chmod(0o600)
     return secret
@@ -45,12 +44,11 @@ ACCESS_TTL  = timedelta(days=30)
 REFRESH_TTL = timedelta(days=90)
 
 # ── Login rate limiting ───────────────────────────────────────────────────
-_failed_attempts: dict = {}   # ip -> {"count": int, "locked_until": float}
+_failed_attempts: dict = {}
 _LOCKOUT_SECONDS = 60
 _MAX_ATTEMPTS = 5
 
 def check_rate_limit(ip: str) -> None:
-    """Raise 429 if IP is locked out. Call before verifying password."""
     entry = _failed_attempts.get(ip)
     if entry and entry["locked_until"] > time.time():
         raise HTTPException(429, "Too many failed attempts — try again in 60 seconds")
@@ -101,14 +99,13 @@ class User(Base):
     __tablename__ = "users"
     username   = Column(String, primary_key=True)
     hashed_pw  = Column(String, nullable=False)
-    role       = Column(String, default="viewer")   # "admin" or "viewer"
+    role       = Column(String, default="viewer")
     created_at = Column(DateTime, default=datetime.utcnow)
     active     = Column(Boolean, default=True)
 
 def init_users():
     Base.metadata.create_all(bind=engine)
     session = SessionLocal()
-    # Create default admin if no users exist
     if not session.query(User).first():
         admin = User(
             username  = os.environ.get("JOBBOT_ADMIN_USER", "admin"),
@@ -125,11 +122,21 @@ def get_user(username: str, bust_cache: bool = False) -> Optional[User]:
     if not bust_cache and username in _user_cache:
         return _user_cache[username]
     session = SessionLocal()
-    user = session.query(User).filter_by(username=username, active=True).first()
-    session.close()
-    if user:
-        _user_cache[username] = user
-    return user
+    try:
+        user = session.query(User).filter_by(username=username, active=True).first()
+        if user:
+            # Cache a plain-dict snapshot — avoids DetachedInstanceError after session close
+            _user_cache[username] = User(
+                username=user.username,
+                hashed_pw=user.hashed_pw,
+                role=user.role,
+                active=user.active,
+                created_at=user.created_at,
+            )
+            _user_cache[username].__dict__.update({k: v for k, v in user.__dict__.items() if not k.startswith('_')})
+        return _user_cache.get(username) if user else None
+    finally:
+        session.close()
 
 def list_users() -> list[dict]:
     session = SessionLocal()
@@ -151,18 +158,17 @@ def create_user(username: str, password: str, role: str = "viewer") -> User:
 
 def delete_user(username: str):
     from src.database import Job, get_session as get_job_session
-    # Delete all jobs belonging to this user first
     job_session = get_job_session()
     job_session.query(Job).filter(Job.discovered_by == username).delete()
     job_session.commit()
     job_session.close()
-    # Then delete the user
     session = SessionLocal()
     u = session.query(User).filter_by(username=username).first()
     if u:
         session.delete(u)
         session.commit()
     session.close()
+    _user_cache.pop(username, None)
 
 def change_password(username: str, new_password: str):
     session = SessionLocal()
@@ -172,6 +178,7 @@ def change_password(username: str, new_password: str):
     u.hashed_pw = hash_password(new_password)
     session.commit()
     session.close()
+    _user_cache.pop(username, None)
 
 # ── FastAPI dependency ────────────────────────────────────────────────────
 def get_current_user(access_token: str = Cookie(default=None)) -> dict:
@@ -181,7 +188,6 @@ def get_current_user(access_token: str = Cookie(default=None)) -> dict:
     if payload.get("type") != "access":
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid token type")
     username = payload["sub"]
-    # If token is valid but user was deleted/deactivated, bust cache and reject
     user = get_user(username, bust_cache=True)
     if not user:
         _user_cache.pop(username, None)

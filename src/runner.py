@@ -1,8 +1,8 @@
 """
 Discovery runner — keyword-based across all portals.
 
-HTTP portals (no browser): LinkedIn, Indeed, Monster, HiringCafe, Greenhouse, Uplers
-Browser portals:           Naukri, Glassdoor, Instahire
+HTTP portals (no browser): LinkedIn, Indeed, Monster, Greenhouse, Uplers
+Browser portals:           HiringCafe, Naukri, Glassdoor, Instahire
 
 All HTTP portals run fully concurrently.
 All browser portals share one Chromium instance, run concurrently capped by BROWSER_SEM.

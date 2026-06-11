@@ -19,7 +19,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.database import Job, Company, JobStatus, UserSettings, get_session, init_db, mark_job
-from src.background import ensure_running, get_status, trigger_now, get_progress, stop_discovery
+from src.background import ensure_running, get_status, trigger_now, get_progress, stop_discovery, clear_progress
 from src.utils import load_config, load_profile
 from src.autofill.profile_adapter import load_autofill_profile
 from src.auth import init_users, get_current_user, require_admin
@@ -153,6 +153,11 @@ def discovery_status(current_user: dict = Depends(get_current_user)):
 @app.get("/api/discovery/progress")
 def discovery_progress(current_user: dict = Depends(get_current_user)):
     return get_progress()
+
+@app.post("/api/discovery/progress/clear")
+def discovery_progress_clear(current_user: dict = Depends(get_current_user)):
+    clear_progress()
+    return {"ok": True}
 
 @app.post("/api/discovery/trigger")
 def discovery_trigger(current_user: dict = Depends(get_current_user)):
@@ -722,8 +727,13 @@ def ai_search_endpoint(body: AISearchBody, current_user: dict = Depends(get_curr
 # ── Config management ──────────────────────────────────────────────────────
 @app.get("/api/config")
 def get_config(current_user: dict = Depends(get_current_user)):
-    with open(CONFIG_YAML) as f:
-        cfg = yaml.safe_load(f)
+    if not CONFIG_YAML.exists():
+        return {"keywords": [], "locations": [], "portals": {}}
+    try:
+        with open(CONFIG_YAML) as f:
+            cfg = yaml.safe_load(f) or {}
+    except Exception:
+        raise HTTPException(500, "Failed to read config file")
     return {"keywords": cfg.get("filters",{}).get("keywords",[]),
             "locations": cfg.get("filters",{}).get("locations",[]),
             "portals":   cfg.get("portals",{})}
@@ -735,16 +745,22 @@ class ConfigUpdate(BaseModel):
 
 @app.patch("/api/config")
 def update_config(body: ConfigUpdate, current_user: dict = Depends(require_admin)):
-    with open(CONFIG_YAML) as f:
-        cfg = yaml.safe_load(f)
+    try:
+        cfg = (yaml.safe_load(open(CONFIG_YAML).read()) or {}) if CONFIG_YAML.exists() else {}
+    except Exception:
+        raise HTTPException(500, "Failed to read config file")
     if body.keywords is not None:
         cfg.setdefault("filters",{})["keywords"] = [k.strip() for k in body.keywords if k.strip()]
     if body.locations is not None:
         cfg.setdefault("filters",{})["locations"] = [l.strip() for l in body.locations if l.strip()]
     if body.portals is not None:
         cfg["portals"] = body.portals
-    with open(CONFIG_YAML, "w") as f:
-        yaml.dump(cfg, f, allow_unicode=True, sort_keys=False)
+    try:
+        CONFIG_YAML.parent.mkdir(parents=True, exist_ok=True)
+        with open(CONFIG_YAML, "w") as f:
+            yaml.dump(cfg, f, allow_unicode=True, sort_keys=False)
+    except Exception:
+        raise HTTPException(500, "Failed to write config file")
     return {"ok": True}
 
 
@@ -1165,6 +1181,7 @@ async def parse_resume_for_profile(
 
     # ── 3. AI enhancement (if configured) ────────────────────────────────
     try:
+        from src.ai.service import AIService
         ai = AIService.for_user(current_user["username"])
         if ai.is_configured():
             prompt = f"""Extract structured job profile data from this resume text. Return JSON only.
