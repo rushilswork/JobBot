@@ -1,183 +1,425 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="home-html">
+<script>!function(){var t=localStorage.getItem('jb-theme')||'light';document.documentElement.setAttribute('data-theme',t);var ai=localStorage.getItem('jb-ai');if(ai==='1')document.documentElement.setAttribute('data-ai','active');}();</script>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JobBot — Automated Job Discovery</title>
+<title>JobBot — AI-Powered Job Application Engine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-:root{--acc:#f97316;--acc2:#fb923c;--bg:#fafafa;--bg2:#f0f0f0;--txt:#0a0a0a;--txt2:rgba(10,10,10,.6);--txt3:rgba(10,10,10,.38);--bdr:rgba(0,0,0,.08);}
-body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
-
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;background:rgba(250,250,250,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);z-index:100;}
-.logo{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;letter-spacing:-.5px;color:var(--txt);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#141414;--bg2:#1f1f1f;--surf:rgba(255,255,255,.04);--surf2:rgba(255,255,255,.07);
+  --bdr:rgba(255,255,255,.08);--bdr2:rgba(255,255,255,.14);
+  --txt:#f0ece4;--txt2:rgba(240,236,228,.65);--txt3:rgba(240,236,228,.38);
+  --acc:#3b82f6;--acc2:#2563eb;
+  --pur:#3b82f6;--pur2:#2563eb;--pur-lo:rgba(59,130,246,.1);
+  --grn:#22c55e;--cyn:#38bdf8;--ylw:#f59e0b;
+  --mono:'JetBrains Mono',monospace;
+}
+[data-theme="light"]{
+  --bg:#f8fafc;--bg2:#f1f5f9;--surf:rgba(0,0,0,.05);--surf2:rgba(0,0,0,.09);
+  --bdr:rgba(0,0,0,.13);--bdr2:rgba(0,0,0,.22);
+  --txt:#1a1814;--txt2:rgba(26,24,20,.62);--txt3:rgba(26,24,20,.4);
+  --accent:#1e40af;--accent2:#1e40af;
+  --acc:#1d4ed8;--acc2:#1e40af;
+  --pur:#1d4ed8;--pur2:#1e40af;--pur-lo:rgba(29,78,216,.1);
+}
+[data-theme="light"] body{background:#f8fafc;color:#0f172a;}
+[data-theme="light"] nav{background:rgba(248,250,252,.93);border-bottom-color:rgba(0,0,0,.12);}
+[data-theme="light"] .portal-pill{background:#fff;border-color:rgba(0,0,0,.13);color:rgba(15,23,42,.65);}
+[data-theme="light"] .portals-scroll{background:#e2e8f0;}
+[data-theme="light"] .portals-scroll::before{background:linear-gradient(90deg,#e2e8f0,transparent);}
+[data-theme="light"] .portals-scroll::after{background:linear-gradient(270deg,#e2e8f0,transparent);}
+[data-theme="light"] .stats{background:#fff;border-color:rgba(0,0,0,.1);}
+[data-theme="light"] .stat-l{color:rgba(15,23,42,.45);}
+[data-theme="light"] .feat-card{background:#fff;border-color:rgba(0,0,0,.09);}
+[data-theme="light"] .ai-section{background:rgba(239,246,255,.9);border-color:rgba(59,130,246,.2);}
+[data-theme="light"] .ai-card{background:#fff;border-color:rgba(59,130,246,.14);}
+[data-theme="light"] .step{background:#fff;border-color:rgba(0,0,0,.09);}
+[data-theme="light"] .hero-grid{background-image:linear-gradient(rgba(0,0,0,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.05) 1px,transparent 1px);}
+[data-theme="light"] footer{background:#e2e8f0;border-top-color:rgba(0,0,0,.1);color:rgba(15,23,42,.45);}
+[data-theme="light"] .cta-sec{background:#e2e8f0;}
+[data-theme="light"] h1,[data-theme="light"] h2,[data-theme="light"] h3{color:#0f172a;}
+[data-ai="active"]{--pur:#3b82f6;--pur2:#2563eb;--pur-lo:rgba(59,130,246,.12);--acc:#3b82f6;}
+[data-ai="active"] nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#1d4ed8,#1e40af,#1d4ed8,transparent);opacity:.8;}
+[data-ai="active"] .nav-badge{background:rgba(59,130,246,.12);color:#1e40af;border-color:rgba(59,130,246,.28);}
+[data-ai="active"] .hero-glow{background:radial-gradient(ellipse at center,rgba(59,130,246,.2) 0%,transparent 70%);}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;font-size:15px;line-height:1.5;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+a{text-decoration:none;color:inherit;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:4px;}
+nav{position:fixed;top:0;left:0;right:0;height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;background:rgba(8,8,8,.82);backdrop-filter:saturate(180%) blur(24px);border-bottom:1px solid var(--bdr);z-index:100;}
+.logo{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;letter-spacing:-.5px;}
 .logo span{color:var(--acc);}
-.nav-btns{display:flex;gap:10px;}
-.btn{display:inline-flex;align-items:center;padding:8px 20px;border-radius:8px;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;border:none;}
-.btn-outline{background:transparent;border:1.5px solid var(--bdr);color:var(--txt2);}
-.btn-outline:hover{border-color:var(--acc);color:var(--acc);}
-.btn-solid{background:var(--acc);color:#fff;}
-.btn-solid:hover{background:#ea6c0a;transform:translateY(-1px);box-shadow:0 4px 16px rgba(249,115,22,.3);}
-
-/* HERO */
-.hero{padding:calc(60px + 5rem) 2rem 4rem;text-align:center;max-width:900px;margin:0 auto;}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);color:var(--acc);font-size:.72rem;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:1.5rem;letter-spacing:.5px;text-transform:uppercase;}
-.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.8rem,6vw,5rem);font-weight:800;line-height:.95;letter-spacing:-3px;color:var(--txt);margin-bottom:1.2rem;}
-.hero h1 span{color:var(--acc);}
-.hero p{font-size:1.1rem;color:var(--txt2);max-width:560px;margin:0 auto 2.5rem;line-height:1.6;}
-.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-.btn-hero{padding:14px 32px;font-size:.95rem;border-radius:12px;}
-
-/* STATS BAR */
-.stats-bar{display:flex;justify-content:center;gap:3rem;padding:2.5rem 2rem;border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);background:var(--bg2);}
-.stat{text-align:center;}
-.stat-n{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--txt);}
-.stat-l{font-size:.75rem;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-top:2px;}
-
-/* PORTALS */
-.section{padding:5rem 2rem;max-width:1000px;margin:0 auto;}
-.section-eyebrow{font-size:.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--acc);margin-bottom:.75rem;}
-.section h2{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-1.5px;margin-bottom:.75rem;color:var(--txt);}
-.section p{color:var(--txt2);font-size:.95rem;line-height:1.7;max-width:560px;margin-bottom:2.5rem;}
-.portals-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-@media(max-width:600px){.portals-grid{grid-template-columns:repeat(2,1fr);}}
-.portal-card{background:#fff;border:1px solid var(--bdr);border-radius:14px;padding:1.1rem 1.2rem;display:flex;align-items:center;gap:10px;transition:border-color .15s,transform .15s;}
-.portal-card:hover{border-color:var(--acc);transform:translateY(-2px);}
-.portal-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
-.portal-name{font-weight:700;font-size:.82rem;color:var(--txt);}
-.portal-desc{font-size:.68rem;color:var(--txt3);}
-
-/* FEATURES */
-.features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
-@media(max-width:600px){.features-grid{grid-template-columns:1fr;}}
-.feat-card{background:#fff;border:1px solid var(--bdr);border-radius:16px;padding:1.5rem;}
-.feat-icon{font-size:1.6rem;margin-bottom:.75rem;}
-.feat-title{font-weight:700;font-size:.95rem;color:var(--txt);margin-bottom:.35rem;}
-.feat-desc{font-size:.8rem;color:var(--txt2);line-height:1.6;}
-
-/* HOW IT WORKS */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:2.5rem;}
-@media(max-width:600px){.steps{grid-template-columns:1fr;}}
-.step{text-align:center;padding:1.5rem;}
-.step-num{width:40px;height:40px;border-radius:50%;background:var(--acc);color:#fff;font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 22px;border-radius:9px;font-family:'Inter',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;border:none;}
+.btn-ghost{background:transparent;border:1px solid var(--bdr2);color:var(--txt2);}
+.btn-ghost:hover{border-color:var(--bdr2);color:var(--txt);background:var(--surf2);}
+.btn-orange{background:var(--acc);color:#fff;}
+.btn-orange:hover{background:#1e40af;transform:translateY(-1px);box-shadow:0 4px 20px rgba(59,130,246,.4);}
+.nav-badge{font-size:.62rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;background:rgba(59,130,246,.1);color:#2563eb;border:1px solid rgba(59,130,246,.25);padding:3px 10px;border-radius:20px;}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(62px + 2rem) 2rem 4rem;text-align:center;position:relative;overflow:hidden;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;}
+.hero-glow{position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse at center,rgba(59,130,246,.14) 0%,transparent 70%);pointer-events:none;}
+.hero-inner{position:relative;z-index:1;max-width:860px;}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);color:var(--acc);font-size:.72rem;font-weight:700;padding:6px 16px;border-radius:20px;margin-bottom:2rem;letter-spacing:.8px;text-transform:uppercase;}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:blink 1.4s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(3rem,7vw,5.5rem);font-weight:800;line-height:.92;letter-spacing:-3.5px;color:var(--txt);margin-bottom:1.4rem;}
+.hero h1 .acc{color:var(--acc);}
+.hero h1 .pur{background:linear-gradient(135deg,var(--pur2),var(--cyn));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:clamp(1rem,2.2vw,1.12rem);color:var(--txt2);line-height:1.65;max-width:640px;margin:0 auto 2rem;}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:2rem;}
+.btn-hero{padding:13px 28px;font-size:.92rem;font-weight:700;border-radius:12px;}
+.hero-mono{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.75rem;color:var(--txt3);background:var(--surf);border:1px solid var(--bdr);padding:7px 18px;border-radius:30px;}
+.hero-mono span{color:var(--grn);}
+.portals-scroll{overflow:hidden;position:relative;padding:1.8rem 0;background:var(--bg2);}
+.portals-scroll::before,.portals-scroll::after{content:'';position:absolute;top:0;bottom:0;width:8rem;z-index:1;pointer-events:none;}
+.portals-scroll::before{left:0;background:linear-gradient(90deg,var(--bg2),transparent);}
+.portals-scroll::after{right:0;background:linear-gradient(270deg,var(--bg2),transparent);}
+.portals-track{display:flex;gap:10px;width:max-content;animation:marquee 28s linear infinite;}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.portal-pill{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border:1px solid var(--bdr);border-radius:30px;background:var(--surf);font-size:.76rem;font-weight:600;color:var(--txt2);white-space:nowrap;}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+section{padding:5rem 2rem;max-width:1080px;margin:0 auto;}
+.eyebrow{font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--acc);margin-bottom:.8rem;}
+.sec-title{font-family:'Syne',sans-serif;font-size:clamp(2rem,4.5vw,3rem);font-weight:800;letter-spacing:-2px;margin-bottom:.8rem;color:var(--txt);}
+.sec-sub{color:var(--txt2);font-size:.98rem;line-height:1.7;max-width:520px;margin-bottom:2.5rem;}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media(max-width:768px){.feat-grid{grid-template-columns:1fr;}}
+.feat-card{background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:1.5rem;transition:border-color .2s,transform .2s,background .2s;position:relative;overflow:hidden;}
+.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--acc),var(--pur));opacity:0;transition:opacity .2s;}
+.feat-card:hover{border-color:var(--bdr2);transform:translateY(-3px);background:var(--surf2);}
+.feat-card:hover::before{opacity:1;}
+.feat-ico{font-size:1.8rem;margin-bottom:.8rem;}
+.feat-title{font-weight:700;font-size:.95rem;color:var(--txt);margin-bottom:.4rem;}
+.feat-desc{font-size:.79rem;color:var(--txt2);line-height:1.65;}
+.feat-badge{display:inline-flex;align-items:center;gap:4px;margin-top:.7rem;font-size:.65rem;font-weight:700;padding:3px 9px;border-radius:12px;letter-spacing:.5px;text-transform:uppercase;}
+.feat-badge.ai{background:rgba(59,130,246,.1);color:#2563eb;border:1px solid rgba(59,130,246,.2);}
+.feat-badge.core{background:rgba(59,130,246,.08);color:var(--acc);border:1px solid rgba(59,130,246,.15);}
+.ai-section{background:linear-gradient(135deg,rgba(59,130,246,.07),rgba(59,130,246,.03));border:1px solid rgba(59,130,246,.18);border-radius:24px;padding:3rem;margin:0 auto;max-width:1080px;}
+.ai-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:2rem;}
+@media(max-width:640px){.ai-grid{grid-template-columns:1fr;}}
+.ai-card{background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.14);border-radius:14px;padding:1.4rem;transition:background .18s,border-color .18s;}
+.ai-card:hover{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.28);}
+.ai-card-head{display:flex;align-items:center;gap:10px;margin-bottom:.5rem;}
+.ai-card-ico{font-size:1.3rem;}
+.ai-card-title{font-weight:700;font-size:.9rem;color:var(--pur2);}
+.ai-card-desc{font-size:.78rem;color:var(--txt2);line-height:1.65;}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;margin-top:2.5rem;}
+@media(max-width:640px){.steps{grid-template-columns:1fr;}}
+.step{position:relative;padding:1.5rem;background:var(--surf);border:1px solid var(--bdr);border-radius:16px;}
+.step-num{width:36px;height:36px;border-radius:10px;background:var(--acc);color:#fff;font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;}
 .step-title{font-weight:700;font-size:.9rem;color:var(--txt);margin-bottom:.4rem;}
-.step-desc{font-size:.78rem;color:var(--txt2);line-height:1.6;}
+.step-desc{font-size:.78rem;color:var(--txt2);line-height:1.65;}
+.step-connector{position:absolute;top:2.3rem;right:-1rem;width:1rem;height:2px;background:var(--bdr2);z-index:1;}
+@media(max-width:640px){.step-connector{display:none;}}
+.stats{display:flex;justify-content:center;gap:4rem;flex-wrap:wrap;padding:4rem 2rem;border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);background:var(--bg2);}
+.stat{text-align:center;}
+.stat-n{font-family:'Syne',sans-serif;font-size:2.4rem;font-weight:800;color:var(--txt);}
+.stat-l{font-size:.72rem;color:var(--txt3);text-transform:uppercase;letter-spacing:1.2px;font-weight:600;margin-top:3px;}
+.cta-sec{text-align:center;padding:7rem 2rem;position:relative;overflow:hidden;}
+.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:300px;background:radial-gradient(ellipse at center,rgba(59,130,246,.14) 0%,transparent 70%);pointer-events:none;}
+.cta-title{font-family:'Syne',sans-serif;font-size:clamp(2.2rem,5vw,3.5rem);font-weight:800;letter-spacing:-2.5px;margin-bottom:.8rem;}
+.cta-sub{color:var(--txt2);font-size:.98rem;max-width:480px;margin:0 auto 2.5rem;line-height:1.7;}
+footer{border-top:1px solid var(--bdr);padding:2rem 2.5rem;display:flex;justify-content:space-between;align-items:center;font-size:.75rem;color:var(--txt3);}
+.footer-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;color:var(--txt2);}
+.footer-logo span{color:var(--acc);}
 
-/* CTA */
-.cta{background:var(--txt);color:#fff;text-align:center;padding:5rem 2rem;margin-top:4rem;}
-.cta h2{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-1.5px;margin-bottom:.75rem;}
-.cta p{color:rgba(255,255,255,.6);font-size:.95rem;margin-bottom:2rem;}
-.cta .btn-solid{font-size:1rem;padding:14px 36px;border-radius:12px;}
-
-/* FOOTER */
-footer{padding:2rem;text-align:center;border-top:1px solid var(--bdr);font-size:.75rem;color:var(--txt3);}
+[data-theme="light"] .nav-badge{background:rgba(29,78,216,.1);color:#1e40af;border-color:rgba(29,78,216,.25);}
+[data-theme="light"] .hero-badge{background:rgba(29,78,216,.1);border-color:rgba(29,78,216,.25);}
+[data-theme="light"] .feat-badge.ai{background:rgba(29,78,216,.1);color:#1e40af;border-color:rgba(29,78,216,.2);}
+[data-theme="light"] .feat-badge.core{background:rgba(29,78,216,.08);border-color:rgba(29,78,216,.15);}
+[data-theme="light"] .btn-orange:hover{box-shadow:0 4px 20px rgba(29,78,216,.4);}
+[data-theme="light"] .ai-section{background:rgba(239,246,255,.9);border-color:rgba(59,130,246,.2);}
+[data-theme="light"] .ai-card{background:#fff;border-color:rgba(59,130,246,.14);}
 </style>
 </head>
 <body>
 
 <nav>
   <div class="logo">Job<span>Bot</span></div>
-  <div class="nav-btns">
-    <a href="/login" class="btn btn-outline">Sign in</a>
-    <a href="/signup" class="btn btn-solid">Get started</a>
+  <div class="nav-right">
+    <span class="nav-badge">⚡ AI-Powered</span>
+    <a href="/login" class="btn btn-ghost">Sign In</a>
+    <a href="/signup" class="btn btn-orange">Get Started →</a>
   </div>
 </nav>
 
 <div class="hero">
-  <div class="hero-badge">⚡ AI-Powered · Free · Local</div>
-  <h1>Your Job Search,<br/><span>Automated.</span></h1>
-  <p>JobBot discovers software engineering roles across 9 portals simultaneously — so you can focus on applying, not searching.</p>
-  <div class="hero-btns">
-    <a href="/signup" class="btn btn-solid btn-hero">Start for free →</a>
-    <a href="/login" class="btn btn-outline btn-hero">Sign in</a>
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-badge"><span class="hero-badge-dot"></span>Open Source · Free to Self-Host</div>
+    <h1 id="hero-title">Your job search<br>on <span class="acc">autopilot</span></h1>
+    <p class="hero-sub" id="hero-sub">JobBot discovers jobs across 9 portals, scores them against your profile, generates tailored cover letters, and fills applications — while you sleep.</p>
+    <div class="hero-btns" id="hero-btns">
+      <a href="/signup" class="btn btn-orange btn-hero">Start for free →</a>
+      <a href="/login" class="btn btn-ghost btn-hero">Sign in</a>
+    </div>
+    <div style="display:flex;justify-content:center;">
+      <div class="hero-mono" id="hero-mono">
+        <span>●</span> Scanning LinkedIn · Naukri · Indeed · Greenhouse · Monster · Glassdoor · 4 more
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="stats-bar">
-  <div class="stat"><div class="stat-n">9</div><div class="stat-l">Portals</div></div>
-  <div class="stat"><div class="stat-n">100%</div><div class="stat-l">Local & Free</div></div>
-  <div class="stat"><div class="stat-n">AI</div><div class="stat-l">NL Search</div></div>
-  <div class="stat"><div class="stat-n">0</div><div class="stat-l">API Keys Needed</div></div>
-</div>
-
-<div class="section">
-  <div class="section-eyebrow">Portals</div>
-  <h2>Search everywhere,<br/>automatically.</h2>
-  <p>JobBot searches all major job boards simultaneously. No more switching between tabs or missing opportunities.</p>
-  <div class="portals-grid">
-    <div class="portal-card"><div class="portal-icon" style="background:#e8f0fe">🔵</div><div><div class="portal-name">LinkedIn</div><div class="portal-desc">Public guest API</div></div></div>
-    <div class="portal-card"><div class="portal-icon" style="background:#fff3e0">🟠</div><div><div class="portal-name">Naukri</div><div class="portal-desc">India's #1 job board</div></div></div>
-    <div class="portal-card"><div class="portal-icon" style="background:#e8f5e9">🟢</div><div><div class="portal-name">Indeed</div><div class="portal-desc">Global aggregator</div></div></div>
-    <div class="portal-card"><div class="portal-icon" style="background:#fce4ec">🔴</div><div><div class="portal-name">Monster</div><div class="portal-desc">MonsterIndia</div></div></div>
-    <div class="portal-card"><div class="portal-icon" style="background:#e0f7fa">🟦</div><div><div class="portal-name">Glassdoor</div><div class="portal-desc">With company reviews</div></div></div>
-    <div class="portal-card"><div class="portal-icon" style="background:#f3e5f5">🟣</div><div><div class="portal-name">Greenhouse</div><div class="portal-desc">50+ tech ATS boards</div></div></div>
-    <div class="portal-card"><div class="portal-icon" style="background:#e8f5e9">🌿</div><div><div class="portal-name">HiringCafe</div><div class="portal-desc">Remote-friendly</div></div></div>
-    <div class="portal-card"><div class="portal-icon" style="background:#fff8e1">⭐</div><div><div class="portal-name">Instahire</div><div class="portal-desc">India-focused</div></div></div>
-    <div class="portal-card"><div class="portal-icon" style="background:#fce4ec">🚀</div><div><div class="portal-name">Uplers</div><div class="portal-desc">Remote India platform</div></div></div>
+<div class="portals-scroll">
+  <div class="portals-track" id="portals-track">
+    <span class="portal-pill"><span class="dot" style="background:#0a66c2"></span>LinkedIn</span>
+    <span class="portal-pill"><span class="dot" style="background:#2164f3"></span>Naukri</span>
+    <span class="portal-pill"><span class="dot" style="background:#003a9b"></span>Indeed</span>
+    <span class="portal-pill"><span class="dot" style="background:#0caa41"></span>Monster</span>
+    <span class="portal-pill"><span class="dot" style="background:#0caa41"></span>Glassdoor</span>
+    <span class="portal-pill"><span class="dot" style="background:#3c1e6e"></span>Greenhouse</span>
+    <span class="portal-pill"><span class="dot" style="background:#5e4fa2"></span>Lever</span>
+    <span class="portal-pill"><span class="dot" style="background:#ff6b35"></span>HiringCafe</span>
+    <span class="portal-pill"><span class="dot" style="background:#1a1a2e"></span>Instahire</span>
+    <span class="portal-pill"><span class="dot" style="background:#d73f41"></span>Uplers</span>
+    <span class="portal-pill"><span class="dot" style="background:#0a66c2"></span>LinkedIn</span>
+    <span class="portal-pill"><span class="dot" style="background:#2164f3"></span>Naukri</span>
+    <span class="portal-pill"><span class="dot" style="background:#003a9b"></span>Indeed</span>
+    <span class="portal-pill"><span class="dot" style="background:#0caa41"></span>Monster</span>
+    <span class="portal-pill"><span class="dot" style="background:#0caa41"></span>Glassdoor</span>
+    <span class="portal-pill"><span class="dot" style="background:#3c1e6e"></span>Greenhouse</span>
+    <span class="portal-pill"><span class="dot" style="background:#5e4fa2"></span>Lever</span>
+    <span class="portal-pill"><span class="dot" style="background:#ff6b35"></span>HiringCafe</span>
+    <span class="portal-pill"><span class="dot" style="background:#1a1a2e"></span>Instahire</span>
+    <span class="portal-pill"><span class="dot" style="background:#d73f41"></span>Uplers</span>
   </div>
 </div>
 
-<div class="section" style="background:var(--bg2);max-width:100%;padding:5rem 2rem;">
-<div style="max-width:1000px;margin:0 auto;">
-  <div class="section-eyebrow">Features</div>
-  <h2>Everything you need<br/>in one place.</h2>
-  <div class="features-grid">
-    <div class="feat-card"><div class="feat-icon">✦</div><div class="feat-title">AI Natural Language Search</div><div class="feat-desc">Search with plain English: "remote python backend, not fintech". JobBot parses your intent and ranks results.</div></div>
-    <div class="feat-card"><div class="feat-icon">📄</div><div class="feat-title">Resume Skill Matching</div><div class="feat-desc">Upload your resume and JobBot scores every job against your skills automatically.</div></div>
-    <div class="feat-card"><div class="feat-icon">📡</div><div class="feat-title">Real-time Feed</div><div class="feat-desc">Watch discoveries happen live with a streaming feed showing exactly what each portal finds.</div></div>
-    <div class="feat-card"><div class="feat-icon">🗂</div><div class="feat-title">Pipeline Tracking</div><div class="feat-desc">Move jobs through New → Reviewed → Applying → Applied → Skipped. Never lose track of where you are.</div></div>
-    <div class="feat-card"><div class="feat-icon">🔒</div><div class="feat-title">100% Local & Private</div><div class="feat-desc">Everything runs on your machine. No data leaves your computer. No subscriptions. Completely free.</div></div>
-    <div class="feat-card"><div class="feat-icon">⚙</div><div class="feat-title">Configurable</div><div class="feat-desc">Add custom keywords, locations, toggle portals on/off. Adapts to exactly what you're looking for.</div></div>
+<div class="stats">
+  <div class="stat reveal"><div class="stat-n">9</div><div class="stat-l">Job Portals</div></div>
+  <div class="stat reveal"><div class="stat-n">5</div><div class="stat-l">Auto-Apply Portals</div></div>
+  <div class="stat reveal"><div class="stat-n">6</div><div class="stat-l">AI Features</div></div>
+  <div class="stat reveal"><div class="stat-n">0</div><div class="stat-l">Manual Applications</div></div>
+</div>
+
+<section>
+  <div class="eyebrow reveal">Core Features</div>
+  <div class="sec-title reveal">Everything you need.<br>Nothing you don't.</div>
+  <div class="sec-sub reveal">JobBot handles the entire job search pipeline — from discovery to submission — completely automated. No AI key required for core features.</div>
+  <div class="feat-grid">
+    <div class="feat-card reveal">
+      <div class="feat-ico">🔭</div>
+      <div class="feat-title">Continuous Discovery</div>
+      <div class="feat-desc">Scans 9 portals on your schedule. New matching jobs land in your inbox automatically — filtered by keywords, location, and level.</div>
+      <div class="feat-badge core">Core</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-ico">📥</div>
+      <div class="feat-title">Smart Inbox</div>
+      <div class="feat-desc">Tabs for Inbox, Reviewed, Applied, and Skipped. Bulk approve, skip, or mark applied. One-click actions on every job card.</div>
+      <div class="feat-badge core">Core</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-ico">⚡</div>
+      <div class="feat-title">Auto Apply</div>
+      <div class="feat-desc">Opens the job portal, fills the form with your profile data, and submits — hands-free. Supports all major portals.</div>
+      <div class="feat-badge core">Core</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-ico">📊</div>
+      <div class="feat-title">Skill-Based Filtering</div>
+      <div class="feat-desc">Upload your resume and filter jobs by skill match. See exactly which skills you have and which are missing.</div>
+      <div class="feat-badge core">Core</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-ico">🔍</div>
+      <div class="feat-title">Natural Language Search</div>
+      <div class="feat-desc">"Remote Python backend, not fintech" — search your job inbox in plain English using AI. No boolean syntax needed.</div>
+      <div class="feat-badge ai">AI</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-ico">👤</div>
+      <div class="feat-title">Rich Job Profile</div>
+      <div class="feat-desc">Store personal info, work experience, skills, education, and preferences. Upload a resume to auto-populate the entire profile via AI.</div>
+      <div class="feat-badge core">Core</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-ico">📡</div>
+      <div class="feat-title">Live Activity Feed</div>
+      <div class="feat-desc">Real-time scan log streamed to your browser. See every portal hit, job found, and error as it happens — with pause and clear controls.</div>
+      <div class="feat-badge core">Core</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-ico">⚙️</div>
+      <div class="feat-title">Keyword &amp; Location Filters</div>
+      <div class="feat-desc">Configure include/exclude keywords, target locations, and per-portal on/off switches in config.yaml. Filters apply to every scan automatically.</div>
+      <div class="feat-badge core">Core</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-ico">👥</div>
+      <div class="feat-title">Multi-User Support</div>
+      <div class="feat-desc">Create admin and viewer accounts. Each user has their own jobs, profile, AI settings, and application history — fully isolated.</div>
+      <div class="feat-badge core">Core</div>
+    </div>
+    <div class="feat-card reveal">
+      <div class="feat-ico">🌙</div>
+      <div class="feat-title">Light &amp; Dark Mode</div>
+      <div class="feat-desc">Polished UI with system-aware theme toggle. All pages — home, login, signup, dashboard — adapt consistently.</div>
+      <div class="feat-badge core">Core</div>
+    </div>
+  </div>
+</section>
+
+<div style="padding:0 2rem;">
+<div class="ai-section reveal">
+  <div class="eyebrow">AI Superpowers</div>
+  <div class="sec-title" style="margin-bottom:.5rem;">Unlock with Groq or Gemini</div>
+  <div style="color:var(--txt2);font-size:.9rem;line-height:1.6;max-width:560px;margin-bottom:.5rem;">Add a free API key from Groq or Gemini to activate AI features. Both have generous free tiers — no credit card required.</div>
+  <div style="display:inline-flex;align-items:center;gap:8px;font-size:.72rem;color:#1e40af;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);padding:5px 14px;border-radius:20px;margin-bottom:1rem;">
+    ⚡ Groq: 14,400 req/day free &nbsp;·&nbsp; ✦ Gemini: 1M tokens/day free
+  </div>
+  <div class="ai-grid">
+    <div class="ai-card reveal">
+      <div class="ai-card-head"><span class="ai-card-ico">🎯</span><span class="ai-card-title">Semantic Job Match Scoring</span></div>
+      <div class="ai-card-desc">Every job gets a 0–100 score based on actual skill overlap, experience fit, and role alignment — not just keyword matching.</div>
+    </div>
+    <div class="ai-card reveal">
+      <div class="ai-card-head"><span class="ai-card-ico">✍️</span><span class="ai-card-title">AI Cover Letter Generation</span></div>
+      <div class="ai-card-desc">Generates a tailored, human-sounding cover letter for every application before Auto Apply runs. References specific requirements from the JD.</div>
+    </div>
+    <div class="ai-card reveal">
+      <div class="ai-card-head"><span class="ai-card-ico">📈</span><span class="ai-card-title">Skill Gap Analysis</span></div>
+      <div class="ai-card-desc">For any job, see which skills you have, which you're missing, and a learning path with resources and time estimates to close each gap.</div>
+    </div>
+    <div class="ai-card reveal">
+      <div class="ai-card-head"><span class="ai-card-ico">🎤</span><span class="ai-card-title">Interview Preparation</span></div>
+      <div class="ai-card-desc">Role-specific behavioral, technical, and situational questions with answering frameworks. Plus questions to ask the interviewer and prep tips.</div>
+    </div>
+    <div class="ai-card reveal">
+      <div class="ai-card-head"><span class="ai-card-ico">📄</span><span class="ai-card-title">AI Resume Parser</span></div>
+      <div class="ai-card-desc">Upload your resume once. AI extracts your name, contact info, skills, experience, and education — then fills your entire profile automatically.</div>
+    </div>
+    <div class="ai-card reveal">
+      <div class="ai-card-head"><span class="ai-card-ico">🌐</span><span class="ai-card-title">Smart Screening Answers</span></div>
+      <div class="ai-card-desc">When a portal asks screening questions (years of experience, salary, relocation), AI answers them accurately using your profile.</div>
+    </div>
   </div>
 </div>
 </div>
 
-<div class="section">
-  <div class="section-eyebrow">How it works</div>
-  <h2>Up and running<br/>in 3 steps.</h2>
+<section>
+  <div class="eyebrow reveal">How It Works</div>
+  <div class="sec-title reveal">From zero to auto-applying<br>in under 10 minutes</div>
   <div class="steps">
-    <div class="step"><div class="step-num">1</div><div class="step-title">Set your keywords</div><div class="step-desc">Configure what roles you're looking for — software engineer, SDE, backend, full stack, etc.</div></div>
-    <div class="step"><div class="step-num">2</div><div class="step-title">Hit Scan</div><div class="step-desc">JobBot searches all 9 portals simultaneously and populates your pipeline in real-time.</div></div>
-    <div class="step"><div class="step-num">3</div><div class="step-title">Review & Apply</div><div class="step-desc">Browse ranked results, use AI search to find the best fits, mark jobs as you apply.</div></div>
+    <div class="step reveal">
+      <div class="step-num">1</div>
+      <div class="step-title">Create account &amp; build profile</div>
+      <div class="step-desc">Sign up (first user becomes admin). Go to Profile and fill in your details — or upload your resume and let AI extract everything: name, contact, skills, experience, education, salary expectations.</div>
+      <div class="step-connector"></div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">2</div>
+      <div class="step-title">Configure filters &amp; portals</div>
+      <div class="step-desc">Edit <code style="font-size:.8em;background:var(--surf2);padding:1px 6px;border-radius:4px;">config/config.yaml</code> to set your target keywords, locations, and which portals to enable. Optionally add a free Groq or Gemini API key in AI Settings to unlock match scoring and cover letters.</div>
+      <div class="step-connector"></div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">3</div>
+      <div class="step-title">Start discovery &amp; review</div>
+      <div class="step-desc">Hit <strong>Start Discovery</strong> in the dashboard. Jobs stream in filtered by your keywords. Each gets AI scored (with key on), skill-matched, and cover-letter pre-generated. Browse your inbox, approve what you like, skip the rest.</div>
+      <div class="step-connector"></div>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">4</div>
+      <div class="step-title">Auto Apply runs hands-free</div>
+      <div class="step-desc">Click <strong>Auto Apply</strong> on any reviewed job. JobBot opens the portal in a browser, fills every field from your profile — name, experience, skills, salary, cover letter — and submits. You get a confirmation with a screenshot. No typing, no tabs.</div>
+    </div>
   </div>
-</div>
+</section>
 
-<div class="cta">
-  <h2>Start discovering jobs today.</h2>
-  <p>Free, local, and takes 2 minutes to set up.</p>
-  <a href="/signup" class="btn btn-solid">Create your account →</a>
+<section>
+  <div class="eyebrow reveal">Portals</div>
+  <div class="sec-title reveal">Where JobBot looks for you</div>
+  <div class="sec-sub reveal">9 portals for discovery. 5 with full form-fill auto-apply. All run locally — no third-party API or proxy needed.</div>
+  <div class="feat-grid" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:2rem;">
+    <div class="feat-card reveal" style="padding:1.2rem 1.4rem;">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--acc);margin-bottom:.6rem;">Discovery + Auto-Apply</div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--txt2);">
+        <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#0a66c2;margin-right:8px;"></span>LinkedIn</div>
+        <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#2164f3;margin-right:8px;"></span>Naukri</div>
+        <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#0caa41;margin-right:8px;"></span>Glassdoor</div>
+        <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#003a9b;margin-right:8px;"></span>Indeed</div>
+        <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff6b35;margin-right:8px;"></span>HiringCafe</div>
+      </div>
+    </div>
+    <div class="feat-card reveal" style="padding:1.2rem 1.4rem;">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--txt3);margin-bottom:.6rem;">Discovery Only</div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:.85rem;color:var(--txt2);">
+        <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#0caa41;margin-right:8px;"></span>Monster</div>
+        <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3c1e6e;margin-right:8px;"></span>Greenhouse</div>
+        <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#5e4fa2;margin-right:8px;"></span>Lever</div>
+        <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#1a1a2e;margin-right:8px;"></span>Instahire</div>
+        <div><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#d73f41;margin-right:8px;"></span>Uplers</div>
+      </div>
+    </div>
+    <div class="feat-card reveal" style="padding:1.2rem 1.4rem;">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--txt3);margin-bottom:.6rem;">AI Setup (Optional)</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:.82rem;color:var(--txt2);">
+        <div>
+          <div style="font-weight:600;color:var(--txt);">Groq</div>
+          <div style="font-size:.75rem;">14,400 req/day free · Llama 3.3 70B</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:var(--txt);">Gemini</div>
+          <div style="font-size:.75rem;">1M tokens/day free · Gemini 1.5 Flash</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-sec">
+  <div class="cta-glow"></div>
+  <div class="eyebrow reveal" style="position:relative">Get Started</div>
+  <div class="cta-title reveal" style="position:relative">Stop applying manually.</div>
+  <div class="cta-sub reveal" style="position:relative">Self-host in minutes. Free. Open source. Your data stays on your machine.</div>
+  <div style="display:flex;gap:12px;justify-content:center;position:relative;" class="reveal">
+    <a href="/signup" class="btn btn-orange btn-hero">Create account →</a>
+    <a href="/login" class="btn btn-ghost btn-hero">Sign in</a>
+  </div>
 </div>
 
 <footer>
-  JobBot v2.0 · MIT License · Built for software engineers in India
+  <div class="footer-logo">Job<span>Bot</span></div>
+  <div>LinkedIn · Naukri · Indeed · Monster · Glassdoor · Greenhouse · Lever · HiringCafe · Instahire · Uplers</div>
+  <div>Open Source · Self-Hosted</div>
 </footer>
 
 <script>
-// Apply saved theme
-(function(){
-  const t=localStorage.getItem('jb-theme')||'light';
-  if(t==='dark'){
-    document.documentElement.style.setProperty('--bg','#080808');
-    document.documentElement.style.setProperty('--bg2','#0f0f0f');
-    document.documentElement.style.setProperty('--txt','#f5f5f7');
-    document.documentElement.style.setProperty('--txt2','rgba(245,245,247,.65)');
-    document.documentElement.style.setProperty('--txt3','rgba(245,245,247,.35)');
-    document.documentElement.style.setProperty('--bdr','rgba(255,255,255,.08)');
-    document.body.style.background='#080808';
-    document.body.style.color='#f5f5f7';
-    document.querySelector('nav').style.background='rgba(8,8,8,.88)';
-  }
-})();
-// If already logged in, show dashboard button in nav
-fetch('/auth/me').then(r=>{
-  if(r.ok){
-    const nav=document.querySelector('.nav-btns');
-    nav.innerHTML='<a href="/dashboard" class="btn btn-solid">Go to Dashboard →</a>';
-  }
-}).catch(()=>{});
+
+gsap.registerPlugin(ScrollTrigger);
+
+// Hero animations
+gsap.from('#hero-title', {opacity:0, y:30, duration:.8, ease:'power3.out', delay:.1});
+gsap.from('#hero-sub',   {opacity:0, y:20, duration:.7, ease:'power2.out', delay:.3});
+gsap.from('#hero-btns',  {opacity:0, y:16, duration:.6, ease:'power2.out', delay:.5});
+gsap.from('#hero-mono',  {opacity:0,       duration:.6, ease:'power2.out', delay:.7});
+gsap.from('.hero-badge', {opacity:0, y:-10,duration:.5, ease:'back.out(1.4)', delay:.05});
+
+// Scroll reveal
+gsap.utils.toArray('.reveal').forEach(el=>{
+  gsap.from(el,{
+    scrollTrigger:{trigger:el,start:'top 85%',toggleActions:'play none none none'},
+    opacity:0,y:32,duration:.65,ease:'power2.out'
+  });
+});
+
+// Portal marquee: pause on hover
+const _track=document.getElementById('portals-track');
+if(_track){
+  _track.parentElement.addEventListener('mouseenter',()=>_track.style.animationPlayState='paused');
+  _track.parentElement.addEventListener('mouseleave',()=>_track.style.animationPlayState='running');
+}
+
 </script>
 </body>
 </html>

@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Optional
 
 import yaml
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import FastAPI, HTTPException, Request, Depends, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse, JSONResponse
 from fastapi.exceptions import RequestValidationError
@@ -18,9 +18,10 @@ import sys
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.database import Job, Company, JobStatus, get_session, init_db, mark_job
+from src.database import Job, Company, JobStatus, UserSettings, get_session, init_db, mark_job
 from src.background import ensure_running, get_status, trigger_now, get_progress, stop_discovery
-from src.utils import load_config
+from src.utils import load_config, load_profile
+from src.autofill.profile_adapter import load_autofill_profile
 from src.auth import init_users, get_current_user, require_admin
 from src.auth_routes import router as auth_router
 
@@ -390,6 +391,304 @@ async def parse_resume(request: Request, current_user: dict = Depends(get_curren
     return {"skills": found, "char_count": len(text)}
 
 
+# ── AI Settings ───────────────────────────────────────────────────────────
+from src.ai.service import GROQ_MODELS, GEMINI_MODELS, DEFAULT_MODEL
+
+@app.get("/api/settings/ai")
+def get_ai_settings(current_user: dict = Depends(get_current_user)):
+    """Get current user's AI provider settings (API key masked)."""
+    session = get_session()
+    try:
+        row = session.query(UserSettings).filter_by(username=current_user["username"]).first()
+        if not row:
+            return {
+                "provider": "groq",
+                "model": DEFAULT_MODEL["groq"],
+                "api_key_set": False,
+                "is_configured": False,
+                "groq_models": GROQ_MODELS,
+                "gemini_models": GEMINI_MODELS,
+            }
+        key = row.ai_api_key or ""
+        configured = bool(key)
+        return {
+            "provider": row.ai_provider or "groq",
+            "model": row.ai_model or DEFAULT_MODEL.get(row.ai_provider or "groq", ""),
+            "api_key_set": configured,
+            "is_configured": configured,
+            "api_key_preview": (key[:8] + "..." + key[-4:]) if len(key) > 12 else ("****" if key else ""),
+            "groq_models": GROQ_MODELS,
+            "gemini_models": GEMINI_MODELS,
+        }
+    finally:
+        session.close()
+
+
+class AISettingsUpdate(BaseModel):
+    provider: str
+    api_key: Optional[str] = None
+    model: Optional[str] = None
+
+@app.put("/api/settings/ai")
+def update_ai_settings(body: AISettingsUpdate, current_user: dict = Depends(get_current_user)):
+    """Save AI provider settings for this user."""
+    if body.provider not in ("groq", "gemini"):
+        raise HTTPException(400, "Provider must be 'groq' or 'gemini'")
+    session = get_session()
+    try:
+        row = session.query(UserSettings).filter_by(username=current_user["username"]).first()
+        if not row:
+            row = UserSettings(username=current_user["username"])
+            session.add(row)
+        row.ai_provider = body.provider
+        if body.api_key is not None:
+            row.ai_api_key = body.api_key.strip()
+        if body.model is not None:
+            row.ai_model = body.model.strip()
+        elif row.ai_model is None or row.ai_model == "":
+            row.ai_model = DEFAULT_MODEL[body.provider]
+        row.updated_at = datetime.utcnow()
+        session.commit()
+        configured = bool(row.ai_api_key)
+        return {"ok": True, "is_configured": configured}
+    finally:
+        session.close()
+
+
+@app.post("/api/settings/ai/test")
+def test_ai_connection(current_user: dict = Depends(get_current_user)):
+    """Quick connectivity test for the configured AI provider."""
+    from src.ai.service import AIService
+    try:
+        ai = AIService.for_user(current_user["username"])
+        if not ai.is_configured():
+            return {"ok": False, "error": "No API key configured"}
+        result = ai.generate("Say 'OK' and nothing else.", max_tokens=10)
+        return {"ok": True, "provider": ai.provider, "model": ai.model, "response": result[:50]}
+    except Exception as e:
+        return {"ok": False, "error": str(e)[:200]}
+
+
+# ── AI Job Analysis endpoints ──────────────────────────────────────────────
+
+def _get_job_for_user(job_id: int, username: str):
+    """Helper: fetch job and validate ownership. Returns (session, job)."""
+    session = get_session()
+    job = session.get(Job, job_id)
+    if not job:
+        session.close()
+        raise HTTPException(404, "Job not found")
+    if job.discovered_by != username:
+        session.close()
+        raise HTTPException(403, "Forbidden")
+    return session, job
+
+
+@app.post("/api/jobs/{job_id}/match-score")
+def job_match_score(job_id: int, current_user: dict = Depends(get_current_user)):
+    """AI-powered match score for this job vs. the user's profile."""
+    from src.ai.service import AIService
+    from src.ai.generator import generate_match_score
+
+    session, job = _get_job_for_user(job_id, current_user["username"])
+    try:
+        # Return cached result if present
+        if job.ai_match_data:
+            return json.loads(job.ai_match_data)
+
+        profile = load_autofill_profile(current_user["username"])
+        ai = AIService.for_user(current_user["username"])
+        if not ai.is_configured():
+            raise HTTPException(400, "AI not configured. Go to AI Settings to add your API key.")
+
+        result = generate_match_score(
+            profile=profile,
+            job_title=job.title,
+            company_name=job.company.name,
+            job_description=job.description or "",
+            resume_skills=[],
+            ai=ai,
+        )
+        # Cache in DB
+        job.ai_match_score = result.get("score", 0)
+        job.ai_match_data = json.dumps(result)
+        session.commit()
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f"Match score failed: {str(e)}")
+    finally:
+        session.close()
+
+
+@app.post("/api/jobs/{job_id}/skill-gap")
+def job_skill_gap(job_id: int, current_user: dict = Depends(get_current_user)):
+    """Detailed skill gap analysis for this job."""
+    from src.ai.service import AIService
+    from src.ai.generator import generate_skill_gap
+
+    session, job = _get_job_for_user(job_id, current_user["username"])
+    try:
+        profile = load_autofill_profile(current_user["username"])
+        ai = AIService.for_user(current_user["username"])
+        if not ai.is_configured():
+            raise HTTPException(400, "AI not configured. Go to AI Settings to add your API key.")
+
+        result = generate_skill_gap(
+            profile=profile,
+            job_title=job.title,
+            company_name=job.company.name,
+            job_description=job.description or "",
+            resume_skills=[],
+            ai=ai,
+        )
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f"Skill gap analysis failed: {str(e)}")
+    finally:
+        session.close()
+
+
+@app.post("/api/jobs/{job_id}/interview-prep")
+def job_interview_prep(job_id: int, current_user: dict = Depends(get_current_user)):
+    """Generate interview preparation questions and tips."""
+    from src.ai.service import AIService
+    from src.ai.generator import generate_interview_prep
+
+    session, job = _get_job_for_user(job_id, current_user["username"])
+    try:
+        profile = load_autofill_profile(current_user["username"])
+        ai = AIService.for_user(current_user["username"])
+        if not ai.is_configured():
+            raise HTTPException(400, "AI not configured. Go to AI Settings to add your API key.")
+
+        result = generate_interview_prep(
+            profile=profile,
+            job_title=job.title,
+            company_name=job.company.name,
+            job_description=job.description or "",
+            ai=ai,
+        )
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f"Interview prep failed: {str(e)}")
+    finally:
+        session.close()
+
+
+@app.post("/api/jobs/{job_id}/cover-letter")
+def job_cover_letter(job_id: int, current_user: dict = Depends(get_current_user)):
+    """Generate or regenerate a cover letter for this job."""
+    from src.ai.service import AIService
+    from src.ai.generator import generate_cover_letter
+
+    session, job = _get_job_for_user(job_id, current_user["username"])
+    try:
+        profile = load_autofill_profile(current_user["username"])
+        ai = AIService.for_user(current_user["username"])
+        if not ai.is_configured():
+            raise HTTPException(400, "AI not configured. Go to AI Settings to add your API key.")
+
+
+        letter = generate_cover_letter(
+            profile=profile,
+            job_title=job.title,
+            company_name=job.company.name,
+            job_description=job.description or "",
+            ai=ai,
+        )
+        job.cover_letter = letter
+        session.commit()
+        return {"cover_letter": letter}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f"Cover letter generation failed: {str(e)}")
+    finally:
+        session.close()
+
+
+# ── Resume Parser (AI-enhanced) ────────────────────────────────────────────
+
+@app.post("/api/resume/parse-ai")
+async def parse_resume_ai(request: Request, current_user: dict = Depends(get_current_user)):
+    """Parse resume with AI — returns structured profile data."""
+    from src.ai.service import AIService
+    import io, json as _json
+
+    form = await request.form()
+    file = form.get("file")
+    if not file:
+        raise HTTPException(400, "No file uploaded")
+
+    content = await file.read()
+    filename = file.filename.lower()
+    text = ""
+    try:
+        if filename.endswith(".pdf"):
+            import pdfplumber
+            with pdfplumber.open(io.BytesIO(content)) as pdf:
+                text = "\n".join(p.extract_text() or "" for p in pdf.pages)
+        elif filename.endswith(".docx"):
+            import docx
+            doc = docx.Document(io.BytesIO(content))
+            text = "\n".join(p.text for p in doc.paragraphs)
+        else:
+            text = content.decode("utf-8", errors="ignore")
+    except Exception:
+        raise HTTPException(500, "Could not parse resume file")
+
+    if not text.strip():
+        raise HTTPException(400, "Resume appears to be empty or unreadable")
+
+    ai = AIService.for_user(current_user["username"])
+    if not ai.is_configured():
+        raise HTTPException(400, "AI not configured. Set up your API key in AI Settings first.")
+
+    prompt = f"""Extract structured information from this resume text.
+
+Resume:
+{text[:4000]}
+
+Return a JSON object with these exact keys:
+{{
+  "name": "<full name>",
+  "email": "<email or empty string>",
+  "phone": "<phone or empty string>",
+  "location": "<city, country or empty string>",
+  "current_title": "<most recent job title>",
+  "years_experience": <integer total years>,
+  "skills": ["<skill1>", "<skill2>"],
+  "top_skills": ["<5 most prominent skills>"],
+  "education": {{"degree": "<degree>", "field": "<field>", "university": "<uni or empty>", "year": <year or null>}},
+  "experience_summary": "<2-sentence career summary>",
+  "companies": ["<company1>"],
+  "certifications": ["<cert1>"]
+}}"""
+
+    try:
+        result = ai.generate_json(prompt)
+        session = get_session()
+        try:
+            row = session.query(UserSettings).filter_by(username=current_user["username"]).first()
+            if not row:
+                row = UserSettings(username=current_user["username"])
+                session.add(row)
+            row.profile_summary = _json.dumps(result)
+            session.commit()
+        finally:
+            session.close()
+        return result
+    except Exception as e:
+        raise HTTPException(500, f"AI resume parsing failed: {str(e)}")
+
+
+
 # ── AI Search ─────────────────────────────────────────────────────────────
 class AISearchBody(BaseModel):
     query: str
@@ -420,7 +719,7 @@ def ai_search_endpoint(body: AISearchBody, current_user: dict = Depends(get_curr
     return {"query": query, "results": results, "total": len(results)}
 
 
-# ── Config management ─────────────────────────────────────────────────────
+# ── Config management ──────────────────────────────────────────────────────
 @app.get("/api/config")
 def get_config(current_user: dict = Depends(get_current_user)):
     with open(CONFIG_YAML) as f:
@@ -451,7 +750,6 @@ def update_config(body: ConfigUpdate, current_user: dict = Depends(require_admin
 
 @app.delete("/api/jobs/clear-only")
 def clear_jobs_only(current_user: dict = Depends(require_admin)):
-    """Delete all jobs without triggering a rescan."""
     session = get_session()
     try:
         deleted = session.query(Job).filter(Job.discovered_by == current_user["username"]).delete()
@@ -464,12 +762,12 @@ def clear_jobs_only(current_user: dict = Depends(require_admin)):
         session.close()
 
 
-# ── Autofill / Auto-apply ─────────────────────────────────────────────────
+# ── Autofill / Auto-apply ──────────────────────────────────────────────────
 import threading as _threading
 
 @app.post("/api/jobs/{job_id}/apply")
 def start_apply(job_id: int, current_user: dict = Depends(get_current_user)):
-    """Start autofill for a job. Returns immediately; progress via SSE."""
+    """Start autofill for a job. Generates AI content first, then launches browser."""
     session = get_session()
     try:
         job = session.get(Job, job_id)
@@ -477,39 +775,115 @@ def start_apply(job_id: int, current_user: dict = Depends(get_current_user)):
             raise HTTPException(404, "Job not found")
         if job.discovered_by != current_user["username"]:
             raise HTTPException(403, "Forbidden")
+        job_url    = job.job_url
+        job_portal = job.portal or "generic"
+        job_title  = job.title
+        company    = job.company.name
+        description = job.description or ""
+        cover_letter = job.cover_letter or ""
+        screening   = job.screening_answers or ""
     finally:
         session.close()
 
     from src.autofill.runner import run_autofill, _sessions
+    # Clear stale terminal sessions
     if job_id in _sessions:
-        raise HTTPException(400, "Autofill already in progress for this job")
+        st = _sessions[job_id].get("result", {}).get("status", "running")
+        if st in ("error", "submitted", "cancelled", "starting"):
+            _sessions.pop(job_id, None)
+        else:
+            raise HTTPException(400, "Autofill already in progress for this job")
 
-    # Run in background thread
-    _results = {}
+    username = current_user["username"]
+
+    # Pre-register so status endpoint always has something to return
+    _sessions[job_id] = {"result": {"status": "starting", "filled": [], "needs_manual": []}}
+
     def _run():
-        import asyncio
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        result = loop.run_until_complete(
-            run_autofill(job_id, job.job_url, job.portal or "generic")
-        )
-        _results[job_id] = result
-        loop.close()
+        from src.utils import log as _log
+        from src.autofill.profile_adapter import load_autofill_profile
+
+        try:
+            profile = load_autofill_profile(username)
+            job_ctx = {
+                "title":        job_title,
+                "company":      company,
+                "description":  description,
+                "cover_letter": cover_letter,
+            }
+
+            ai = None
+            try:
+                from src.ai.service import AIService
+                from src.ai.generator import generate_cover_letter, generate_screening_answers
+                _ai = AIService.for_user(username)
+                if _ai.is_configured():
+                    ai = _ai
+                    if not cover_letter:
+                        try:
+                            cl = generate_cover_letter(profile, job_title, company, description, ai)
+                            _save_job_field(job_id, "cover_letter", cl)
+                            job_ctx["cover_letter"] = cl
+                        except Exception as e:
+                            _log.warning(f"Cover letter skipped: {e}")
+                    if not screening:
+                        try:
+                            common_qs = [
+                                "Are you authorized to work in India?",
+                                "Are you willing to relocate?",
+                                "What is your notice period?",
+                                "What are your salary expectations?",
+                                "How many years of experience do you have?",
+                            ]
+                            answers = generate_screening_answers(profile, job_title, company, common_qs, ai)
+                            _save_job_field(job_id, "screening_answers", json.dumps(answers))
+                        except Exception as e:
+                            _log.warning(f"Screening answers skipped: {e}")
+            except Exception as e:
+                _log.warning(f"AI setup skipped: {e}")
+
+            import asyncio
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                loop.run_until_complete(run_autofill(
+                    job_id, job_url, job_portal,
+                    username=username,
+                    ai=ai,
+                    job_context=job_ctx,
+                ))
+            finally:
+                loop.close()
+
+        except Exception as e:
+            _log.error(f"[Autofill] Startup error for job {job_id}: {e}")
+            if job_id in _sessions:
+                _sessions[job_id]["result"]["status"] = "error"
+                _sessions[job_id]["result"]["error"]  = str(e)
 
     t = _threading.Thread(target=_run, daemon=True)
     t.start()
-    return {"ok": True, "job_id": job_id, "message": "Autofill started — check the review modal"}
+    return {"ok": True, "job_id": job_id, "message": "Autofill started"}
+
+
+def _save_job_field(job_id: int, field: str, value: str):
+    session = get_session()
+    try:
+        job = session.get(Job, job_id)
+        if job:
+            setattr(job, field, value)
+            session.commit()
+    finally:
+        session.close()
 
 
 @app.get("/api/jobs/{job_id}/apply/status")
 def apply_status(job_id: int, current_user: dict = Depends(get_current_user)):
-    """Get current autofill status and screenshot path."""
     from src.autofill.runner import get_session as get_af_session
     af = get_af_session(job_id)
     if not af:
         return {"status": "not_started"}
     r = af.get("result", {})
-    # Return screenshot as relative path
     ss = r.get("screenshot_path", "")
     if ss:
         ss = "/api/screenshots/" + __import__('pathlib').Path(ss).name
@@ -524,10 +898,8 @@ def apply_status(job_id: int, current_user: dict = Depends(get_current_user)):
 
 @app.post("/api/jobs/{job_id}/apply/confirm")
 def confirm_apply(job_id: int, current_user: dict = Depends(get_current_user)):
-    """User confirmed — submit the application."""
     from src.autofill.runner import confirm_apply as _confirm
     _confirm(job_id)
-    # Mark job as applied in DB
     session = get_session()
     try:
         mark_job(session, job_id, "applied", applied_at=datetime.utcnow())
@@ -538,15 +910,31 @@ def confirm_apply(job_id: int, current_user: dict = Depends(get_current_user)):
 
 @app.post("/api/jobs/{job_id}/apply/cancel")
 def cancel_apply(job_id: int, current_user: dict = Depends(get_current_user)):
-    """User cancelled — close browser without submitting."""
     from src.autofill.runner import cancel_apply as _cancel
     _cancel(job_id)
     return {"ok": True}
 
 
+@app.post("/api/jobs/{job_id}/apply/focus")
+def focus_apply_window(job_id: int, current_user: dict = Depends(get_current_user)):
+    """Bring the Playwright browser window to front."""
+    from src.autofill.runner import _sessions
+    sess = _sessions.get(job_id)
+    if not sess:
+        return {"ok": False, "reason": "no_session"}
+    page = sess.get("page")
+    if not page:
+        return {"ok": False, "reason": "no_page"}
+    loop = sess.get("loop")
+    if loop and loop.is_running():
+        import asyncio
+        asyncio.run_coroutine_threadsafe(page.bring_to_front(), loop)
+        return {"ok": True}
+    return {"ok": False, "reason": "loop_not_running"}
+
+
 @app.get("/api/screenshots/{filename}")
 def serve_screenshot(filename: str, current_user: dict = Depends(get_current_user)):
-    """Serve screenshot files."""
     from fastapi.responses import FileResponse as FR
     import re
     if not re.match(r'^[\w\-\.]+\.png$', filename):
@@ -557,8 +945,270 @@ def serve_screenshot(filename: str, current_user: dict = Depends(get_current_use
     return FR(str(path))
 
 
-@app.post("/api/discovery/progress/clear")
-def clear_progress_log(current_user: dict = Depends(get_current_user)):
-    from src.background import clear_progress
-    clear_progress()
-    return {"ok": True}
+
+# ── Profile management ────────────────────────────────────────────────────────
+
+@app.get("/api/profile")
+def get_profile(current_user: dict = Depends(get_current_user)):
+    """Get the current user's job application profile."""
+    session = get_session()
+    try:
+        row = session.query(UserSettings).filter_by(username=current_user["username"]).first()
+        if not row or not row.profile_summary:
+            return _default_profile()
+        try:
+            return json.loads(row.profile_summary)
+        except Exception:
+            return _default_profile()
+    finally:
+        session.close()
+
+
+def _default_profile() -> dict:
+    return {
+        "personal": {"first_name": "", "last_name": "", "email": "", "phone": "",
+                     "linkedin": "", "github": "", "portfolio": "", "location": ""},
+        "professional": {"current_title": "", "current_company": "", "years_experience": 0,
+                         "target_roles": [], "work_mode_preference": "hybrid",
+                         "willing_to_relocate": False, "notice_period": "30 days"},
+        "skills": {"languages": [], "frameworks": [], "tools": [], "certifications": []},
+        "education": {"degree": "", "field": "", "institution": "", "year": ""},
+        "answers": {"salary_expectation": "", "work_authorization": "Authorized to work in India",
+                    "notice_period": "30 days", "cover_letter_tone": "professional"},
+    }
+
+
+@app.put("/api/profile")
+def update_profile(body: dict, current_user: dict = Depends(get_current_user)):
+    """Save the user's job application profile."""
+    session = get_session()
+    try:
+        row = session.query(UserSettings).filter_by(username=current_user["username"]).first()
+        if not row:
+            row = UserSettings(username=current_user["username"])
+            session.add(row)
+        row.profile_summary = json.dumps(body)
+        row.updated_at = datetime.utcnow()
+        session.commit()
+        return {"ok": True}
+    finally:
+        session.close()
+
+
+@app.post("/api/resume/parse-profile")
+async def parse_resume_for_profile(
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user),
+):
+    """
+    Finest resume parser — extracts a complete profile from uploaded resume.
+    Multi-strategy: pdfplumber → python-docx → raw text, then regex + AI enhancement.
+    """
+    import re
+
+    content = await file.read()
+    filename = file.filename or ""
+    ext = filename.lower().rsplit(".", 1)[-1] if "." in filename else "txt"
+
+    # ── 1. Text extraction ────────────────────────────────────────────────
+    raw_text = ""
+    try:
+        if ext == "pdf":
+            import pdfplumber, io
+            with pdfplumber.open(io.BytesIO(content)) as pdf:
+                raw_text = "\n".join(p.extract_text() or "" for p in pdf.pages)
+        elif ext in ("doc", "docx"):
+            from docx import Document
+            import io as _io
+            doc = Document(_io.BytesIO(content))
+            raw_text = "\n".join(p.text for p in doc.paragraphs)
+        else:
+            raw_text = content.decode("utf-8", errors="ignore")
+    except Exception as e:
+        raw_text = content.decode("utf-8", errors="ignore")
+
+    if not raw_text.strip():
+        raise HTTPException(400, "Could not extract text from resume")
+
+    profile = _default_profile()
+
+    # ── 2. Regex extraction ────────────────────────────────────────────────
+    lines = [l.strip() for l in raw_text.splitlines() if l.strip()]
+
+    # Name: first non-empty line that looks like a name (2-4 words, title case, no @)
+    for line in lines[:8]:
+        words = line.split()
+        if 2 <= len(words) <= 4 and all(w[0].isupper() for w in words if w.isalpha()) and "@" not in line and not any(c.isdigit() for c in line):
+            parts = line.split()
+            profile["personal"]["first_name"] = parts[0]
+            profile["personal"]["last_name"] = " ".join(parts[1:]) if len(parts) > 1 else ""
+            break
+
+    # Email
+    emails = re.findall(r'[\w.+-]+@[\w-]+\.[a-zA-Z]{2,}', raw_text)
+    if emails: profile["personal"]["email"] = emails[0]
+
+    # Phone
+    phones = re.findall(r'(?:\+91[\s-]?)?(?:\(?\d{3,5}\)?[\s.-]?\d{3,4}[\s.-]?\d{4})', raw_text)
+    if phones: profile["personal"]["phone"] = re.sub(r'[\s.-]', '', phones[0])
+
+    # LinkedIn
+    linkedin = re.findall(r'(?:linkedin\.com/in/|linkedin\.com/pub/)([^\s/,\)]+)', raw_text, re.I)
+    if linkedin: profile["personal"]["linkedin"] = f"https://linkedin.com/in/{linkedin[0]}"
+
+    # GitHub
+    github = re.findall(r'(?:github\.com/)([^\s/,\)]+)', raw_text, re.I)
+    if github: profile["personal"]["github"] = f"https://github.com/{github[0]}"
+
+    # Portfolio/website
+    portfolio = re.findall(r'https?://(?!linkedin|github)[\w.-]+\.[a-z]{2,}(?:/[\w/-]*)?', raw_text, re.I)
+    if portfolio: profile["personal"]["portfolio"] = portfolio[0]
+
+    # Location — city names
+    CITIES = ["hyderabad", "bengaluru", "bangalore", "mumbai", "pune", "chennai",
+              "delhi", "noida", "gurgaon", "kolkata", "ahmedabad", "new york",
+              "san francisco", "london", "singapore", "remote"]
+    lo = raw_text.lower()
+    for city in CITIES:
+        if city in lo:
+            profile["personal"]["location"] = city.title()
+            break
+
+    # Years of experience — look for date ranges
+    year_ranges = re.findall(r'(20\d{2})\s*[-–—]\s*(20\d{2}|present|current)', raw_text, re.I)
+    if year_ranges:
+        import datetime as _dt
+        cur_year = _dt.datetime.utcnow().year
+        total_months = 0
+        for start_yr, end_yr in year_ranges:
+            s = int(start_yr)
+            e = cur_year if end_yr.lower() in ('present', 'current') else int(end_yr)
+            total_months += max(0, (e - s) * 12)
+        profile["professional"]["years_experience"] = max(0, round(total_months / 12))
+
+    # Current title — look for common title patterns near the top
+    TITLE_PATTERNS = [
+        r'(senior|lead|principal|staff|associate|junior)?\s*'
+        r'(software|frontend|backend|full.?stack|data|ml|ai|devops|platform|cloud|site reliability|sre)'
+        r'\s*(engineer|developer|scientist|analyst|architect|manager|intern)',
+        r'(sde|swe|sde[\s-]?[123]|software development engineer)',
+        r'(product manager|engineering manager|technical lead|tech lead)',
+    ]
+    for p in TITLE_PATTERNS:
+        m = re.search(p, raw_text[:2000], re.I)
+        if m:
+            profile["professional"]["current_title"] = m.group(0).strip().title()
+            break
+
+    # Skills extraction — comprehensive tech list
+    TECH_SKILLS = {
+        "languages": ["python", "java", "javascript", "typescript", "golang", "go", "rust",
+                      "c++", "c#", "kotlin", "swift", "scala", "ruby", "php", "r", "matlab",
+                      "bash", "shell", "powershell", "dart", "elixir", "haskell", "lua"],
+        "frameworks": ["react", "vue", "angular", "next.js", "nuxt", "svelte", "django",
+                       "flask", "fastapi", "spring", "express", "node.js", "nestjs", "rails",
+                       "laravel", "asp.net", "pytorch", "tensorflow", "keras", "scikit-learn",
+                       "langchain", "hugging face", "transformers", "pandas", "numpy", "spark",
+                       "hadoop", "airflow", "celery", "graphql", "grpc", "rest", "tailwind",
+                       "bootstrap", "material ui", "redux", "mobx", "zustand"],
+        "tools": ["git", "docker", "kubernetes", "terraform", "ansible", "jenkins", "github actions",
+                  "gitlab ci", "circleci", "aws", "gcp", "azure", "linux", "nginx", "apache",
+                  "postgresql", "mysql", "mongodb", "redis", "elasticsearch", "kafka", "rabbitmq",
+                  "prometheus", "grafana", "datadog", "jira", "confluence", "figma", "postman",
+                  "intellij", "vscode", "vim", "jupyter", "airflow", "dbt", "snowflake", "bigquery",
+                  "firebase", "supabase", "heroku", "vercel", "netlify"],
+    }
+    for category, skill_list in TECH_SKILLS.items():
+        found = []
+        for skill in skill_list:
+            pattern = r'\b' + re.escape(skill) + r'\b'
+            if re.search(pattern, raw_text, re.I):
+                found.append(skill.title() if len(skill) > 3 else skill.upper())
+        profile["skills"][category] = found
+
+    # Certifications
+    cert_patterns = re.findall(
+        r'(aws certified|google cloud|azure [a-z]+|cka|ckad|pmp|scrum master|cissp|comptia [a-z+]+)',
+        raw_text, re.I
+    )
+    profile["skills"]["certifications"] = list(set(c.title() for c in cert_patterns))
+
+    # Education
+    EDU_PATTERNS = [
+        (r'\b(b\.?tech|bachelor of technology)\b', 'B.Tech'),
+        (r'\b(b\.?e\.?|bachelor of engineering)\b', 'B.E.'),
+        (r'\b(b\.?sc\.?|bachelor of science)\b', 'B.Sc.'),
+        (r'\b(m\.?tech|master of technology)\b', 'M.Tech'),
+        (r'\b(m\.?s\.?|master of science)\b', 'M.S.'),
+        (r'\b(m\.?b\.?a\.?|master of business)\b', 'MBA'),
+        (r'\b(ph\.?d\.?|doctor of philosophy)\b', 'Ph.D.'),
+        (r'\b(b\.?c\.?a\.?|bachelor of computer applications)\b', 'BCA'),
+        (r'\b(m\.?c\.?a\.?|master of computer applications)\b', 'MCA'),
+    ]
+    for pat, degree_label in EDU_PATTERNS:
+        if re.search(pat, raw_text, re.I):
+            profile["education"]["degree"] = degree_label
+            break
+
+    # Field of study
+    FIELDS = ["computer science", "information technology", "electronics", "electrical",
+              "mechanical", "civil", "data science", "artificial intelligence", "mathematics"]
+    for field in FIELDS:
+        if field in lo:
+            profile["education"]["field"] = field.title()
+            break
+
+    # Grad year
+    grad_years = re.findall(r'20(?:1[0-9]|2[0-4])', raw_text)
+    if grad_years:
+        profile["education"]["year"] = sorted(grad_years)[0]
+
+    # ── 3. AI enhancement (if configured) ────────────────────────────────
+    try:
+        ai = AIService.for_user(current_user["username"])
+        if ai.is_configured():
+            prompt = f"""Extract structured job profile data from this resume text. Return JSON only.
+
+Resume (first 3000 chars):
+{raw_text[:3000]}
+
+Current extraction (fix and enhance):
+{json.dumps(profile, indent=2)[:1500]}
+
+Return the same JSON structure with improved/corrected values. Rules:
+- Keep existing values if already correct
+- Fix or fill missing fields where text evidence exists
+- target_roles: list 2-4 specific job titles this person would target
+- years_experience: integer, calculated from work history dates
+- salary_expectation: realistic range based on experience level and skills (India LPA or USD)
+- Return ONLY valid JSON, no explanation"""
+            enhanced = ai.generate_json(prompt)
+            if isinstance(enhanced, dict) and "personal" in enhanced:
+                # Merge: AI fills gaps but doesn't overwrite good regex extractions
+                for section in profile:
+                    if section in enhanced and isinstance(enhanced[section], dict):
+                        for key, val in enhanced[section].items():
+                            if key in profile[section]:
+                                existing = profile[section][key]
+                                if not existing or existing in ("", [], 0, False):
+                                    profile[section][key] = val
+    except Exception:
+        pass  # AI enhancement is best-effort
+
+    # ── 4. Save profile ────────────────────────────────────────────────────
+    session = get_session()
+    try:
+        row = session.query(UserSettings).filter_by(username=current_user["username"]).first()
+        if not row:
+            row = UserSettings(username=current_user["username"])
+            session.add(row)
+        row.profile_summary = json.dumps(profile)
+        row.updated_at = datetime.utcnow()
+        session.commit()
+    except Exception:
+        pass
+    finally:
+        session.close()
+
+    skill_count = sum(len(v) if isinstance(v, list) else 0 for v in profile["skills"].values())
+    return {**profile, "_meta": {"skill_count": skill_count, "raw_chars": len(raw_text)}}

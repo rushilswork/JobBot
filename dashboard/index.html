@@ -14,34 +14,146 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#080808;--bg2:#0f0f0f;--bg3:#161616;
+  --bg:#141414;--bg2:#1f1f1f;--bg3:#252525;
   --surf:rgba(255,255,255,.04);--surf2:rgba(255,255,255,.07);--surf3:rgba(255,255,255,.11);
-  --bdr:rgba(255,255,255,.08);--bdr2:rgba(255,255,255,.14);--bdr3:rgba(255,255,255,.22);
-  --txt:#f5f5f7;--txt2:rgba(245,245,247,.65);--txt3:rgba(245,245,247,.35);
-  --accent:#f97316;--accent2:#fb923c;
-  --pur:#7c3aed;--pur2:#a78bfa;--pur-lo:rgba(124,58,237,.12);--pur-glow:rgba(124,58,237,.28);
-  --cyn:#38bdf8;--grn:#22c55e;--ylw:#f59e0b;--red:#ef4444;
+  --bdr:rgba(255,255,255,.07);--bdr2:rgba(255,255,255,.12);--bdr3:rgba(255,255,255,.2);
+  --txt:#f0ece4;--txt2:rgba(240,236,228,.65);--txt3:rgba(240,236,228,.38);
+  --accent:#3b82f6;--accent2:#2563eb;
+  --pur:#3b82f6;--pur2:#2563eb;--pur-lo:rgba(59,130,246,.1);--pur-glow:rgba(59,130,246,.28);
+  --cyn:#38bdf8;--grn:#4ade80;--ylw:#3b82f6;--red:#f87171;
   --mono:'JetBrains Mono',monospace;
   --r:12px;--r-sm:8px;--r-lg:18px;--hh:64px;
 }
 [data-theme="light"]{
-  --bg:#fafafa;--bg2:#f0f0f0;--bg3:#e5e5e5;
+  --bg:#f8fafc;--bg2:#f1f5f9;--bg3:#e2e8f0;
   --surf:rgba(0,0,0,.04);--surf2:rgba(0,0,0,.07);--surf3:rgba(0,0,0,.11);
-  --bdr:rgba(0,0,0,.1);--bdr2:rgba(0,0,0,.16);--bdr3:rgba(0,0,0,.22);
-  --txt:#0a0a0a;--txt2:rgba(10,10,10,.65);--txt3:rgba(10,10,10,.4);
-  --pur-lo:rgba(124,58,237,.07);--pur-glow:rgba(124,58,237,.15);
+  --bdr:rgba(0,0,0,.1);--bdr2:rgba(0,0,0,.16);--bdr3:rgba(0,0,0,.24);
+  --txt:#1a1814;--txt2:rgba(26,24,20,.62);--txt3:rgba(26,24,20,.4);
+  --accent:#1d4ed8;--accent2:#1e40af;
+  --pur:#1d4ed8;--pur2:#1e40af;--pur-lo:rgba(29,78,216,.08);--pur-glow:rgba(29,78,216,.2);
 }
-[data-theme="light"] .footer{background:rgba(240,240,240,.95);border-top:1px solid rgba(0,0,0,.1);padding:.5rem 2rem;}
-[data-theme="light"] .footer-brand{color:#0a0a0a;}
-[data-theme="light"] .footer-txt{color:rgba(10,10,10,.5);}
-[data-theme="light"] .nav{background:rgba(250,250,250,.88)!important;border-bottom:1px solid rgba(0,0,0,.08);}
-[data-theme="light"] .feed-col{background:#f0f0f0;border-left-color:rgba(0,0,0,.1);}
+[data-theme="light"] .footer{background:rgba(248,250,252,.95);border-top:1px solid rgba(0,0,0,.08);padding:.5rem 2rem;}
+[data-theme="light"] .footer-brand{color:#0f172a;}
+[data-theme="light"] .footer-txt{color:rgba(15,23,42,.45);}
+[data-theme="light"] .nav{background:rgba(248,250,252,.96)!important;border-bottom:1px solid rgba(0,0,0,.08);}
+[data-theme="light"] .hbg-menu{background:rgba(248,250,252,.98);border-color:rgba(0,0,0,.1);box-shadow:0 12px 40px rgba(15,23,42,.1),0 0 0 0.5px rgba(0,0,0,.07);}
+[data-theme="light"] .ai-recents-dd{background:rgba(248,250,252,.97);border-color:rgba(0,0,0,.1);box-shadow:0 16px 48px rgba(15,23,42,.12);}
+[data-theme="light"] .fmenu{background:rgba(248,250,252,.97);border-color:rgba(0,0,0,.1);box-shadow:0 20px 60px rgba(15,23,42,.12);}
+[data-theme="light"] .feed-col{background:#f1f5f9;border-left-color:rgba(0,0,0,.08);}
 [data-theme="light"] .jcard{background:#fff;border-color:rgba(0,0,0,.08);}
-[data-theme="light"] .jcard:hover{background:#f8f8f8;border-color:rgba(249,115,22,.3);}
-
+[data-theme="light"] .jcard:hover{background:#f8fafc;border-color:rgba(29,78,216,.35);}
+[data-theme="light"] .jcard.selected{border-color:rgba(29,78,216,.4);background:rgba(29,78,216,.04);}
 [data-theme="light"] .tabs{border-bottom-color:rgba(0,0,0,.1);}
-[data-theme="light"] select{background:#fff;color:#0a0a0a;}
-[data-theme="light"] .search-wrap input{background:#fff;color:#0a0a0a;}
+[data-theme="light"] select{background:#fff;color:#0f172a;}
+[data-theme="light"] .search-wrap input{background:#fff;color:#0f172a;}
+[data-theme="light"] .skill-ac input{background:#fff;color:#0f172a;}
+
+/* ── AI-ACTIVE PALETTE (deep violet) ────────────────────────────────── */
+[data-ai="active"]{
+  --pur:#3b82f6;--pur2:#2563eb;--pur-lo:rgba(59,130,246,.12);--pur-glow:rgba(59,130,246,.35);
+  --accent:#3b82f6;--accent2:#2563eb;
+}
+[data-ai="active"][data-theme="light"]{
+  --accent:#1d4ed8;--accent2:#1e40af;
+  --pur:#1d4ed8;--pur2:#1e40af;--pur-lo:rgba(29,78,216,.1);--pur-glow:rgba(29,78,216,.28);
+}
+[data-ai="active"] .nav{background:rgba(10,10,14,.96)!important;border-bottom-color:rgba(59,130,246,.3);}
+[data-ai="active"][data-theme="light"] .nav{background:rgba(248,250,252,.97)!important;border-bottom:1px solid rgba(29,78,216,.25);box-shadow:0 4px 24px rgba(29,78,216,.07);}
+[data-ai="active"][data-theme="light"] .btn-p{box-shadow:0 0 14px rgba(29,78,216,.35),0 2px 8px rgba(29,78,216,.2);}
+[data-ai="active"][data-theme="light"] .jcard:hover{border-color:rgba(29,78,216,.4);box-shadow:0 0 16px rgba(29,78,216,.1);}
+[data-ai="active"][data-theme="light"] .ai-nav-btn{background:rgba(29,78,216,.1);border-color:rgba(29,78,216,.4);color:#1d4ed8;box-shadow:0 0 14px rgba(29,78,216,.2);}
+[data-ai="active"] .logo-em{color:var(--pur2);}
+[data-ai="active"] .ai-nav-btn{
+  background:rgba(59,130,246,.1);
+  border-color:rgba(59,130,246,.45);color:#2563eb;
+  box-shadow:0 0 14px rgba(59,130,246,.22),0 0 0 1px rgba(59,130,246,.1);
+  animation:ai-pulse 2.8s ease-in-out infinite;
+}
+[data-ai="active"] .ai-nav-btn:hover{
+  background:rgba(59,130,246,.16);
+  box-shadow:0 0 22px rgba(59,130,246,.35),0 0 0 1px rgba(59,130,246,.18);
+}
+[data-ai="active"] .tab.active{border-bottom-color:#3b82f6;color:#3b82f6;}
+[data-ai="active"][data-theme="light"] .tab.active{border-bottom-color:#1d4ed8;color:#1d4ed8;}
+[data-ai="active"] .btn-p{background:var(--pur);}
+[data-ai="active"] .jcard:hover{border-color:rgba(59,130,246,.4);}
+[data-ai="active"] .ai-panel{border-color:rgba(59,130,246,.2);background:rgba(59,130,246,.04);}
+[data-ai="active"] .ai-panel-hdr{color:var(--pur2);}
+[data-ai="active"] .ai-tab.active{border-bottom-color:#3b82f6;color:#3b82f6;}
+[data-ai="active"][data-theme="light"] .ai-tab.active{border-bottom-color:#1d4ed8;color:#1d4ed8;}
+[data-ai="active"] .ai-score-big.strong{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.25);}
+[data-ai="active"] .hero-eyebrow{color:var(--pur2);}
+
+@keyframes ai-pulse{0%,100%{box-shadow:0 0 10px rgba(59,130,246,.18),0 0 0 1px rgba(59,130,246,.06);}50%{box-shadow:0 0 22px rgba(59,130,246,.38),0 0 0 1px rgba(59,130,246,.18);}}
+
+/* AI-locked panel (shown when AI not configured) */
+.ai-locked{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2.5rem 1.5rem;gap:.75rem;text-align:center;}
+.ai-locked-ico{font-size:2rem;opacity:.5;}
+.ai-locked-title{font-size:.82rem;font-weight:600;color:var(--txt2);}
+.ai-locked-sub{font-size:.73rem;color:var(--txt3);line-height:1.5;max-width:240px;}
+.ai-locked-btn{margin-top:.25rem;padding:7px 18px;background:var(--pur);color:#fff;border:none;border-radius:8px;font-size:.73rem;font-weight:600;cursor:pointer!important;font-family:'Inter',sans-serif;transition:opacity .15s;}
+.ai-locked-btn:hover{opacity:.85;}
+
+/* AI-active navbar accent bar */
+[data-ai="active"] .nav::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#3b82f6,#2563eb,#3b82f6,transparent);opacity:.8;}
+[data-ai="active"][data-theme="light"] .nav::after{background:linear-gradient(90deg,transparent,rgba(29,78,216,.6),#2563eb,rgba(29,78,216,.6),transparent);opacity:1;}
+
+
+/* ── HAMBURGER MENU ─────────────────────────────────────────────── */
+.hbg-wrap{position:relative;}
+.hbg-btn{background:none;border:1px solid var(--bdr2);border-radius:9px;padding:8px 10px;color:var(--txt2);cursor:pointer!important;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;transition:all .18s;height:36px;}
+.hbg-btn:hover{border-color:var(--pur);color:var(--pur);background:var(--pur-lo);}
+.hbg-line{display:block;width:15px;height:1.8px;background:currentColor;border-radius:2px;transition:all .25s cubic-bezier(.4,0,.2,1);transform-origin:center;}
+@keyframes menuIn{from{opacity:0;transform:translateY(-6px) scale(.975);}to{opacity:1;transform:translateY(0) scale(1);}}
+.hbg-menu{position:absolute;top:calc(100% + 8px);right:0;width:210px;background:var(--bg2);border:1px solid var(--bdr2);border-radius:14px;padding:.3rem .3rem .4rem;z-index:300;box-shadow:0 16px 48px rgba(0,0,0,.6),0 0 0 0.5px rgba(59,130,246,.08);overflow:hidden;animation:menuIn .18s cubic-bezier(.16,1,.3,1) forwards;backdrop-filter:blur(24px);}
+.hbg-section{padding:.55rem .7rem .18rem;font-size:.56rem;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--txt3);}
+.hbg-item{display:flex;align-items:center;gap:9px;padding:6.5px 9px;border-radius:8px;font-size:.79rem;font-weight:500;color:var(--txt2);cursor:pointer!important;transition:background .1s,color .1s;width:100%;border:none;background:none;text-align:left;font-family:'Inter',sans-serif;}
+.hbg-item:hover{background:var(--surf3);color:var(--txt);}
+.hbg-item.ai-on{color:var(--pur2);}
+.hbg-item.ai-on:hover{background:var(--pur-lo);}
+.hbg-item.danger{color:var(--txt3);}
+.hbg-item.danger:hover{background:rgba(239,68,68,.09);color:var(--red);}
+.hbg-item.signout{color:var(--txt3);}
+.hbg-item.signout:hover{background:rgba(239,68,68,.09);color:var(--red);}
+.hbg-sep{height:1px;background:var(--bdr);margin:.28rem .4rem;}
+.hbg-ico{font-size:.82rem;width:18px;text-align:center;flex-shrink:0;opacity:.7;}
+.hbg-item:hover .hbg-ico{opacity:1;}
+.hbg-item.ai-on .hbg-ico{opacity:1;}
+
+/* ── PROFILE PAGE ────────────────────────────────────────────────── */
+.pf-ov{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;overflow:hidden;}
+.pf-hdr{height:60px;display:flex;align-items:center;padding:0 1.5rem;gap:1rem;border-bottom:1px solid var(--bdr);background:var(--bg2);flex-shrink:0;}
+.pf-hdr-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;letter-spacing:-.3px;}
+.pf-hdr-sub{font-size:.72rem;color:var(--txt3);}
+.pf-body{display:flex;flex:1;overflow:hidden;}
+.pf-nav{width:210px;flex-shrink:0;border-right:1px solid var(--bdr);padding:1.2rem .8rem;display:flex;flex-direction:column;gap:3px;background:var(--bg2);overflow-y:auto;}
+.pf-nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;font-size:.8rem;font-weight:500;color:var(--txt2);cursor:pointer!important;transition:all .12s;}
+.pf-nav-item:hover{background:var(--surf);color:var(--txt);}
+.pf-nav-item.on{background:var(--pur-lo);color:var(--pur2);font-weight:600;}
+.pf-content{flex:1;overflow-y:auto;padding:2rem;}
+.pf-sec-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;letter-spacing:-.4px;color:var(--txt);margin-bottom:1.4rem;}
+.pf-field{margin-bottom:1.1rem;}
+.pf-label{font-size:.67rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--txt3);margin-bottom:.4rem;}
+.pf-input{width:100%;padding:9px 13px;background:var(--surf);border:1.5px solid var(--bdr);border-radius:9px;color:var(--txt);font-family:'Inter',sans-serif;font-size:.84rem;outline:none;transition:border-color .15s;}
+.pf-input:focus{border-color:var(--pur);}
+.pf-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:680px){.pf-row{grid-template-columns:1fr;}}
+.pf-tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;font-size:.72rem;color:var(--txt2);margin:3px;}
+.pf-tag-rm{cursor:pointer!important;color:var(--txt3);font-size:.75rem;line-height:1;}
+.pf-tag-rm:hover{color:var(--red);}
+.pf-add-row{display:flex;gap:8px;}
+.pf-tag-suggestions{display:flex;flex-wrap:wrap;gap:4px;margin-top:.45rem;}
+.pf-sug{font-size:.65rem;padding:2px 9px;border-radius:12px;border:1px dashed var(--bdr2);color:var(--txt3);cursor:pointer!important;transition:all .1s;}
+.pf-sug:hover{border-color:var(--pur);color:var(--pur);}
+.pf-resume-zone{border:2px dashed var(--bdr2);border-radius:14px;padding:2.2rem;text-align:center;cursor:pointer!important;transition:all .2s;margin-bottom:1.5rem;background:var(--surf);}
+.pf-resume-zone:hover,.pf-resume-zone.drag{border-color:var(--pur);background:var(--pur-lo);}
+.pf-resume-ico{font-size:2.2rem;margin-bottom:.5rem;}
+.pf-resume-title{font-size:.9rem;font-weight:700;color:var(--txt);margin-bottom:.25rem;}
+.pf-resume-sub{font-size:.73rem;color:var(--txt3);}
+.pf-footer{display:flex;align-items:center;gap:10px;padding:1rem 1.5rem;border-top:1px solid var(--bdr);background:var(--bg2);flex-shrink:0;}
+.pf-mode-btn{padding:6px 14px;border-radius:7px;border:1px solid var(--bdr2);background:var(--surf);color:var(--txt2);font-size:.78rem;cursor:pointer!important;font-family:'Inter',sans-serif;transition:all .12s;}
+.pf-mode-btn.on{background:var(--pur);border-color:var(--pur);color:#fff;}
+
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;min-height:100vh;overflow-x:hidden;cursor:default;-webkit-font-smoothing:antialiased;transition:background .35s,color .25s;padding-top:var(--hh);}
 *{cursor:default;}
@@ -81,7 +193,7 @@ a,button,select,input,label,[role="button"]{cursor:pointer!important;}
 .nav-group .btn:hover{background:var(--surf2);opacity:1;}
 /* Settings dropdown */
 .settings-wrap{position:relative;}
-.settings-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:210px;background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--r);padding:.45rem 0;z-index:300;box-shadow:0 12px 36px rgba(0,0,0,.5);}
+.settings-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:220px;background:var(--bg2);border:1px solid var(--bdr2);border-radius:14px;padding:.4rem .4rem .5rem;z-index:300;box-shadow:0 24px 64px rgba(0,0,0,.6),0 0 0 0.5px rgba(59,130,246,.08);backdrop-filter:blur(24px);animation:menuIn .18s cubic-bezier(.16,1,.3,1) forwards;}
 .smenu-sec{padding:.35rem .85rem .1rem;font-size:.59rem;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--txt3);}
 .smenu-row{display:flex;align-items:center;gap:9px;padding:.42rem .85rem;font-size:.76rem;color:var(--txt2);cursor:pointer!important;transition:background .12s,color .12s;}
 .smenu-row:hover{background:var(--surf2);color:var(--txt);}
@@ -95,10 +207,12 @@ a,button,select,input,label,[role="button"]{cursor:pointer!important;}
 .b-onsite{background:rgba(239,68,68,.09);color:#f87171;border:1px solid rgba(239,68,68,.17);}
 .b-portal{background:rgba(99,102,241,.09);color:#a5b4fc;border:1px solid rgba(99,102,241,.17);}
 .b-new{background:rgba(56,189,248,.09);color:#7dd3fc;border:1px solid rgba(56,189,248,.17);}
-.b-reviewed{background:rgba(124,58,237,.09);color:#a78bfa;border:1px solid rgba(124,58,237,.17);}
+.b-reviewed{background:rgba(59,130,246,.07);color:#3b82f6;border:1px solid rgba(59,130,246,.15);}
+[data-theme="light"] .b-reviewed{color:#1d4ed8;}
 .b-applied{background:rgba(34,197,94,.09);color:#4ade80;border:1px solid rgba(34,197,94,.17);}
 .b-skipped,.b-failed{background:rgba(239,68,68,.07);color:#f87171;border:1px solid rgba(239,68,68,.12);}
-.b-applying{background:rgba(249,115,22,.09);color:#fb923c;border:1px solid rgba(249,115,22,.17);}
+.b-applying{background:rgba(59,130,246,.09);color:#2563eb;border:1px solid rgba(59,130,246,.17);}
+[data-theme="light"] .b-applying{color:#1e40af;}
 .match-score{display:inline-flex;align-items:center;padding:2px 7px;border-radius:5px;font-size:.61rem;font-weight:700;font-family:var(--mono);background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.2);}
 .match-score.mid{background:rgba(245,158,11,.1);color:#fbbf24;border-color:rgba(245,158,11,.2);}
 .match-score.low{background:rgba(99,102,241,.09);color:#a5b4fc;border-color:rgba(99,102,241,.15);}
@@ -112,10 +226,10 @@ a,button,select,input,label,[role="button"]{cursor:pointer!important;}
 .stat-n{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;letter-spacing:-1.5px;line-height:1;}
 .stat-l{font-size:.59rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--txt2);margin-top:4px;}
 /* Resume bar */
-.resume-bar{display:flex;align-items:flex-start;gap:7px;flex-wrap:wrap;padding:.55rem 1rem;background:rgba(249,115,22,.04);border-bottom:1px solid rgba(249,115,22,.1);font-size:.75rem;max-height:80px;overflow-y:auto;transition:max-height .25s ease;}.resume-bar.expanded{max-height:160px;}
+.resume-bar{display:flex;align-items:flex-start;gap:7px;flex-wrap:wrap;padding:.55rem 1rem;background:rgba(59,130,246,.04);border-bottom:1px solid rgba(59,130,246,.1);font-size:.75rem;max-height:80px;overflow-y:auto;transition:max-height .25s ease;}.resume-bar.expanded{max-height:160px;}
 .resume-name{color:var(--accent2);font-family:var(--mono);font-size:.68rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px;}
 .skill-tags{display:flex;gap:4px;flex-wrap:wrap;align-items:center;flex:1;}
-.skill-tag{display:inline-flex;align-items:center;padding:1px 7px;border-radius:4px;font-size:.6rem;font-weight:600;font-family:var(--mono);background:rgba(249,115,22,.08);color:var(--accent2);border:1px solid rgba(249,115,22,.18);}
+.skill-tag{display:inline-flex;align-items:center;padding:1px 7px;border-radius:4px;font-size:.6rem;font-weight:600;font-family:var(--mono);background:rgba(59,130,246,.08);color:var(--accent2);border:1px solid rgba(59,130,246,.18);}
 .sk-rm{margin-left:4px;cursor:pointer!important;opacity:.55;}
 .sk-rm:hover{opacity:1;}
 /* Layout */
@@ -128,12 +242,32 @@ a,button,select,input,label,[role="button"]{cursor:pointer!important;}
 /* Filters */
 .filters{display:flex;gap:7px;margin-bottom:.85rem;flex-wrap:wrap;align-items:center;}
 .search-wrap{flex:1;min-width:150px;position:relative;}
-.search-wrap input{width:100%;background:var(--surf);border:1px solid var(--bdr);color:var(--txt);font-size:.8rem;font-family:'Inter',sans-serif;padding:.5rem .85rem .5rem 2.1rem;border-radius:8px;outline:none;transition:background .15s,border-color .15s;cursor:text!important;}
+.search-wrap input{width:100%;background:var(--surf);border:1px solid var(--bdr);color:var(--txt);font-size:.74rem;font-family:'Inter',sans-serif;padding:5px .75rem 5px 2rem;border-radius:8px;outline:none;transition:background .15s,border-color .15s;cursor:text!important;}
 .search-wrap input::placeholder{color:var(--txt3);}
-.search-wrap input:focus{border-color:rgba(249,115,22,.45);background:var(--surf2);}
-.search-ico{position:absolute;left:.72rem;top:50%;transform:translateY(-50%);color:var(--txt3);pointer-events:none;font-size:.8rem;}
+.search-wrap input:focus{border-color:rgba(59,130,246,.5);background:var(--surf2);}
+.search-ico{position:absolute;left:.65rem;top:50%;transform:translateY(-50%);color:var(--txt3);pointer-events:none;font-size:.74rem;}
 select{background:var(--surf);border:1px solid var(--bdr);color:var(--txt);font-size:.78rem;font-family:'Inter',sans-serif;padding:.5rem .8rem;border-radius:8px;outline:none;cursor:pointer!important;transition:background .15s,border-color .15s;}
-select:focus{border-color:rgba(249,115,22,.4);}
+select:focus{border-color:rgba(59,130,246,.55);}
+/* ── Custom Dropdown ───────────────────────────────────────────── */
+.dd-wrap{position:relative;width:100%;}
+.dd-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:.6rem .9rem;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;color:var(--txt);font-size:.82rem;font-family:'Inter',sans-serif;cursor:pointer!important;transition:border-color .15s,background .15s;text-align:left;line-height:1.4;}
+.dd-trigger:hover{border-color:var(--bdr2);background:var(--surf2);}
+.dd-trigger.open{border-color:rgba(59,130,246,.55);background:var(--surf2);box-shadow:0 0 0 3px rgba(59,130,246,.08);}
+.dd-val{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dd-val-sub{font-size:.68rem;color:var(--txt3);font-weight:400;margin-left:6px;}
+.dd-chevron{flex-shrink:0;color:var(--txt3);font-size:10px;transition:transform .2s cubic-bezier(.16,1,.3,1);}
+.dd-trigger.open .dd-chevron{transform:rotate(180deg);}
+.dd-menu{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg2);border:1px solid var(--bdr2);border-radius:12px;padding:.35rem;z-index:600;box-shadow:0 20px 48px rgba(0,0,0,.5),0 0 0 0.5px rgba(59,130,246,.1);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);animation:menuIn .18s cubic-bezier(.16,1,.3,1) forwards;overflow:hidden;}
+.dd-opt{display:flex;align-items:center;gap:10px;padding:.6rem .9rem;border-radius:8px;font-size:.82rem;color:var(--txt2);cursor:pointer!important;transition:background .1s,color .1s;line-height:1.35;}
+.dd-opt:hover{background:var(--surf3);color:var(--txt);}
+.dd-opt.active{background:rgba(59,130,246,.09);color:var(--pur);}
+.dd-opt-label{flex:1;min-width:0;}
+.dd-opt-label strong{display:block;font-weight:500;font-size:.82rem;}
+.dd-opt-label span{display:block;font-size:.69rem;color:var(--txt3);margin-top:1px;}
+.dd-opt.active .dd-opt-label span{color:rgba(59,130,246,.6);}
+.dd-check{font-size:.72rem;color:var(--pur);flex-shrink:0;opacity:0;}
+.dd-opt.active .dd-check{opacity:1;}
+.dd-sep{height:1px;background:var(--bdr);margin:.3rem .5rem;}
 /* Tabs */
 .tabs{display:flex;border-bottom:1px solid var(--bdr);margin-bottom:.9rem;}
 .tab{padding:6px 14px;font-size:.74rem;font-weight:500;color:var(--txt2);cursor:pointer!important;border:none;background:none;font-family:'Inter',sans-serif;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s;white-space:nowrap;}
@@ -143,7 +277,7 @@ select:focus{border-color:rgba(249,115,22,.4);}
 .jlist{display:flex;flex-direction:column;gap:6px;}
 .jcard{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:1rem 1.1rem;cursor:pointer;display:flex;gap:.9rem;align-items:flex-start;transition:background .18s,border-color .18s,box-shadow .18s;position:relative;overflow:hidden;}
 .jcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);opacity:0;transition:opacity .2s;}
-.jcard:hover{border-color:rgba(249,115,22,.25);background:rgba(249,115,22,.02);box-shadow:0 4px 20px rgba(0,0,0,.15);}
+.jcard:hover{border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.02);box-shadow:0 4px 20px rgba(0,0,0,.15);}
 .jcard:hover::before{opacity:1;}
 .av{width:40px;height:40px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:-.3px;}
 .av-unknown{background:rgba(128,128,150,.08)!important;color:rgba(180,180,200,.35)!important;border:1px dashed rgba(128,128,150,.18)!important;}
@@ -170,7 +304,7 @@ select:focus{border-color:rgba(249,115,22,.4);}
 .lrow{display:flex;gap:8px;padding:3px 0;border-bottom:1px solid rgba(128,128,128,.06);line-height:1.45;}
 .lt{color:var(--txt3);flex-shrink:0;min-width:52px;}
 .lm{color:var(--txt2);word-break:break-word;}
-.lm.pos{color:#4ade80;}.lm.err{color:#f87171;}.lm.done{color:#a78bfa;}
+.lm.pos{color:#4ade80;}.lm.err{color:#f87171;}.lm.done{color:#3b82f6;}
 .log-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:7px;color:var(--txt3);font-size:.72rem;text-align:center;}
 /* Drawer overlay */
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:200;display:flex;justify-content:flex-end;align-items:stretch;}
@@ -181,7 +315,7 @@ select:focus{border-color:rgba(249,115,22,.4);}
 .dp-lbl{font-size:.62rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--txt3);margin-bottom:.4rem;}
 .dp-val{font-size:.82rem;color:var(--txt2);line-height:1.65;}
 textarea{width:100%;background:var(--surf);border:1px solid var(--bdr);color:var(--txt);font-family:var(--mono);font-size:.73rem;padding:.65rem .75rem;border-radius:9px;resize:vertical;line-height:1.6;outline:none;transition:border-color .15s;cursor:text!important;}
-textarea:focus{border-color:rgba(249,115,22,.4);}
+textarea:focus{border-color:rgba(59,130,246,.55);}
 /* Link preview */
 .preview-wrap{margin-top:1rem;border-radius:var(--r);overflow:hidden;border:1px solid var(--bdr);}
 .preview-bar{display:flex;align-items:center;justify-content:space-between;padding:.4rem .8rem;background:var(--bg3);border-bottom:1px solid var(--bdr);font-size:.62rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--txt3);}
@@ -194,27 +328,36 @@ textarea:focus{border-color:rgba(249,115,22,.4);}
 .footer-txt{font-size:.72rem;color:var(--txt3);letter-spacing:.01em;}
 .footer-brand{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:800;letter-spacing:-.3px;color:var(--txt);}
 /* Filter menu */
-.fmenu-wrap{position:relative;overflow:visible;z-index:300;}
+.fmenu-wrap{position:relative;overflow:visible;z-index:10;}
 .fmenu-btn{position:relative;}
 .fmenu-dot{position:absolute;top:-3px;right:-3px;width:7px;height:7px;border-radius:50%;background:var(--accent2);border:1.5px solid var(--bg);}
-.fmenu{position:fixed;width:300px;max-height:70vh;overflow-y:auto;overscroll-behavior:contain;background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--r);padding:.6rem 0;z-index:50;box-shadow:0 12px 40px rgba(0,0,0,.2);}.fmenu::-webkit-scrollbar{width:4px;}.fmenu::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:4px;}
+.fmenu{position:fixed;width:310px;max-height:72vh;overflow-y:auto;overscroll-behavior:contain;background:var(--bg2);border:1px solid var(--bdr2);border-radius:16px;padding:.5rem .5rem .7rem;z-index:350;box-shadow:0 24px 64px rgba(0,0,0,.6),0 0 0 0.5px rgba(59,130,246,.08);backdrop-filter:blur(24px);animation:menuIn .2s cubic-bezier(.16,1,.3,1) forwards;}.fmenu::-webkit-scrollbar{width:3px;}.fmenu::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:3px;}
+.ai-recents-dd{position:absolute;top:calc(100% + 5px);left:0;right:0;background:var(--bg2);border:1px solid var(--bdr2);border-radius:14px;z-index:400;overflow:hidden;box-shadow:0 20px 56px rgba(0,0,0,.55),0 0 0 0.5px rgba(59,130,246,.08);backdrop-filter:blur(22px);animation:menuIn .18s cubic-bezier(.16,1,.3,1) forwards;}
+.ai-recents-hdr{display:flex;justify-content:space-between;align-items:center;padding:.5rem .85rem .3rem;border-bottom:1px solid var(--bdr);}
+.ai-recents-lbl{font-size:.59rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--txt3);}
+.ai-recents-clear{background:none;border:none;cursor:pointer!important;font-size:.68rem;color:var(--txt3);padding:2px 8px;border-radius:6px;transition:color .1s,background .1s;font-family:inherit;}
+.ai-recents-clear:hover{color:var(--txt);background:var(--surf2);}
+.ai-recent-item{display:flex;align-items:center;justify-content:space-between;padding:.48rem .85rem;cursor:pointer!important;font-size:.8rem;color:var(--txt2);gap:8px;transition:background .1s,color .1s;}
+.ai-recent-item:hover{background:var(--surf2);color:var(--txt);}
+.ai-recent-rm{background:none;border:none;cursor:pointer!important;color:var(--txt3);font-size:.7rem;padding:2px 7px;border-radius:5px;flex-shrink:0;transition:color .1s,background .1s;font-family:inherit;}
+.ai-recent-rm:hover{color:var(--red);background:rgba(239,68,68,.08);}
 .fmenu-sec{padding:.3rem .9rem .1rem;font-size:.58rem;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--txt3);margin-top:.3rem;}
 .fmenu-row{display:flex;align-items:center;gap:10px;padding:.38rem .9rem;font-size:.78rem;color:var(--txt2);}
 .fmenu-row label{font-size:.73rem;color:var(--txt2);min-width:60px;}
 .fmenu-row select{flex:1;padding:.32rem .6rem;font-size:.75rem;}
 .fmenu-chips{display:flex;gap:4px;flex-wrap:wrap;padding:.25rem .9rem .5rem;}
 .fchip{padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:600;cursor:pointer!important;border:1px solid var(--bdr);background:var(--surf);color:var(--txt2);transition:all .12s;}
-.fchip:hover,.fchip.on{background:rgba(249,115,22,.1);border-color:var(--accent2);color:var(--accent2);}
+.fchip:hover,.fchip.on{background:rgba(59,130,246,.1);border-color:var(--accent2);color:var(--accent2);}
 .fmenu-div{height:1px;background:var(--bdr);margin:.4rem 0;}
 /* Skill autocomplete */
 .skill-ac{position:relative;flex:1;min-width:180px;}
-.skill-ac input{width:100%;background:var(--surf);border:1px solid var(--bdr);color:var(--txt);font-size:.8rem;font-family:'Inter',sans-serif;padding:.5rem .85rem .5rem 2.1rem;border-radius:8px;outline:none;transition:background .15s,border-color .15s;cursor:text!important;}
-.skill-ac input:focus{border-color:rgba(249,115,22,.45);background:var(--surf2);}
+.skill-ac input{width:100%;background:var(--surf);border:1px solid var(--bdr);color:var(--txt);font-size:.74rem;font-family:'Inter',sans-serif;padding:5px .75rem 5px 2rem;border-radius:8px;outline:none;transition:background .15s,border-color .15s;cursor:text!important;}
+.skill-ac input:focus{border-color:rgba(59,130,246,.5);background:var(--surf2);}
 .skill-ac input::placeholder{color:var(--txt3);}
-.ac-list{position:absolute;top:calc(100% + 4px);left:0;min-width:220px;background:var(--bg2);border:1px solid var(--bdr2);border-radius:var(--r-sm);padding:.3rem 0;z-index:500;box-shadow:0 8px 28px rgba(0,0,0,.45);max-height:200px;overflow-y:auto;}
+.ac-list{position:absolute;top:calc(100% + 4px);left:0;min-width:220px;background:var(--bg2);border:1px solid var(--bdr2);border-radius:12px;padding:.3rem .3rem .4rem;z-index:500;box-shadow:0 20px 56px rgba(0,0,0,.55),0 0 0 0.5px rgba(59,130,246,.08);backdrop-filter:blur(20px);max-height:200px;overflow-y:auto;animation:menuIn .16s cubic-bezier(.16,1,.3,1) forwards;}
 .ac-item{padding:.38rem .85rem;font-size:.76rem;color:var(--txt2);cursor:pointer!important;transition:background .1s,color .1s;font-family:var(--mono);}
 .ac-item:hover{background:var(--surf2);color:var(--txt);}
-.tab-count{font-size:.6rem;font-weight:700;background:rgba(249,115,22,.15);color:var(--accent2);border-radius:10px;padding:1px 6px;margin-left:4px;font-family:var(--mono);}
+.tab-count{font-size:.6rem;font-weight:700;background:rgba(59,130,246,.15);color:var(--accent2);border-radius:10px;padding:1px 6px;margin-left:4px;font-family:var(--mono);}
 .filters-row{display:flex;gap:7px;margin-bottom:.85rem;align-items:center;flex-wrap:nowrap;}
 .job-scroll{padding-bottom:5rem;}
 
@@ -222,7 +365,7 @@ textarea:focus{border-color:rgba(249,115,22,.4);}
 
 .sticky-bar{padding-bottom:2px;overflow:visible;}
 .modal-form input{background:var(--surf);border:1px solid var(--bdr);color:var(--txt);font-size:.78rem;font-family:'Inter',sans-serif;padding:.45rem .75rem;border-radius:8px;outline:none;transition:border-color .15s;cursor:text!important;}
-.modal-form input:focus{border-color:rgba(249,115,22,.45);}
+.modal-form input:focus{border-color:rgba(59,130,246,.55);}
 .modal-form input::placeholder{color:var(--txt3);}
 /* About modal */
 .about-modal{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(20px);z-index:600;display:flex;align-items:center;justify-content:center;padding:1.5rem;overflow-y:auto;}
@@ -236,12 +379,12 @@ textarea:focus{border-color:rgba(249,115,22,.4);}
 .about-feat-title{font-size:.8rem;font-weight:700;color:var(--txt);margin-bottom:.2rem;}
 .about-feat-desc{font-size:.7rem;color:var(--txt2);line-height:1.5;}
 .about-portals{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:2rem;}
-.about-portal-tag{padding:4px 12px;border-radius:20px;font-size:.68rem;font-weight:600;background:rgba(249,115,22,.08);color:var(--accent2);border:1px solid rgba(249,115,22,.18);}
+.about-portal-tag{padding:4px 12px;border-radius:20px;font-size:.68rem;font-weight:600;background:rgba(59,130,246,.08);color:var(--accent2);border:1px solid rgba(59,130,246,.18);}
 .about-close{width:100%;padding:.75rem;border-radius:12px;background:var(--accent);border:none;color:#fff;font-size:.85rem;font-weight:600;cursor:pointer!important;font-family:'Inter',sans-serif;transition:background .15s;}
 .about-close:hover{background:var(--accent2);}
 
 #theme-overlay{position:fixed;inset:0;z-index:9999;pointer-events:none;transform:translateY(-100%);}
-#theme-overlay .scan-line{position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,rgba(249,115,22,.8),transparent);box-shadow:0 0 20px rgba(249,115,22,.6);}
+#theme-overlay .scan-line{position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,rgba(59,130,246,.8),transparent);box-shadow:0 0 20px rgba(59,130,246,.6);}
 
 .cfg-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(12px);z-index:600;display:flex;align-items:center;justify-content:center;padding:1.5rem;}
 .cfg-card{background:var(--bg2);border:1px solid var(--bdr2);border-radius:20px;padding:2rem;max-width:620px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.4);}
@@ -271,8 +414,8 @@ textarea:focus{border-color:rgba(249,115,22,.4);}
 .jcard{position:relative;}
 .jcard-cb{position:absolute;top:1rem;left:.8rem;width:16px;height:16px;accent-color:var(--accent);cursor:pointer;opacity:0;transition:opacity .15s;z-index:2;}
 .jcard:hover .jcard-cb,.jcard-cb:checked{opacity:1;}
-.jcard.selected{border-color:rgba(249,115,22,.4);background:rgba(249,115,22,.04);}
-.bulk-bar{position:sticky;bottom:52px;left:0;right:0;z-index:50;display:flex;align-items:center;gap:10px;padding:.7rem 1.2rem;background:var(--accent);color:#fff;border-radius:12px;margin:0 0 .5rem;box-shadow:0 8px 24px rgba(249,115,22,.35);animation:slideUp .2s ease;}
+.jcard.selected{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.04);}
+.bulk-bar{position:sticky;bottom:52px;left:0;right:0;z-index:50;display:flex;align-items:center;gap:10px;padding:.7rem 1.2rem;background:var(--accent);color:#fff;border-radius:12px;margin:0 0 .5rem;box-shadow:0 8px 24px rgba(59,130,246,.35);animation:slideUp .2s ease;}
 @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .bulk-bar .bb-count{font-weight:700;font-size:.85rem;flex:1;}
 .bulk-bar button{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:.75rem;font-weight:600;padding:5px 14px;border-radius:8px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;}
@@ -292,7 +435,7 @@ textarea:focus{border-color:rgba(249,115,22,.4);}
 .acct-input:focus{border-color:var(--accent);}
 .acct-btn{width:100%;padding:.65rem;border-radius:10px;border:none;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:background .15s;}
 .acct-btn.primary{background:var(--accent);color:#fff;}
-.acct-btn.primary:hover{background:#ea6c0a;}
+.acct-btn.primary:hover{background:#1e40af;}
 .acct-btn.danger{background:rgba(239,68,68,.08);color:var(--red);border:1px solid rgba(239,68,68,.2);margin-top:.5rem;}
 .acct-btn.danger:hover{background:rgba(239,68,68,.15);}
 .acct-divider{height:1px;background:var(--bdr);margin:1.2rem 0;}
@@ -300,24 +443,24 @@ textarea:focus{border-color:rgba(249,115,22,.4);}
 .ai-search-bar{display:flex;gap:8px;padding:0 0 1rem 0;align-items:center;}
 .ai-input-wrap{flex:1;position:relative;}
 .ai-input{width:100%;background:var(--surf);border:1.5px solid var(--bdr);color:var(--txt);font-size:.88rem;font-family:'Inter',sans-serif;padding:.65rem 1rem .65rem 2.4rem;border-radius:10px;outline:none;transition:border-color .2s,box-shadow .2s;}
-.ai-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(249,115,22,.1);}
+.ai-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.1);}
 .ai-input::placeholder{color:var(--txt3);}
 .ai-ico{position:absolute;left:.8rem;top:50%;transform:translateY(-50%);font-size:.9rem;pointer-events:none;}
 .ai-btn{padding:.65rem 1.2rem;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;transition:background .15s;}
-.ai-btn:hover{background:#ea6c0a;}
+.ai-btn:hover{background:#1e40af;}
 .ai-btn:disabled{opacity:.6;cursor:default;}
 .ai-mode-toggle{display:flex;align-items:center;gap:6px;font-size:.72rem;color:var(--txt3);cursor:pointer;white-space:nowrap;padding:0 4px;}
 .ai-mode-toggle input{accent-color:var(--accent);}
 .ai-result-hdr{padding:.5rem 1.5rem .3rem;font-size:.68rem;color:var(--txt3);font-family:var(--mono);display:flex;align-items:center;gap:8px;}
 .ai-score{display:inline-flex;align-items:center;gap:3px;padding:1px 7px;border-radius:10px;font-size:.62rem;font-weight:700;font-family:var(--mono);}
 .ai-score.high{background:rgba(34,197,94,.12);color:#22c55e;}
-.ai-score.mid{background:rgba(249,115,22,.12);color:var(--accent);}
+.ai-score.mid{background:rgba(59,130,246,.12);color:var(--accent);}
 .ai-score.low{background:rgba(128,128,128,.1);color:var(--txt3);}
 .ai-reasons{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
 .ai-reason-tag{font-size:.6rem;color:var(--txt3);background:var(--surf);border:1px solid var(--bdr);border-radius:6px;padding:1px 6px;font-family:var(--mono);}
 
-.go-top{position:fixed;bottom:60px;right:1.5rem;width:38px;height:38px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(249,115,22,.35);transition:opacity .2s,transform .2s;z-index:200;}
-.go-top:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(249,115,22,.45);}
+.go-top{position:fixed;bottom:60px;right:1.5rem;width:38px;height:38px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(59,130,246,.35);transition:opacity .2s,transform .2s;z-index:200;}
+.go-top:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,130,246,.45);}
 .go-top.hidden{opacity:0;pointer-events:none;transform:translateY(8px);}
 
 [data-theme="light"] .btn-ghost{color:#1a1a1a;opacity:.8;}
@@ -347,13 +490,86 @@ textarea:focus{border-color:rgba(249,115,22,.4);}
 .apply-screenshot{width:100%;border-radius:10px;border:1px solid var(--bdr);margin:1rem 0;max-height:400px;object-fit:contain;background:var(--bg3);}
 .apply-fields{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:1rem;}
 .apply-field{font-size:.72rem;padding:4px 10px;border-radius:6px;background:rgba(34,197,94,.08);color:#16a34a;border:1px solid rgba(34,197,94,.2);}
-.apply-manual{font-size:.72rem;padding:4px 10px;border-radius:6px;background:rgba(249,115,22,.08);color:var(--accent);border:1px solid rgba(249,115,22,.2);}
+.apply-manual{font-size:.72rem;padding:4px 10px;border-radius:6px;background:rgba(59,130,246,.08);color:var(--accent);border:1px solid rgba(59,130,246,.2);}
 .apply-btns{display:flex;gap:8px;margin-top:1rem;}
 .apply-btns .btn-submit{flex:1;padding:.75rem;background:#16a34a;border:none;border-radius:10px;color:#fff;font-weight:700;font-size:.9rem;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;}
 .apply-btns .btn-submit:hover{background:#15803d;}
 .apply-btns .btn-cancel-apply{padding:.75rem 1.5rem;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;color:var(--txt2);font-weight:600;font-size:.9rem;cursor:pointer;font-family:'Inter',sans-serif;}
 .apply-status{text-align:center;padding:2rem;font-size:.85rem;color:var(--txt2);}
 .apply-spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--bdr2);border-top-color:var(--accent);border-radius:50%;animation:rot .6s linear infinite;margin-bottom:.75rem;}
+
+/* ── AI Settings Modal ─────────────────────────────────────────────────── */
+.ai-settings-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(14px);z-index:650;display:flex;align-items:center;justify-content:center;padding:1.5rem;}
+.ai-settings-card{background:var(--bg2);border:1px solid var(--bdr2);border-radius:20px;padding:2rem;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.4);}
+.ai-settings-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
+.ai-settings-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;letter-spacing:-.3px;}
+.ai-prov-btns{display:flex;gap:8px;margin-bottom:1.2rem;}
+.ai-prov-btn{flex:1;padding:.65rem 1rem;border-radius:12px;border:1.5px solid var(--bdr);background:var(--surf);color:var(--txt2);font-size:.82rem;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.ai-prov-btn.active{border-color:var(--accent);background:rgba(59,130,246,.07);color:var(--txt);}
+.ai-prov-icon{font-size:1.2rem;}
+.ai-key-wrap{position:relative;margin-bottom:1rem;}
+.ai-key-input{width:100%;background:var(--surf);border:1px solid var(--bdr);color:var(--txt);font-size:.82rem;font-family:'JetBrains Mono',monospace;padding:.6rem 2.8rem .6rem .85rem;border-radius:10px;outline:none;transition:border-color .15s;}
+.ai-key-input:focus{border-color:var(--accent);}
+.ai-key-eye{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--txt3);cursor:pointer;font-size:.85rem;padding:2px;}
+
+.ai-test-row{display:flex;gap:8px;margin-bottom:1.2rem;align-items:center;}
+.ai-test-result{font-size:.73rem;font-family:'JetBrains Mono',monospace;color:var(--grn);}
+.ai-test-result.err{color:var(--red);}
+.ai-save-btn{width:100%;padding:.7rem;background:var(--accent);border:none;border-radius:12px;color:#fff;font-size:.85rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;}
+.ai-save-btn:hover{background:#1e40af;}
+.ai-free-note{font-size:.7rem;color:var(--txt3);line-height:1.55;padding:.75rem;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15);border-radius:10px;margin-bottom:1.2rem;}
+.ai-free-note a{color:var(--pur2);text-decoration:none;}
+.ai-free-note a:hover{text-decoration:underline;}
+
+/* ── AI Analysis Panel (inside detail drawer) ──────────────────────────── */
+.ai-panel{margin-top:1.25rem;border:1px solid var(--bdr);border-radius:14px;overflow:hidden;}
+.ai-panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:.65rem 1rem;background:rgba(59,130,246,.06);border-bottom:1px solid var(--bdr);}
+.ai-panel-title{font-size:.65rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--pur2);}
+.ai-panel-tabs{display:flex;gap:2px;background:var(--surf);padding:.3rem;border-bottom:1px solid var(--bdr);}
+.ai-tab{padding:5px 12px;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--txt3);font-family:'Inter',sans-serif;transition:all .12s;white-space:nowrap;}
+.ai-tab.active{background:var(--pur-lo);color:var(--pur2);border:1px solid var(--pur-glow);}
+.ai-tab:hover:not(.active){color:var(--txt2);}
+.ai-panel-body{padding:1rem;}
+.ai-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;gap:.6rem;color:var(--txt3);font-size:.78rem;}
+.ai-spinner{width:20px;height:20px;border:2.5px solid var(--bdr2);border-top-color:var(--pur2);border-radius:50%;animation:rot .5s linear infinite;}
+.ai-score-big{display:flex;align-items:center;gap:1.2rem;padding:.75rem 0;}
+.ai-score-num{font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;line-height:1;letter-spacing:-2px;}
+.ai-score-num.strong{color:#22c55e;}.ai-score-num.good{color:#84cc16;}.ai-score-num.partial{color:#3b82f6;}.ai-score-num.weak{color:#ef4444;}
+[data-theme="light"] .ai-score-num.partial{color:#1d4ed8;}
+.ai-verdict{font-size:.85rem;font-weight:700;color:var(--txt);margin-bottom:4px;}
+.ai-recommendation{font-size:.76rem;color:var(--txt2);line-height:1.6;}
+.ai-skill-lists{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.9rem;}
+.ai-skill-group{font-size:.62rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--txt3);margin-bottom:.4rem;}
+.ai-skill-tags{display:flex;flex-wrap:wrap;gap:4px;}
+.ai-skill-tag{font-size:.67rem;padding:2px 8px;border-radius:5px;font-family:'JetBrains Mono',monospace;}
+.ai-skill-has{background:rgba(34,197,94,.09);color:#4ade80;border:1px solid rgba(34,197,94,.18);}
+.ai-skill-miss{background:rgba(239,68,68,.08);color:#f87171;border:1px solid rgba(239,68,68,.18);}
+.ai-skill-nice{background:rgba(99,102,241,.08);color:#a5b4fc;border:1px solid rgba(99,102,241,.18);}
+.ai-readiness-bar{height:6px;background:var(--bdr2);border-radius:3px;margin:8px 0;overflow:hidden;}
+.ai-readiness-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--pur2),var(--cyn));transition:width .6s ease;}
+.ai-learn-item{padding:.6rem;border-radius:9px;background:var(--surf);border:1px solid var(--bdr);margin-bottom:.5rem;}
+.ai-learn-skill{font-size:.78rem;font-weight:700;color:var(--txt);margin-bottom:2px;}
+.ai-learn-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:3px;}
+.ai-priority{font-size:.6rem;font-weight:700;padding:1px 7px;border-radius:10px;}
+.ai-priority.high{background:rgba(239,68,68,.1);color:#f87171;}
+.ai-priority.medium{background:rgba(245,158,11,.1);color:#fbbf24;}
+.ai-priority.low{background:rgba(34,197,94,.1);color:#4ade80;}
+.ai-learn-resource{font-size:.72rem;color:var(--pur2);font-family:var(--mono);}
+.ai-learn-time{font-size:.67rem;color:var(--txt3);}
+.ai-q-section{margin-bottom:1.1rem;}
+.ai-q-section-title{font-size:.6rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--txt3);margin-bottom:.5rem;padding-bottom:.3rem;border-bottom:1px solid var(--bdr);}
+.ai-q-item{padding:.6rem .75rem;border-radius:9px;background:var(--surf);border:1px solid var(--bdr);margin-bottom:.4rem;}
+.ai-q-text{font-size:.78rem;font-weight:600;color:var(--txt);margin-bottom:3px;}
+.ai-q-hint{font-size:.7rem;color:var(--txt3);font-style:italic;}
+.ai-q-tip{font-size:.7rem;color:var(--pur2);}
+.ai-cl-area{width:100%;min-height:180px;background:var(--surf);border:1px solid var(--bdr);color:var(--txt);font-family:'JetBrains Mono',monospace;font-size:.74rem;padding:.75rem;border-radius:10px;resize:vertical;outline:none;line-height:1.65;}
+.ai-cl-area:focus{border-color:rgba(59,130,246,.4);}
+.ai-gen-btn{padding:.55rem 1.2rem;background:var(--pur);border:none;border-radius:9px;color:#fff;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;margin-top:.5rem;}
+.ai-gen-btn:hover{background:#1e40af;}
+.ai-gen-btn:disabled{opacity:.5;cursor:default;}
+.ai-error{font-size:.76rem;color:var(--red);padding:.6rem .8rem;background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:9px;margin-bottom:.5rem;}
+.ai-nav-btn{padding:5px 12px;background:rgba(59,130,246,.09);border:1px solid rgba(59,130,246,.25);border-radius:8px;color:var(--pur2);font-size:.73rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:5px;transition:all .15s;}
+.ai-nav-btn:hover{background:rgba(59,130,246,.16);border-color:rgba(59,130,246,.4);}
 </style>
 </head>
 <body>
@@ -362,7 +578,18 @@ textarea:focus{border-color:rgba(249,115,22,.4);}
 const { useState, useEffect, useRef, useCallback } = React;
 
 const PORTALS={linkedin:'LinkedIn',naukri:'Naukri',glassdoor:'Glassdoor',indeed:'Indeed',monster:'Monster',hiring_cafe:'HiringCafe',instahire:'Instahire',greenhouse:'Greenhouse',lever:'Lever'};
-const PALETTE=[['#1a0f5e','#8b5cf6'],['#0a3350','#0ea5e9'],['#043422','#10b981'],['#3d0802','#f87171'],['#280d5a','#a855f7'],['#181460','#6366f1'],['#44061f','#ec4899'],['#3a1a06','#f59e0b'],['#0c1628','#38bdf8'],['#19093a','#c084fc'],['#1b0e04','#fb923c'],['#09251a','#4ade80']];
+const KNOWN_PORTALS=[
+  {key:'linkedin',label:'LinkedIn',desc:'Largest professional network'},
+  {key:'naukri',label:'Naukri',desc:'India #1 job portal'},
+  {key:'indeed',label:'Indeed',desc:'Aggregates millions of jobs'},
+  {key:'glassdoor',label:'Glassdoor',desc:'Jobs + company reviews'},
+  {key:'monster',label:'Monster',desc:'Global job board'},
+  {key:'greenhouse',label:'Greenhouse',desc:'Direct company ATS postings'},
+  {key:'lever',label:'Lever',desc:'Direct company ATS postings'},
+  {key:'hiring_cafe',label:'HiringCafe',desc:'Tech-focused job board'},
+  {key:'instahire',label:'Instahire',desc:'India tech jobs'},
+];
+const PALETTE=[['#1a0f5e','#8b5cf6'],['#0a3350','#0ea5e9'],['#043422','#10b981'],['#3d0802','#f87171'],['#280d5a','#a855f7'],['#181460','#6366f1'],['#44061f','#ec4899'],['#0f172a','#1d4ed8'],['#0c1628','#38bdf8'],['#19093a','#c084fc'],['#0c1a3a','#1e40af'],['#09251a','#4ade80']];
 const STAT_DEFS=[{k:'total',l:'Total'},{k:'new',l:'New'},{k:'reviewed',l:'Reviewed'},{k:'applied',l:'Applied'},{k:'skipped',l:'Skipped'},{k:'failed',l:'Failed'}];
 const TABS=[{k:'inbox',l:'Inbox'},{k:'reviewed',l:'Reviewed'},{k:'applied',l:'Applied'},{k:'skipped',l:'Skipped'}];
 const LEVEL_KW={junior:['junior','jr.','entry level','entry-level','fresher','graduate','associate'],mid:['mid level','mid-level','intermediate'],senior:['senior','sr.','lead','staff','principal','architect']};
@@ -525,7 +752,7 @@ function LinkPreview({url}){
         <a href={url} target="_blank" rel="noreferrer"><button className="btn btn-link" style={{padding:'2px 8px',fontSize:'.65rem'}}>Open ↗</button></a>
       </div>
       <div style={{padding:'2rem',display:'flex',flexDirection:'column',alignItems:'center',gap:'1rem',minHeight:180,justifyContent:'center'}}>
-        <div style={{width:48,height:48,borderRadius:14,background:'var(--pur-lo)',border:'1px solid rgba(124,58,237,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.4rem'}}>🔗</div>
+        <div style={{width:48,height:48,borderRadius:14,background:'var(--pur-lo)',border:'1px solid rgba(59,130,246,.2)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.4rem'}}>🔗</div>
         <div style={{textAlign:'center'}}>
           <div style={{fontSize:'.82rem',fontWeight:600,color:'var(--txt)',marginBottom:4}}>{portal} Job Posting</div>
           <div style={{fontSize:'.72rem',color:'var(--txt3)',fontFamily:'var(--mono)',wordBreak:'break-all',maxWidth:320}}>{url.length>60?url.slice(0,60)+'…':url}</div>
@@ -539,9 +766,10 @@ function LinkPreview({url}){
   );
 }
 
-function DetailDrawer({job,onClose,onApprove,onSkip,onMarkApplied,onUnreview,onRestore,onAutoApply,isNew=false}){
+function DetailDrawer({job,onClose,onApprove,onSkip,onMarkApplied,onUnreview,onRestore,onAutoApply,isNew=false,aiActive=false}){
   const ref=useRef();
   const [preview,setPreview]=useState(false);
+  const [showAI,setShowAI]=useState(true);
   useEffect(()=>{if(job&&ref.current)gsap.from(ref.current,{x:30,opacity:0,duration:.32,ease:'power2.out'});setPreview(false);},[job]);
   if(!job)return null;
   const unk=isUnknown(job.company);
@@ -567,104 +795,181 @@ function DetailDrawer({job,onClose,onApprove,onSkip,onMarkApplied,onUnreview,onR
             {onAutoApply&&!["applied","skipped"].includes(job.status)&&<button className="btn btn-p" style={{background:"#16a34a",borderColor:"transparent",display:"inline-flex",alignItems:"center",gap:5,fontWeight:700}} onClick={()=>onAutoApply(job)}><span>⚡</span><span>Auto Apply</span></button>}
           </div>
           <button className="btn" onClick={()=>setPreview(p=>!p)}>{preview?'Hide preview':'👁 Preview'}</button>
-          
-          
-          
           {job.status==='reviewed'&&<button className="btn btn-ok" onClick={()=>onMarkApplied(job)}>Applied</button>}{job.status==='applied'&&<button className="btn btn-icon" onClick={()=>onRestore(job)} style={{fontSize:'.72rem',color:'var(--txt3)'}}>↩ Undo</button>}{job.status==='skipped'&&<button className="btn btn-icon" onClick={()=>onRestore(job)} style={{fontSize:'.72rem',color:'var(--accent)'}}>↩ Undo</button>}
           {!['applied','skipped'].includes(job.status)&&<button className="btn btn-no" onClick={()=>onSkip(job)}>Skip</button>}
         </div>
         {preview&&<LinkPreview url={job.job_url}/>}
         {job.description&&<div className="dp-sec"><div className="dp-lbl">Description</div><div className="dp-val">{job.description}</div></div>}
-        {job.cover_letter&&<div className="dp-sec"><div className="dp-lbl">Cover Letter</div><textarea rows={8} readOnly defaultValue={job.cover_letter}/></div>}
         {job.posted_at&&<div className="dp-sec"><div className="dp-lbl">Posted</div><div className="dp-val">{ago(job.posted_at)}</div></div>}
         <div className="dp-sec"><div className="dp-lbl">Discovered by JobBot</div><div className="dp-val">{ago(job.discovered_at)}</div></div>
+        <AIPanel job={job} aiActive={aiActive}/>
       </div>
     </div>
   );
 }
 
-function FeedPanel({feed,isOpen,onClose,isRunning,onStop,paused,onTogglePause,onClear}){
+function FeedPanel({feed,isOpen,onClose,isRunning,paused,onTogglePause,onClear}){
   const logRef=useRef();
   useEffect(()=>{if(!paused&&logRef.current)logRef.current.scrollTop=logRef.current.scrollHeight;},[feed,paused]);
-  const hasContent=feed.length>0;
+  const showPauseResume=isRunning||paused;
   return (
     <aside className={'feed-col'+(isOpen?' open':'')}>
       <div className="feed-hdr">
         <span className="feed-ttl" style={{display:'flex',alignItems:'center',gap:6}}>
-          Live Feed
-          {isRunning&&<div className="spin" style={{width:8,height:8,border:'2px solid rgba(255,255,255,.15)',borderTopColor:'var(--grn)',flexShrink:0}}/>}
+          LIVE FEED
+          {isRunning&&<div className="spin" style={{width:7,height:7,border:'1.5px solid rgba(255,255,255,.15)',borderTopColor:'var(--grn)',flexShrink:0}}/>}
+          {paused&&<span style={{fontSize:'.58rem',fontWeight:700,letterSpacing:'.5px',color:'var(--ylw)',opacity:.8}}>PAUSED</span>}
         </span>
-        <div style={{display:'flex',gap:4,alignItems:'center'}}>
-          {isRunning&&<button className="btn btn-icon" onClick={()=>{onStop();}} style={{padding:'2px 7px',fontSize:'.67rem',color:'var(--red)',borderColor:'rgba(239,68,68,.25)',display:'inline-flex',alignItems:'center',gap:4}}><svg width='7' height='7' viewBox='0 0 7 7'><rect width='7' height='7' rx='1' fill='#f87171'/></svg>Stop</button>}
-          {hasContent&&<button className="btn btn-icon" onClick={onClear} style={{padding:'2px 7px',fontSize:'.67rem',color:'var(--txt3)'}} title="Clear log">Clear</button>}
-          {hasContent&&<button className="btn btn-icon" onClick={onTogglePause} style={{padding:'2px 7px',fontSize:'.67rem'}} title={paused?'Resume feed updates':'Pause feed updates'}>{paused?'▶ Resume':'⏸ Pause'}</button>}
-          <button className="btn btn-icon" onClick={onClose} style={{padding:'3px 7px'}}>✕</button>
+        <div style={{display:'flex',gap:3,alignItems:'center'}}>
+          {showPauseResume&&(
+            <button className="btn btn-icon" onClick={onTogglePause}
+              style={{padding:'2px 8px',fontSize:'.67rem',color:paused?'var(--grn)':'var(--txt2)',borderColor:paused?'rgba(34,197,94,.3)':'var(--bdr2)'}}>
+              {paused?'▶ Resume':'⏸ Pause'}
+            </button>
+          )}
+          <button className="btn btn-icon" onClick={onClear} style={{padding:'2px 7px',fontSize:'.67rem',color:'var(--txt3)',borderColor:'var(--bdr)'}} title="Clear log">Clear</button>
+          <button className="btn btn-icon" onClick={onClose} style={{padding:'2px 7px',fontSize:'.67rem',color:'var(--txt3)'}} title="Close feed">✕</button>
         </div>
       </div>
       <div className="log" ref={logRef}>
-        {feed.length===0&&<div className="log-empty"><span style={{fontSize:'1.5rem',opacity:.22}}>📡</span><span>Waiting for discovery...</span><span style={{fontSize:'.62rem'}}>Hit Start or Scan to begin</span></div>}
+        {feed.length===0&&<div className="log-empty"><span style={{fontSize:'1.5rem',opacity:.22}}>📡</span><span>Waiting for discovery...</span><span style={{fontSize:'.62rem'}}>Hit Scan to begin</span></div>}
         {feed.map((e,i)=><div key={i} className="lrow"><span className="lt">{e.t}</span><span className={'lm '+logCls(e.msg)}>{e.msg}</span></div>)}
       </div>
     </aside>
   );
 }
 
-function Navbar({disc,feedOpen,isDark,hdrMeta,onStart,onStop,onScan,onRefresh,onToggleFeed,onToggleTheme,onPurge,onClearDb,onAbout,onConfigure,onAccount}){
-  const [sOpen,setSOpen]=useState(false);
+function Navbar({disc,feedOpen,isDark,hdrMeta,paused,onStart,onStop,onScan,onRefresh,onToggleFeed,onToggleTheme,onPurge,onClearDb,onAbout,onConfigure,onAccount,onAISettings,aiActive,onProfile,onSignOut}){
+  const [menuOpen,setMenuOpen]=useState(false);
+  const menuRef=useRef();
   const isRunning=disc.status==='running'||disc.status==='starting';
-  const dotCls=isRunning?'s-run':disc.status==='paused'?'s-stop':disc.status==='stopped'?'s-stop':disc.error?'s-err':'s-idle';
-  const stTxt=isRunning?'Scanning...':disc.status==='paused'?'Paused':disc.last_run?'Last: '+ago(disc.last_run):'Ready';
-  return (
+  const dotCls=isRunning?'s-run':disc.status==='paused'?'s-stop':disc.status==='stopped'?'s-stop':'s-idle';
+  const stTxt=isRunning?'Scanning…':disc.status==='paused'?'Paused':disc.last_run?'Last: '+ago(disc.last_run):'Ready';
+
+  useEffect(()=>{
+    if(!menuOpen)return;
+    const close=e=>{if(menuRef.current&&!menuRef.current.contains(e.target))setMenuOpen(false);};
+    document.addEventListener('mousedown',close);return()=>document.removeEventListener('mousedown',close);
+  },[menuOpen]);
+
+  useEffect(()=>{
+    if(menuOpen&&menuRef.current){
+      const menu=menuRef.current.querySelector('.hbg-menu');
+      if(menu){
+        gsap.fromTo(menu,{opacity:0,y:-8,scale:.96},{opacity:1,y:0,scale:1,duration:.22,ease:'back.out(1.4)'});
+        gsap.from(menu.querySelectorAll('.hbg-item,.hbg-section'),{opacity:0,x:8,duration:.18,stagger:.03,ease:'power2.out',delay:.06});
+      }
+    }
+  },[menuOpen]);
+
+  const go=fn=>{setMenuOpen(false);fn();};
+
+  return(
     <nav className="nav">
-      <div className="logo" onClick={onAbout} style={{cursor:'pointer'}}>Job<span className="logo-em">Bot</span></div>
+      <div className="logo" style={{cursor:'pointer'}} onClick={()=>window.location.href='/'}>Job<span className="logo-em">Bot</span></div>
       <div className="s-pill"><span className={'s-dot '+dotCls}/><span>{stTxt}</span></div>
       {hdrMeta&&<span style={{fontSize:'.67rem',color:'var(--pur2)',fontFamily:'var(--mono)',fontWeight:600}}>{hdrMeta}</span>}
       <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:8}}>
-        {/* Primary action */}
-        {isRunning
-          ?<button className="btn btn-stop btn-icon" onClick={onStop} style={{padding:'6px 18px',display:'inline-flex',alignItems:'center',gap:5}}><svg width="8" height="8" viewBox="0 0 8 8" style={{flexShrink:0,marginTop:1}}><rect width="8" height="8" rx="1.5" fill="#f87171"/></svg>Stop</button>
-          :<button className="btn btn-p btn-icon" onClick={()=>{onStart();onScan();}} style={{padding:'6px 18px',letterSpacing:'.01em'}}><svg width="11" height="14" viewBox="0 0 11 14" fill="none" style={{flexShrink:0}}><path d="M6.5 1L1 8h4.5L4.5 13L10 6H5.5L6.5 1Z" fill="white" stroke="white" strokeWidth=".5"/></svg> Scan</button>}
-        {/* Secondary group */}
+        {paused
+          ?<button className="btn btn-icon" disabled style={{padding:'6px 16px',opacity:.5,cursor:'not-allowed',display:'inline-flex',alignItems:'center',gap:5,background:'var(--surf2)',border:'1px solid var(--bdr2)',color:'var(--txt3)'}}>⏸ Paused</button>
+          :isRunning
+            ?<button className="btn btn-stop btn-icon" onClick={onStop} style={{padding:'6px 16px',display:'inline-flex',alignItems:'center',gap:5}}><svg width="8" height="8" viewBox="0 0 8 8"><rect width="8" height="8" rx="1.5" fill="#f87171"/></svg>Stop</button>
+            :<button className="btn btn-p btn-icon" onClick={()=>{onStart();onScan();}} style={{padding:'6px 18px'}}><svg width="11" height="14" viewBox="0 0 11 14" fill="none"><path d="M6.5 1L1 8h4.5L4.5 13L10 6H5.5L6.5 1Z" fill="white" stroke="white" strokeWidth=".5"/></svg> Scan</button>}
         <div className="nav-group">
-          <button className="btn btn-ghost btn-icon" onClick={onRefresh} title="Refresh jobs">↻</button>
-          <button className="btn btn-ghost btn-icon" onClick={onToggleFeed} title="Toggle feed">{feedOpen?'📡':'📡'}</button>
-          <button className="btn btn-ghost btn-icon" onClick={onToggleTheme} title="Toggle theme">{isDark?'☀':'🌙'}</button>
+          <button className="btn btn-ghost btn-icon" onClick={onRefresh} title="Refresh">↻</button>
+          <button className="btn btn-ghost btn-icon" onClick={onToggleFeed} title="Live feed">📡</button>
+          <button className="btn btn-ghost btn-icon" onClick={onToggleTheme} title="Theme">{isDark?'☀':'🌙'}</button>
         </div>
-        {/* Danger group */}
-        <div className="nav-group">
-          <button className="btn btn-ghost btn-icon" onClick={onPurge} title="Purge suspicious jobs" style={{color:'rgba(239,68,68,.7)',fontSize:'.72rem',gap:4}}>🗂 Purge</button>
-          <button className="btn btn-ghost btn-icon" onClick={onClearDb} title="Clear all jobs & rescan" style={{color:'rgba(239,68,68,.7)',fontSize:'.72rem',gap:4}}>🗑 Clear DB</button>
+        <div className="hbg-wrap" ref={menuRef}>
+          <button className="hbg-btn" onClick={()=>setMenuOpen(o=>!o)} title="Menu">
+            <span className="hbg-line" style={{transform:menuOpen?'rotate(45deg) translate(0,5.8px)':'none'}}/>
+            <span className="hbg-line" style={{opacity:menuOpen?0:1,width:menuOpen?0:15}}/>
+            <span className="hbg-line" style={{transform:menuOpen?'rotate(-45deg) translate(0,-5.8px)':'none'}}/>
+          </button>
+          {menuOpen&&(
+            <div className="hbg-menu">
+              <button className="hbg-item" onClick={()=>go(onProfile)}>
+                <span className="hbg-ico"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.5" stroke="currentColor" strokeWidth="1.5"/><path d="M2.5 13.5C2.5 11 5 9 8 9s5.5 2 5.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg></span>
+                My Profile
+              </button>
+              <button className={'hbg-item'+(aiActive?' ai-on':'')} onClick={()=>go(onAISettings)}>
+                <span className="hbg-ico"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M9 2L6 9h4l-3 5 7-7H9l3-7z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round"/></svg></span>
+                <span style={{flex:1}}>AI Settings</span>
+                {aiActive&&<span style={{fontSize:'.56rem',fontWeight:700,padding:'1px 6px',borderRadius:8,background:'var(--pur-lo)',color:'var(--pur2)',border:'1px solid var(--pur-glow)'}}>ON</span>}
+              </button>
+              <button className="hbg-item" onClick={()=>go(onAccount)}>
+                <span className="hbg-ico"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeWidth="1.5"/><circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.3"/></svg></span>
+                Account
+              </button>
+              <div className="hbg-sep"/>
+              <button className="hbg-item" onClick={()=>go(onConfigure)}>
+                <span className="hbg-ico"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 5h12M2 8h8M2 11h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><circle cx="12" cy="8" r="2" stroke="currentColor" strokeWidth="1.3"/></svg></span>
+                Scan Settings
+              </button>
+              <div className="hbg-sep"/>
+              <button className="hbg-item danger" onClick={()=>go(onPurge)}>
+                <span className="hbg-ico"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V3h4v1M5 4l.5 8h5L11 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/><path d="M7 7v3M9 7v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg></span>
+                Purge Suspicious
+              </button>
+              <button className="hbg-item danger" onClick={()=>go(onClearDb)}>
+                <span className="hbg-ico"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><ellipse cx="8" cy="4.5" rx="5" ry="2" stroke="currentColor" strokeWidth="1.4"/><path d="M3 4.5v3c0 1.1 2.24 2 5 2s5-.9 5-2v-3" stroke="currentColor" strokeWidth="1.4"/><path d="M3 7.5v3c0 1.1 2.24 2 5 2s5-.9 5-2v-3" stroke="currentColor" strokeWidth="1.4"/><path d="M10 11.5l2 2m0-2l-2 2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg></span>
+                Clear Database
+              </button>
+              <div className="hbg-sep"/>
+              <button className="hbg-item signout" onClick={()=>go(onSignOut)}>
+                <span className="hbg-ico"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 3H3.5A1.5 1.5 0 002 4.5v7A1.5 1.5 0 003.5 13H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M10 5l3 3-3 3M13 8H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
+                Sign Out
+              </button>
+            </div>
+          )}
         </div>
-        {/* Settings */}
-        <div className="settings-wrap">
-          <button className="btn btn-ghost btn-icon" onClick={onAccount} title="Account">◉</button>
-          <button className="btn btn-ghost btn-icon" onClick={()=>setSOpen(o=>!o)} title="Settings">⚙</button>
-          {sOpen&&<SettingsMenu onClose={()=>setSOpen(false)} onAccount={onAccount}/>}
-        </div>
-        <button className="btn btn-ghost btn-icon" onClick={onConfigure} style={{fontSize:'.72rem',letterSpacing:'.02em'}}>Scan Settings</button>
-        <button className="btn btn-ghost btn-icon" onClick={onAbout} style={{fontSize:'.72rem',letterSpacing:'.02em'}}>About</button>
       </div>
     </nav>
   );
 }
 
-
-
-
-
-
-const KNOWN_PORTALS = [
-  {key:'linkedin',  label:'LinkedIn',   desc:'Public guest API'},
-  {key:'naukri',    label:'Naukri',     desc:'India #1 job board'},
-  {key:'indeed',    label:'Indeed',     desc:'Global aggregator'},
-  {key:'monster',   label:'Monster',    desc:'MonsterIndia'},
-  {key:'glassdoor', label:'Glassdoor',  desc:'With company reviews'},
-  {key:'greenhouse',label:'Greenhouse', desc:'50+ tech company ATS'},
-  {key:'hiring_cafe',label:'HiringCafe',desc:'Remote-friendly'},
-  {key:'instahire', label:'Instahire',  desc:'India-focused'},
-  {key:'uplers',    label:'Uplers',     desc:'Remote India platform'},
-];
-
+function Dropdown({value,onChange,options,placeholder='Select...',style={},menuStyle={}}){
+  const [open,setOpen]=useState(false);
+  const ref=useRef();
+  const sel=options.find(o=>(o.value!==undefined?o.value:o)===value);
+  useEffect(()=>{
+    const h=e=>{if(ref.current&&!ref.current.contains(e.target))setOpen(false);};
+    document.addEventListener('mousedown',h);
+    return()=>document.removeEventListener('mousedown',h);
+  },[]);
+  return(
+    <div className="dd-wrap" ref={ref} style={style}>
+      <button type="button" className={'dd-trigger'+(open?' open':'')} onClick={()=>setOpen(o=>!o)}>
+        <span className="dd-val">
+          {sel?(sel.label||sel):<span style={{color:'var(--txt3)'}}>{placeholder}</span>}
+          {sel?.sub&&<span className="dd-val-sub">{sel.sub}</span>}
+        </span>
+        <svg className="dd-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      </button>
+      {open&&(
+        <div className="dd-menu" style={menuStyle}>
+          {options.map((o,i)=>{
+            const v=o.value!==undefined?o.value:o;
+            const l=o.label||o;
+            const sub=o.sub;
+            const sep=o.sep;
+            if(sep)return <div key={'sep'+i} className="dd-sep"/>;
+            const isActive=v===value;
+            return(
+              <div key={v} className={'dd-opt'+(isActive?' active':'')} onClick={()=>{onChange(v);setOpen(false);}}>
+                <div className="dd-opt-label">
+                  <strong>{l}</strong>
+                  {sub&&<span>{sub}</span>}
+                </div>
+                <svg className="dd-check" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3.5 3.5 5.5-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function AccountModal({onClose}){
   const [user,setUser]=useState(null);
@@ -762,10 +1067,15 @@ function AccountModal({onClose}){
             <div className="acct-sec-title">Create New User</div>
             <input className="acct-input" placeholder="Username" value={newUser.username} onChange={e=>setNewUser(p=>({...p,username:e.target.value}))}/>
             <input className="acct-input" type="password" placeholder="Password (min 8 chars)" value={newUser.password} onChange={e=>setNewUser(p=>({...p,password:e.target.value}))}/>
-            <select style={{width:'100%',marginBottom:'.5rem',padding:'.48rem .75rem',borderRadius:8,border:'1px solid var(--bdr)',background:'var(--surf)',color:'var(--txt)',fontSize:'.8rem',fontFamily:'Inter,sans-serif'}} value={newUser.role} onChange={e=>setNewUser(p=>({...p,role:e.target.value}))}>
-              <option value="viewer">Viewer — read only</option>
-              <option value="admin">Admin — full access</option>
-            </select>
+            <Dropdown
+              style={{marginBottom:'.5rem'}}
+              value={newUser.role}
+              onChange={v=>setNewUser(p=>({...p,role:v}))}
+              options={[
+                {value:'viewer',label:'Viewer',sub:'Read-only access'},
+                {value:'admin',label:'Admin',sub:'Full access'},
+              ]}
+            />
             {createErr&&<div style={{fontSize:'.73rem',color:'var(--red)',marginBottom:'.4rem'}}>{createErr}</div>}
             {createMsg&&<div style={{fontSize:'.73rem',color:'var(--grn)',marginBottom:'.4rem'}}>{createMsg}</div>}
             <button className="acct-btn primary" onClick={createUser}>+ Create User</button>
@@ -790,6 +1100,325 @@ function AccountModal({onClose}){
     </>
   );
 }
+
+function AISettingsModal({onClose,onConfigured}){
+  const [settings,setSettings]=useState(null);
+  const [provider,setProvider]=useState('groq');
+  const [apiKey,setApiKey]=useState('');
+  const [model,setModel]=useState('');
+  const [showKey,setShowKey]=useState(false);
+  const [saving,setSaving]=useState(false);
+  const [testing,setTesting]=useState(false);
+  const [testResult,setTestResult]=useState(null);
+  const [msg,setMsg]=useState('');
+
+  useEffect(()=>{
+    fetch('/api/settings/ai').then(r=>r.json()).then(d=>{
+      setSettings(d);
+      setProvider(d.provider||'groq');
+      setModel(d.model||'');
+      if(d.api_key_set) setApiKey('');  // don't show existing key
+    });
+  },[]);
+
+  const models = provider==='groq'
+    ? (settings?.groq_models||[])
+    : (settings?.gemini_models||[]);
+
+  const save=async()=>{
+    setSaving(true);setMsg('');
+    const body={provider};
+    if(apiKey.trim()) body.api_key=apiKey.trim();
+    if(model) body.model=model;
+    const r=await fetch('/api/settings/ai',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    setSaving(false);
+    if(r.ok){const d2=await r.json();setMsg('Saved!');setApiKey('');fetch('/api/settings/ai').then(r2=>r2.json()).then(d=>{setSettings(d);});if(onConfigured)onConfigured(!!(d2.is_configured));}
+    else{const d=await r.json();setMsg('Error: '+(d.detail||'unknown'));}
+  };
+
+  const removeKey=async()=>{
+    if(!confirm('Remove the saved API key? AI features will be disabled until a new key is added.'))return;
+    setSaving(true);
+    const r=await fetch('/api/settings/ai',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({provider,api_key:''})});
+    setSaving(false);
+    if(r.ok){setMsg('Key removed');setSettings(s=>({...s,api_key_set:false,api_key_preview:''}));setApiKey('');if(onConfigured)onConfigured(false);}
+    else setMsg('Error removing key');
+  };
+
+  const test=async()=>{
+    setTesting(true);setTestResult(null);
+    // Save first if key is entered
+    if(apiKey.trim()){
+      const body={provider};if(apiKey.trim())body.api_key=apiKey.trim();if(model)body.model=model;
+      await fetch('/api/settings/ai',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    }
+    const r=await fetch('/api/settings/ai/test',{method:'POST'});
+    const d=await r.json();
+    setTesting(false);
+    setTestResult(d);
+  };
+
+  const freeNote = provider==='groq'
+    ? (<>Get a free API key at <a href="https://console.groq.com" target="_blank" rel="noreferrer">console.groq.com</a> — no credit card needed. Free tier: 30 req/min, 14,400 req/day.</>)
+    : (<>Get a free API key at <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer">aistudio.google.com</a> — free for personal use. Flash model: 15 req/min, 1M tokens/day.</>);
+
+  return(
+    <div className="ai-settings-modal" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="ai-settings-card">
+        <div className="ai-settings-hdr">
+          <div className="ai-settings-title">⚡ AI Settings</div>
+          <button className="btn btn-ghost" onClick={onClose} style={{padding:'4px 10px'}}>✕</button>
+        </div>
+
+        <div style={{fontSize:'.72rem',color:'var(--txt2)',marginBottom:1.1+'rem',lineHeight:1.6}}>
+          JobBot uses AI for cover letters, job matching, skill gap analysis, and interview prep. Choose your provider — both are free.
+        </div>
+
+        <div style={{fontSize:'.62rem',fontWeight:700,letterSpacing:'1.2px',textTransform:'uppercase',color:'var(--txt3)',marginBottom:'.5rem'}}>Provider</div>
+        <div className="ai-prov-btns">
+          <button className={'ai-prov-btn'+(provider==='groq'?' active':'')} onClick={()=>{setProvider('groq');setModel('');}}>
+            <span className="ai-prov-icon">⚡</span>
+            <span style={{fontWeight:700}}>Groq</span>
+            <span style={{fontSize:'.65rem',color:'var(--grn)'}}>Ultra-fast · Free</span>
+          </button>
+          <button className={'ai-prov-btn'+(provider==='gemini'?' active':'')} onClick={()=>{setProvider('gemini');setModel('');}}>
+            <span className="ai-prov-icon">✦</span>
+            <span style={{fontWeight:700}}>Gemini</span>
+            <span style={{fontSize:'.65rem',color:'var(--pur2)'}}>Google · Free</span>
+          </button>
+        </div>
+
+        <div className="ai-free-note">{freeNote}</div>
+
+        <div style={{fontSize:'.62rem',fontWeight:700,letterSpacing:'1.2px',textTransform:'uppercase',color:'var(--txt3)',marginBottom:'.4rem'}}>API Key</div>
+        <div className="ai-key-wrap">
+          <input
+            className="ai-key-input"
+            type={showKey?'text':'password'}
+            placeholder={settings?.api_key_set ? '••••••••••• (key saved — enter new key to change)' : `Paste your ${provider==='groq'?'Groq':'Gemini'} API key here`}
+            value={apiKey}
+            onChange={e=>setApiKey(e.target.value)}
+          />
+          <button className="ai-key-eye" onClick={()=>setShowKey(s=>!s)}>{showKey?'🙈':'👁'}</button>
+        </div>
+        {settings?.api_key_set&&<div style={{fontSize:'.68rem',color:'var(--grn)',marginBottom:'.7rem'}}>✓ Key saved: {settings.api_key_preview}</div>}
+
+        <div style={{fontSize:'.62rem',fontWeight:700,letterSpacing:'1.2px',textTransform:'uppercase',color:'var(--txt3)',marginBottom:'.4rem'}}>Model</div>
+        <Dropdown
+          value={model}
+          onChange={v=>setModel(v)}
+          options={[
+            {value:'',label:'Default',sub:'Recommended'},
+            {sep:true},
+            ...models.map(m=>({value:m.id,label:m.label,sub:m.context+' context'}))
+          ]}
+        />
+
+        <div className="ai-test-row">
+          <button className="btn" onClick={test} disabled={testing||(!settings?.api_key_set&&!apiKey.trim())} style={{fontSize:'.75rem',padding:'6px 14px'}}>
+            {testing?'Testing…':'Test connection'}
+          </button>
+          {testResult&&<span className={'ai-test-result'+(testResult.ok?'':' err')}>
+            {testResult.ok?`✓ Connected — ${testResult.provider} / ${testResult.model}`:('✗ '+testResult.error)}
+          </span>}
+        </div>
+
+        {msg&&<div style={{fontSize:'.73rem',color:msg.startsWith('Error')?'var(--red)':'var(--grn)',marginBottom:'.6rem'}}>{msg}</div>}
+        <div style={{display:'flex',gap:8,alignItems:'center'}}>
+          <button className="ai-save-btn" onClick={save} disabled={saving} style={{flex:1}}>{saving?'Saving…':'Save Settings'}</button>
+          {settings?.api_key_set&&<button onClick={removeKey} disabled={saving} style={{padding:'9px 14px',background:'none',border:'1px solid var(--red)',color:'var(--red)',borderRadius:9,fontSize:'.75rem',fontWeight:600,cursor:'pointer',whiteSpace:'nowrap',transition:'background .15s'}} onMouseEnter={e=>e.target.style.background='rgba(239,68,68,.1)'} onMouseLeave={e=>e.target.style.background='none'}>Remove Key</button>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+function AIPanel({job,aiActive=false}){
+  const [tab,setTab]=useState('score');
+  const [data,setData]=useState({score:null,gap:null,prep:null,cl:null});
+  const [loading,setLoading]=useState({score:false,gap:false,prep:false,cl:false});
+  const [errors,setErrors]=useState({});
+  const [editedCL,setEditedCL]=useState('');
+
+  const fetch_ai=async(endpoint,key)=>{
+    if(loading[key])return;
+    setLoading(p=>({...p,[key]:true}));
+    setErrors(p=>({...p,[key]:null}));
+    try{
+      const r=await fetch('/api/jobs/'+job.id+'/'+endpoint,{method:'POST'});
+      const d=await r.json();
+      if(!r.ok)throw new Error(d.detail||'AI request failed');
+      setData(p=>({...p,[key]:d}));
+      if(key==='cl') setEditedCL(d.cover_letter||'');
+    }catch(e){setErrors(p=>({...p,[key]:e.message}));}
+    setLoading(p=>({...p,[key]:false}));
+  };
+
+  useEffect(()=>{
+    // Auto-load score on mount
+    if(!data.score&&!loading.score) fetch_ai('match-score','score');
+    // Pre-populate cover letter if already exists
+    if(job.cover_letter&&!editedCL) setEditedCL(job.cover_letter);
+  },[job.id]);
+
+  const scoreNum=data.score?.score;
+  const scoreCls=scoreNum>=75?'strong':scoreNum>=55?'good':scoreNum>=35?'partial':'weak';
+
+  if(!aiActive) return(
+    <div className="ai-panel" style={{marginTop:'1.5rem'}}>
+      <div className="ai-panel-hdr">⚡ AI Analysis</div>
+      <div className="ai-locked">
+        <div className="ai-locked-ico">🔒</div>
+        <div className="ai-locked-title">AI features not configured</div>
+        <div className="ai-locked-sub">Add a free Groq or Gemini API key to unlock match scoring, skill gap analysis, interview prep, and AI-generated cover letters.</div>
+        <button className="ai-locked-btn" onClick={()=>window.dispatchEvent(new CustomEvent('jb:open-ai-settings'))}>Configure AI ⚡</button>
+      </div>
+    </div>
+  );
+
+  return(
+    <div className="ai-panel">
+      <div className="ai-panel-hdr">
+        <span className="ai-panel-title">✦ AI Analysis</span>
+        {tab==='score'&&data.score&&<span style={{fontSize:'.68rem',color:'var(--txt3)',fontFamily:'var(--mono)'}}>cached</span>}
+      </div>
+      <div className="ai-panel-tabs">
+        {[['score','Match Score'],['gap','Skill Gap'],['prep','Interview Prep'],['cl','Cover Letter']].map(([k,l])=>(
+          <button key={k} className={'ai-tab'+(tab===k?' active':'')} onClick={()=>{setTab(k);if(k!=='score'&&k!=='cl'&&!data[k])fetch_ai(k==='gap'?'skill-gap':'interview-prep',k);}}>
+            {l}{k==='score'&&data.score?.score!=null&&<span style={{marginLeft:4,fontSize:'.6rem',fontFamily:'var(--mono)'}}>{data.score.score}</span>}
+          </button>
+        ))}
+      </div>
+      <div className="ai-panel-body">
+
+        {/* ── Match Score ── */}
+        {tab==='score'&&(
+          loading.score
+            ?<div className="ai-loading"><div className="ai-spinner"/><span>Analysing job fit…</span></div>
+            :errors.score
+              ?<><div className="ai-error">{errors.score}</div><button className="ai-gen-btn" onClick={()=>fetch_ai('match-score','score')}>Retry</button></>
+              :data.score?(
+                <>
+                  <div className="ai-score-big">
+                    <div className={'ai-score-num '+scoreCls}>{data.score.score}</div>
+                    <div>
+                      <div className="ai-verdict">{data.score.verdict}</div>
+                      <div className="ai-recommendation">{data.score.recommendation}</div>
+                    </div>
+                  </div>
+                  {data.score.strengths?.length>0&&<div style={{marginBottom:'.6rem'}}><div className="ai-skill-group">Strengths</div><div className="ai-skill-tags">{data.score.strengths.map((s,i)=><span key={i} className="ai-skill-tag" style={{background:'rgba(34,197,94,.07)',color:'#4ade80',border:'1px solid rgba(34,197,94,.18)',padding:'3px 9px',borderRadius:6,fontSize:'.71rem'}}>{s}</span>)}</div></div>}
+                  <div className="ai-skill-lists">
+                    <div><div className="ai-skill-group">✓ You have</div><div className="ai-skill-tags">{(data.score.matched_skills||[]).map(s=><span key={s} className="ai-skill-tag ai-skill-has">{s}</span>)}</div></div>
+                    <div><div className="ai-skill-group">⚠ Missing</div><div className="ai-skill-tags">{(data.score.missing_skills||[]).map(s=><span key={s} className="ai-skill-tag ai-skill-miss">{s}</span>)}</div></div>
+                  </div>
+                  <button className="ai-gen-btn" style={{marginTop:'1rem',fontSize:'.7rem',padding:'4px 12px',background:'var(--surf)',color:'var(--txt3)',border:'1px solid var(--bdr)'}} onClick={()=>{setData(p=>({...p,score:null}));fetch_ai('match-score','score');}}>↻ Refresh</button>
+                </>
+              ):<div className="ai-loading"><div className="ai-spinner"/></div>
+        )}
+
+        {/* ── Skill Gap ── */}
+        {tab==='gap'&&(
+          loading.gap
+            ?<div className="ai-loading"><div className="ai-spinner"/><span>Analysing skill gaps…</span></div>
+            :errors.gap
+              ?<><div className="ai-error">{errors.gap}</div><button className="ai-gen-btn" onClick={()=>fetch_ai('skill-gap','gap')}>Retry</button></>
+              :!data.gap?<div className="ai-loading"><div className="ai-spinner"/></div>
+              :(
+                <>
+                  <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:'1rem'}}>
+                    <div style={{flex:1}}>
+                      <div style={{fontSize:'.72rem',color:'var(--txt3)',marginBottom:4}}>Readiness</div>
+                      <div className="ai-readiness-bar"><div className="ai-readiness-fill" style={{width:data.gap.overall_readiness||'0%'}}/></div>
+                      <div style={{fontSize:'.8rem',fontWeight:700,color:'var(--pur2)'}}>{data.gap.overall_readiness}</div>
+                    </div>
+                  </div>
+                  <div style={{fontSize:'.76rem',color:'var(--txt2)',lineHeight:1.65,marginBottom:'1rem'}}>{data.gap.summary}</div>
+                  <div className="ai-skill-lists" style={{marginBottom:'1rem'}}>
+                    <div><div className="ai-skill-group">✓ You have</div><div className="ai-skill-tags">{(data.gap.candidate_has||[]).map(s=><span key={s} className="ai-skill-tag ai-skill-has">{s}</span>)}</div></div>
+                    <div><div className="ai-skill-group">⚠ Missing</div><div className="ai-skill-tags">{(data.gap.candidate_missing||[]).map(s=><span key={s} className="ai-skill-tag ai-skill-miss">{s}</span>)}{(data.gap.nice_to_have||[]).map(s=><span key={s} className="ai-skill-tag ai-skill-nice">{s}</span>)}</div></div>
+                  </div>
+                  {data.gap.learning_path?.length>0&&<>
+                    <div className="ai-skill-group" style={{marginBottom:'.5rem'}}>Learning Path</div>
+                    {data.gap.learning_path.map((item,i)=>(
+                      <div key={i} className="ai-learn-item">
+                        <div className="ai-learn-skill">{item.skill}</div>
+                        <div className="ai-learn-meta">
+                          <span className={'ai-priority '+(item.priority||'medium')}>{item.priority||'medium'}</span>
+                          <span className="ai-learn-time">⏱ {item.time_estimate}</span>
+                        </div>
+                        <div className="ai-learn-resource">📚 {item.resource}</div>
+                      </div>
+                    ))}
+                  </>}
+                </>
+              )
+        )}
+
+        {/* ── Interview Prep ── */}
+        {tab==='prep'&&(
+          loading.prep
+            ?<div className="ai-loading"><div className="ai-spinner"/><span>Generating interview questions…</span></div>
+            :errors.prep
+              ?<><div className="ai-error">{errors.prep}</div><button className="ai-gen-btn" onClick={()=>fetch_ai('interview-prep','prep')}>Retry</button></>
+              :!data.prep?<div className="ai-loading"><div className="ai-spinner"/></div>
+              :(
+                <>
+                  {[
+                    {key:'behavioral_questions',label:'Behavioral Questions'},
+                    {key:'technical_questions',label:'Technical Questions'},
+                    {key:'role_specific_questions',label:'Role-Specific Questions'},
+                  ].map(section=>(
+                    <div key={section.key} className="ai-q-section">
+                      <div className="ai-q-section-title">{section.label}</div>
+                      {(data.prep[section.key]||[]).map((q,i)=>(
+                        <div key={i} className="ai-q-item">
+                          <div className="ai-q-text">Q: {q.question}</div>
+                          {(q.tip||q.hint)&&<div className="ai-q-hint">→ {q.tip||q.hint}</div>}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                  {data.prep.questions_to_ask?.length>0&&(
+                    <div className="ai-q-section">
+                      <div className="ai-q-section-title">Questions to Ask Interviewer</div>
+                      {data.prep.questions_to_ask.map((q,i)=><div key={i} className="ai-q-item"><div className="ai-q-text">{q}</div></div>)}
+                    </div>
+                  )}
+                  {data.prep.prep_tips?.length>0&&(
+                    <div className="ai-q-section">
+                      <div className="ai-q-section-title">Prep Tips</div>
+                      {data.prep.prep_tips.map((t,i)=><div key={i} className="ai-q-item"><div className="ai-q-text">{t}</div></div>)}
+                    </div>
+                  )}
+                </>
+              )
+        )}
+
+        {/* ── Cover Letter ── */}
+        {tab==='cl'&&(
+          <>
+            {errors.cl&&<div className="ai-error">{errors.cl}</div>}
+            <textarea
+              className="ai-cl-area"
+              value={editedCL}
+              onChange={e=>setEditedCL(e.target.value)}
+              placeholder="No cover letter yet — click Generate below"
+            />
+            <div style={{display:'flex',gap:8,marginTop:'.6rem',flexWrap:'wrap'}}>
+              <button className="ai-gen-btn" onClick={()=>fetch_ai('cover-letter','cl')} disabled={loading.cl}>
+                {loading.cl?'Generating…':(editedCL?'↻ Regenerate':'✦ Generate Cover Letter')}
+              </button>
+              {editedCL&&<button className="btn" style={{fontSize:'.75rem',padding:'6px 14px'}} onClick={()=>{navigator.clipboard.writeText(editedCL);toast('Copied!');}}>📋 Copy</button>}
+            </div>
+          </>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
 
 function ConfigPanel({onClose}){
   const [cfg,setCfg]=useState(null);
@@ -904,23 +1533,36 @@ function ConfigPanel({onClose}){
 }
 
 function AboutModal({onClose}){
-  const FEATURES=[
-    {icon:'🔍',title:'Keyword Discovery',desc:'Searches by job title across all portals automatically. No company list needed.'},
-    {icon:'🌐',title:'9 Portals',desc:'LinkedIn, Naukri, Indeed, Monster, Glassdoor, Greenhouse, HiringCafe, Instahire, Uplers.'},
-    {icon:'🇮🇳',title:'India-first',desc:'Optimised for Hyderabad, Bengaluru, Mumbai and remote roles. Defaults to India.'},
-    {icon:'⚡',title:'Real-time Feed',desc:'Live SSE stream shows exactly what each portal is doing as it happens.'},
-    {icon:'📄',title:'Resume Matching',desc:'Upload PDF/DOCX resume — skills extracted server-side and matched to jobs.'},
-    {icon:'🎯',title:'Smart Filters',desc:'Filter by level, work mode, portal, location, and skill keywords.'},
-    {icon:'🗂',title:'Pipeline Tracking',desc:'Move jobs through Inbox → Reviewed → Applied. Skip anytime.'},
-    {icon:'🔒',title:'Local & Private',desc:'Everything runs on your machine. No data leaves your computer.'},
+  const CORE=[
+    {icon:'🔭',title:'Continuous Discovery',desc:'Scans 10+ portals on your schedule. New jobs land in your inbox — no manual searching ever.'},
+    {icon:'📥',title:'Smart Inbox',desc:'New → Reviewed → Applied → Skipped pipeline. One-click to approve, skip, or auto-apply.'},
+    {icon:'⚡',title:'Auto Apply',desc:'Opens the job portal, fills your profile data into every field, and submits hands-free.'},
+    {icon:'🔍',title:'Natural Language Search',desc:'Search "remote Python, not fintech" — local NLP understands intent, roles, skills, locations.'},
+    {icon:'📄',title:'Resume Skill Matching',desc:'Upload your resume to filter jobs by skill overlap. See match% on every job card.'},
+    {icon:'🔒',title:'Local & Private',desc:'Self-hosted. Everything runs on your machine. Zero data leaves your computer.'},
+  ];
+  const AI=[
+    {icon:'🎯',title:'Semantic Match Score',desc:'0–100 score per job: skill overlap, experience fit, role alignment. Not just keywords.'},
+    {icon:'✍️',title:'AI Cover Letters',desc:'Tailored cover letter generated before every Auto Apply, referencing the exact JD.'},
+    {icon:'📈',title:'Skill Gap Analysis',desc:'See which skills you have vs. need, with a learning path and resources for each gap.'},
+    {icon:'🎤',title:'Interview Prep',desc:'Behavioral, technical, and role-specific questions with STAR frameworks and prep tips.'},
+    {icon:'🤖',title:'AI Resume Parser',desc:'Upload resume → AI fills your entire profile: skills, experience, education, contact info.'},
+    {icon:'💬',title:'Screening Answers',desc:'AI answers portal screening questions (salary, notice, relocation) using your profile.'},
   ];
   return(
     <div className="about-modal" onClick={e=>e.target===e.currentTarget&&onClose()}>
-      <div className="about-card">
-        <div className="about-logo">Job<span>Bot</span></div>
-        <div className="about-ver">v2.0 · Keyword-based · 9 portals</div>
+      <div className="about-card" style={{maxWidth:640,maxHeight:'88vh',overflowY:'auto'}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'1.2rem'}}>
+          <div>
+            <div className="about-logo" style={{fontSize:'1.4rem'}}>Job<span>Bot</span></div>
+            <div className="about-ver">v3.0 · AI-Powered · 10 portals · Open Source</div>
+          </div>
+          <button className="btn" onClick={onClose} style={{padding:'4px 12px',fontSize:'.78rem'}}>✕</button>
+        </div>
+
+        <div style={{fontSize:'.72rem',fontWeight:700,letterSpacing:'1.2px',textTransform:'uppercase',color:'var(--txt3)',marginBottom:'.7rem'}}>Core Features</div>
         <div className="about-grid">
-          {FEATURES.map(f=>(
+          {CORE.map(f=>(
             <div key={f.title} className="about-feat">
               <div className="about-feat-icon">{f.icon}</div>
               <div className="about-feat-title">{f.title}</div>
@@ -928,11 +1570,30 @@ function AboutModal({onClose}){
             </div>
           ))}
         </div>
-        <div style={{fontSize:'.7rem',color:'var(--txt3)',marginBottom:'.6rem',fontWeight:700,letterSpacing:'1px',textTransform:'uppercase'}}>Active portals</div>
-        <div className="about-portals">
-          {['LinkedIn','Naukri','Indeed','Monster','Glassdoor','Greenhouse','HiringCafe','Instahire','Uplers'].map(p=><span key={p} className="about-portal-tag">{p}</span>)}
+
+        <div style={{background:'var(--pur-lo)',border:'1px solid rgba(59,130,246,.18)',borderRadius:12,padding:'1.2rem',margin:'1.2rem 0'}}>
+          <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:'.8rem'}}>
+            <span style={{fontSize:'1rem'}}>⚡</span>
+            <div style={{fontWeight:700,fontSize:'.85rem',color:'var(--pur2)'}}>AI Superpowers</div>
+            <span style={{fontSize:'.62rem',background:'rgba(59,130,246,.15)',color:'var(--pur2)',border:'1px solid rgba(59,130,246,.25)',padding:'2px 9px',borderRadius:12,marginLeft:'auto',fontWeight:700}}>Groq / Gemini — Free tier</span>
+          </div>
+          <div className="about-grid">
+            {AI.map(f=>(
+              <div key={f.title} className="about-feat" style={{background:'rgba(59,130,246,.05)',border:'1px solid rgba(59,130,246,.12)',borderRadius:10}}>
+                <div className="about-feat-icon">{f.icon}</div>
+                <div className="about-feat-title" style={{color:'var(--pur2)'}}>{f.title}</div>
+                <div className="about-feat-desc">{f.desc}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{fontSize:'.7rem',color:'var(--pur2)',marginTop:'.8rem',opacity:.7}}>Configure in Menu → AI Settings. Groq: 14,400 req/day free · Gemini: 1M tokens/day free</div>
         </div>
-        <button className="about-close" onClick={onClose}>Got it</button>
+
+        <div style={{fontSize:'.7rem',color:'var(--txt3)',marginBottom:'.5rem',fontWeight:700,letterSpacing:'1px',textTransform:'uppercase'}}>Portals</div>
+        <div className="about-portals">
+          {['LinkedIn','Naukri','Indeed','Monster','Glassdoor','Greenhouse','Lever','HiringCafe','Instahire','Uplers'].map(p=><span key={p} className="about-portal-tag">{p}</span>)}
+        </div>
+        <button className="about-close" onClick={onClose} style={{marginTop:'1.2rem'}}>Got it ✓</button>
       </div>
     </div>
   );
@@ -942,18 +1603,27 @@ function AboutModal({onClose}){
 function AISearch({onResults,onClear,active}){
   const [q,setQ]=useState('');
   const [loading,setLoading]=useState(false);
-  const [aiResults,setAiResults]=useState(null);
-  const [aiQuery,setAiQuery]=useState('');
-  const examples=[
-    'remote python backend, not fintech',
-    'full stack react node.js in Bengaluru',
-    'SDE at product company, 0-3 years',
-    'AI/ML engineer, startup, remote',
-  ];
+  const [showRecents,setShowRecents]=useState(false);
+  const [recents,setRecents]=useState(()=>{try{return JSON.parse(localStorage.getItem('jb-ai-recents')||'[]');}catch{return [];}});
+  const recentsRef=useRef(null);
+  const examples=['remote python backend, not fintech','full stack react node.js in Bengaluru','SDE at product company, 0-3 years','AI/ML engineer, startup, remote'];
+
+  const saveRecent=qry=>{
+    const next=[qry,...recents.filter(r=>r!==qry)].slice(0,5);
+    setRecents(next);localStorage.setItem('jb-ai-recents',JSON.stringify(next));
+  };
+  const removeRecent=(qry,e)=>{
+    e.stopPropagation();
+    const next=recents.filter(r=>r!==qry);
+    setRecents(next);localStorage.setItem('jb-ai-recents',JSON.stringify(next));
+  };
+  const clearAllRecents=()=>{setRecents([]);localStorage.removeItem('jb-ai-recents');};
 
   const search=async(query)=>{
     const qry=(query||q).trim();
     if(!qry)return;
+    setShowRecents(false);
+    saveRecent(qry);
     setLoading(true);
     try{
       const r=await fetch('/api/search/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:qry,top_n:100})});
@@ -964,20 +1634,45 @@ function AISearch({onResults,onClear,active}){
     setLoading(false);
   };
 
+  const clearSearch=()=>{setQ('');if(active)onClear();};
+
   return(
-    <div>
+    <div style={{position:'relative'}}>
       <div className="ai-search-bar">
-        <div className="ai-input-wrap">
+        <div className="ai-input-wrap" style={{position:'relative',flex:1}}>
           <span className="ai-ico">✦</span>
           <input className="ai-input" value={q} onChange={e=>setQ(e.target.value)}
             onKeyDown={e=>e.key==='Enter'&&search()}
-            placeholder="Ask in plain English: remote python backend, not fintech…"/>
+            onFocus={()=>setShowRecents(true)}
+            onBlur={()=>setTimeout(()=>setShowRecents(false),160)}
+            placeholder="Ask in plain English: remote python backend, not fintech…"
+            style={{paddingRight:(active||q.trim())?'2rem':'1rem'}}/>
+          {(active||q.trim())&&(
+            <button onClick={clearSearch} title="Clear" style={{position:'absolute',right:'.55rem',top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',color:'var(--txt3)',fontSize:'.85rem',padding:'2px 5px',lineHeight:1,borderRadius:4}}>✕</button>
+          )}
         </div>
         <button className="ai-btn" onClick={()=>search()} disabled={loading||!q.trim()}>
           {loading?'Searching…':'Search'}
         </button>
-        {active&&<button className="btn btn-ghost" onClick={()=>{setQ('');onClear();}} style={{whiteSpace:'nowrap',fontSize:'.75rem'}}>✕ Clear</button>}
       </div>
+      {showRecents&&recents.length>0&&(
+        <div ref={recentsRef} style={{position:'absolute',top:'calc(100% + 4px)',left:0,right:0,background:'var(--bg2)',border:'1px solid var(--bdr2)',borderRadius:10,zIndex:400,overflow:'hidden',boxShadow:'0 8px 28px rgba(0,0,0,.35)'}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'.45rem .8rem .3rem',borderBottom:'1px solid var(--bdr)'}}>
+            <span style={{fontSize:'.63rem',fontWeight:700,letterSpacing:'.7px',textTransform:'uppercase',color:'var(--txt3)'}}>Recent searches</span>
+            <button onClick={clearAllRecents} style={{background:'none',border:'none',cursor:'pointer',fontSize:'.68rem',color:'var(--txt3)',padding:'2px 4px'}}>Clear all</button>
+          </div>
+          {recents.map(r=>(
+            <div key={r} onClick={()=>{setQ(r);search(r);}} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'.45rem .8rem',cursor:'pointer',fontSize:'.8rem',color:'var(--txt2)',gap:8}}
+              onMouseEnter={e=>e.currentTarget.style.background='var(--surf)'}
+              onMouseLeave={e=>e.currentTarget.style.background=''}>
+              <span style={{display:'flex',alignItems:'center',gap:7,minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+                <span style={{color:'var(--txt3)',fontSize:'.72rem'}}>↩</span>{r}
+              </span>
+              <button onClick={e=>removeRecent(r,e)} style={{background:'none',border:'none',cursor:'pointer',color:'var(--txt3)',fontSize:'.72rem',padding:'2px 6px',flexShrink:0}}>✕</button>
+            </div>
+          ))}
+        </div>
+      )}
       {!active&&q===''&&(
         <div style={{padding:'.4rem 1.5rem .8rem',display:'flex',gap:6,flexWrap:'wrap'}}>
           {examples.map(ex=>(
@@ -1058,7 +1753,19 @@ function ApplyModal({job, onClose, onApplied}){
           <div className="apply-status">
             <div className="apply-spinner"/>
             <div>Filling your application...</div>
-            <div style={{fontSize:'.72rem',color:'var(--txt3)',marginTop:'.3rem'}}>A browser window has opened</div>
+            <div style={{fontSize:'.72rem',color:'var(--txt3)',marginTop:'.3rem'}}>A browser window should have opened</div>
+            <div style={{display:'flex',gap:8,marginTop:'1.1rem',justifyContent:'center',flexWrap:'wrap'}}>
+              <button className="btn" style={{fontSize:'.72rem',padding:'5px 14px'}}
+                onClick={async()=>{await fetch('/api/jobs/'+job.id+'/apply/focus',{method:'POST'});}}>
+                Bring to front
+              </button>
+              <a href={job.job_url} target="_blank" rel="noopener noreferrer"
+                style={{fontSize:'.72rem',padding:'5px 14px',display:'inline-flex',alignItems:'center',
+                  border:'1px solid var(--bdr)',borderRadius:8,color:'var(--txt2)',textDecoration:'none',
+                  background:'var(--surf)',cursor:'pointer'}}>
+                Open job page ↗
+              </a>
+            </div>
           </div>
         )}
 
@@ -1087,7 +1794,7 @@ function ApplyModal({job, onClose, onApplied}){
 
         {status==='submitting'&&<div className="apply-status"><div className="apply-spinner"/><div>Submitting...</div></div>}
         {status==='submitted'&&<div className="apply-status" style={{color:'#16a34a'}}>✓ Application submitted!</div>}
-        {status==='error'&&<div className="apply-status" style={{color:'var(--red)'}}>Error starting autofill. Make sure your profile.yaml is filled in.</div>}
+        {status==='error'&&<div className="apply-status" style={{color:'var(--red)'}}>⚠ {data?.error||'Autofill failed — check that your Profile is filled and the server is running.'}</div>}
         {status==='cancelled'&&<div className="apply-status">Cancelled.</div>}
       </div>
     </div>
@@ -1192,22 +1899,323 @@ function FilterMenu({modeF,portalF,levelF,locationF,matchOnly,resumeFile,hasSkil
           <div className="fmenu-chips">
             {[['india','India'],['hyderabad','Hyderabad'],['bengaluru','Bengaluru'],['mumbai','Mumbai'],['pune','Pune'],['chennai','Chennai'],['us','USA'],['uk','UK']].map(([v,l])=><span key={v} className={'fchip'+(locationF.includes(v)?' on':'')} onClick={()=>toggle(locationF,v,onLocation)}>{l}</span>)}
           </div>
-          <div className="fmenu-div"/>
-          <div className="fmenu-sec">Resume match</div>
-          <div className="fmenu-row">
-            <label style={{display:'flex',alignItems:'center',gap:6,cursor:'pointer',fontSize:'.75rem',color:matchOnly?'var(--pur2)':'var(--txt2)'}}>
-              <input type="checkbox" checked={matchOnly} onChange={e=>onMatchOnly(e.target.checked)} style={{accentColor:'var(--pur)'}}/>Match skills only
-            </label>
-          </div>
-          <div className="fmenu-row">
-            <label className="btn btn-icon" style={{cursor:'pointer',fontSize:'.72rem',maxWidth:180,overflow:'hidden',textOverflow:'ellipsis'}}>
-              📎 {resumeFile?resumeFile:'Upload resume'}
-              <input type="file" accept=".txt,.pdf,.doc,.docx,.rtf" onChange={onResume} style={{display:'none'}}/>
-            </label>
-            {(resumeFile||hasSkills)&&<button className="btn btn-icon" onClick={onClearResume} style={{fontSize:'.72rem',color:'var(--red)',flexShrink:0}}>✕ Remove</button>}
-          </div>
+
         </div>
       )}
+    </div>
+  );
+}
+
+
+function PfSelect({value,onChange,options,placeholder}){
+  const [open,setOpen]=React.useState(false);
+  const ref=React.useRef();
+  React.useEffect(()=>{
+    const h=e=>{if(ref.current&&!ref.current.contains(e.target))setOpen(false);};
+    document.addEventListener('mousedown',h);
+    return()=>document.removeEventListener('mousedown',h);
+  },[]);
+  const norm=o=>typeof o==='string'?{value:o,label:o}:o;
+  const opts=options.map(norm);
+  const sel=opts.find(o=>o.value===value);
+  const lbl=sel?sel.label:(placeholder||'Select…');
+  return(
+    <div ref={ref} style={{position:'relative',width:'100%'}}>
+      <button type="button" className="pf-input" onClick={()=>setOpen(o=>!o)}
+        style={{display:'flex',alignItems:'center',gap:6,cursor:'pointer',textAlign:'left',
+          color:sel?'var(--txt)':'var(--txt3)',border:'1.5px solid var(--bdr)'}}>
+        <span style={{flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{lbl}</span>
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" style={{flexShrink:0,opacity:.45,transform:open?'rotate(180deg)':'none',transition:'transform .18s'}}>
+          <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+      {open&&(
+        <div style={{position:'absolute',top:'calc(100% + 4px)',left:0,right:0,background:'var(--bg2)',
+          border:'1px solid var(--bdr2)',borderRadius:10,boxShadow:'0 8px 32px rgba(0,0,0,.28)',
+          zIndex:300,overflow:'hidden',maxHeight:220,overflowY:'auto'}}>
+          {opts.map(o=>{
+            const active=o.value===value;
+            return(
+              <div key={o.value} onClick={()=>{onChange({target:{value:o.value}});setOpen(false);}}
+                style={{padding:'.5rem .9rem',cursor:'pointer',fontSize:'.84rem',userSelect:'none',
+                  color:active?'var(--accent)':'var(--txt)',
+                  background:active?'var(--pur-lo)':'transparent',
+                  fontWeight:active?600:400}}
+                onMouseEnter={e=>{if(!active)e.currentTarget.style.background='var(--surf2)';}}
+                onMouseLeave={e=>{if(!active)e.currentTarget.style.background=active?'var(--pur-lo)':'transparent';}}>
+                {o.label}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProfilePage({onClose}){
+  const SECS=[
+    {id:'resume',ico:'📄',lbl:'Resume Upload'},
+    {id:'personal',ico:'👤',lbl:'Personal Info'},
+    {id:'professional',ico:'💼',lbl:'Professional'},
+    {id:'skills',ico:'🛠',lbl:'Skills'},
+    {id:'education',ico:'🎓',lbl:'Education'},
+    {id:'prefs',ico:'⚙',lbl:'Preferences'},
+  ];
+  const [sec,setSec]=useState('resume');
+  const [profile,setProfile]=useState(null);
+  const [saving,setSaving]=useState(false);
+  const [saved,setSaved]=useState(false);
+  const [parsing,setParsing]=useState(false);
+  const [drag,setDrag]=useState(false);
+  const [si,setSi]=useState({languages:'',frameworks:'',tools:''});
+  const [trInput,setTrInput]=useState('');
+  const [certInput,setCertInput]=useState('');
+  const ref=useRef();
+  const cRef=useRef();
+
+  const dflt=()=>({
+    personal:{first_name:'',last_name:'',email:'',phone:'',linkedin:'',github:'',portfolio:'',location:''},
+    professional:{current_title:'',current_company:'',years_experience:0,target_roles:[],work_mode_preference:'hybrid',willing_to_relocate:false,notice_period:'30 days'},
+    skills:{languages:[],frameworks:[],tools:[],certifications:[]},
+    education:{degree:'',field:'',institution:'',year:''},
+    answers:{salary_expectation:'',work_authorization:'Authorized to work in India',notice_period:'30 days',cover_letter_tone:'professional'},
+  });
+
+  useEffect(()=>{
+    fetch('/api/profile').then(r=>r.json()).then(d=>setProfile(d)).catch(()=>setProfile(dflt()));
+    if(ref.current) gsap.from(ref.current,{opacity:0,duration:.28,ease:'power2.out'});
+  },[]);
+
+  const animSec=()=>{setTimeout(()=>{if(cRef.current){gsap.from(cRef.current.querySelectorAll('.pf-anim'),{opacity:0,y:12,stagger:.04,duration:.28,ease:'power2.out'});}},30);};
+  const goSec=id=>{setSec(id);animSec();};
+
+  const set=(s,k,v)=>setProfile(p=>({...p,[s]:{...p[s],[k]:v}}));
+  const addSkill=(cat,val)=>{const v=val.trim();if(!v)return;setProfile(p=>({...p,skills:{...p.skills,[cat]:[...new Set([...(p.skills[cat]||[]),v])]}}));setSi(x=>({...x,[cat]:''}));};
+  const rmSkill=(cat,sk)=>setProfile(p=>({...p,skills:{...p.skills,[cat]:(p.skills[cat]||[]).filter(s=>s!==sk)}}));
+  const addTag=(field,val,setter)=>{const v=val.trim();if(!v)return;setProfile(p=>({...p,skills:{...p.skills,[field]:[...new Set([...(p.skills[field]||[]),v])]}}));setter('');};
+
+  const save=async()=>{
+    setSaving(true);setSaved(false);
+    await fetch('/api/profile',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(profile)});
+    setSaving(false);setSaved(true);setTimeout(()=>setSaved(false),2500);toast('Profile saved ✓');
+  };
+
+  const parseFile=async file=>{
+    if(!file)return;
+    setParsing(true);toast('Parsing resume…');
+    const fd=new FormData();fd.append('file',file);
+    try{
+      const r=await fetch('/api/resume/parse-profile',{method:'POST',body:fd});
+      const d=await r.json();
+      if(r.ok){
+        setProfile(prev=>{
+          const m=JSON.parse(JSON.stringify(prev||dflt()));
+          for(const sec of Object.keys(d)){
+            if(sec.startsWith('_'))continue;
+            if(m[sec]&&typeof m[sec]==='object'){
+              for(const[k,v]of Object.entries(d[sec])){
+                const cur=m[sec][k];
+                if(!cur||cur===''||(Array.isArray(cur)&&cur.length===0)||cur===0||cur===false)m[sec][k]=v;
+              }
+            }
+          }
+          m.resume_meta={filename:file.name,parsed_at:new Date().toISOString(),size:Math.round(file.size/1024)+'KB'};
+          return m;
+        });
+        const sc=d._meta?.skill_count||0;
+        toast('Resume parsed — '+sc+' skills found! Review each section and save.');
+        goSec('personal');
+      }else toast('Parse error: '+(d.detail||'unknown'));
+    }catch(e){toast('Parse failed');}
+    setParsing(false);
+  };
+
+  if(!profile)return<div ref={ref} className="pf-ov" style={{display:'flex',alignItems:'center',justifyContent:'center'}}><div className="spin" style={{width:24,height:24,border:'2.5px solid var(--bdr2)',borderTopColor:'var(--pur)'}}/></div>;
+
+  const p=profile;
+  return(
+    <div ref={ref} className="pf-ov">
+      <div className="pf-hdr">
+        <div>
+          <div className="pf-hdr-title">My Job Profile</div>
+          <div className="pf-hdr-sub">Auto-fills cover letters, screening answers &amp; forms</div>
+        </div>
+        <div style={{marginLeft:'auto',display:'flex',gap:8,alignItems:'center'}}>
+          <button className="btn btn-p" onClick={save} disabled={saving} style={{height:28,minWidth:110,padding:'0 14px',fontSize:'.74rem',lineHeight:'28px',justifyContent:'center'}}>{saving?'Saving…':saved?'✓ Saved!':'Save Profile'}</button>
+          <button className="btn" onClick={onClose} style={{height:28,width:28,padding:0,fontSize:'.74rem',lineHeight:'28px',justifyContent:'center'}}>✕</button>
+        </div>
+      </div>
+
+      <div className="pf-body">
+        <div className="pf-nav">
+          {SECS.map(s=>(
+            <div key={s.id} className={'pf-nav-item'+(sec===s.id?' on':'')} onClick={()=>goSec(s.id)}>
+              <span style={{fontSize:'.9rem'}}>{s.ico}</span><span>{s.lbl}</span>
+            </div>
+          ))}
+          <div style={{marginTop:'auto',padding:'.8rem .5rem 0',fontSize:'.68rem',color:'var(--txt3)',lineHeight:1.6}}>
+            Tip: upload your resume first — it auto-fills everything below.
+          </div>
+        </div>
+
+        <div className="pf-content" ref={cRef}>
+
+          {sec==='resume'&&(<div className="profile-section">
+            <div className="pf-sec-title pf-anim">📄 Resume</div>
+            {p.resume_meta?.filename?(
+              <div className="pf-anim" style={{background:'var(--surf)',border:'1px solid var(--bdr2)',borderRadius:12,padding:'1rem 1.2rem',marginBottom:'1rem'}}>
+                <div style={{display:'flex',alignItems:'center',gap:10}}>
+                  <span style={{fontSize:'1.6rem'}}>📄</span>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontWeight:600,fontSize:'.82rem',color:'var(--txt)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{p.resume_meta.filename}</div>
+                    <div style={{fontSize:'.7rem',color:'var(--txt3)',marginTop:2}}>{p.resume_meta.size} · Parsed {new Date(p.resume_meta.parsed_at).toLocaleDateString()}</div>
+                  </div>
+                  <div style={{display:'flex',gap:6,flexShrink:0}}>
+                    <label className="btn btn-icon" style={{cursor:'pointer',fontSize:'.72rem',color:'var(--pur2)'}}>
+                      ↺ Replace
+                      <input type="file" accept=".pdf,.doc,.docx,.txt,.rtf" onChange={e=>{if(e.target.files[0])parseFile(e.target.files[0]);}} style={{display:'none'}}/>
+                    </label>
+                    <button className="btn btn-icon" onClick={()=>setProfile(pr=>({...pr,resume_meta:null}))} style={{fontSize:'.72rem',color:'var(--red)'}}>✕ Remove</button>
+                  </div>
+                </div>
+              </div>
+            ):(
+              <div className={'pf-resume-zone pf-anim'+(drag?' drag':'')} onDragOver={e=>{e.preventDefault();setDrag(true);}} onDragLeave={()=>setDrag(false)} onDrop={e=>{e.preventDefault();setDrag(false);parseFile(e.dataTransfer.files[0]);}} onClick={()=>document.getElementById('pf-file').click()}>
+                <input id="pf-file" type="file" accept=".pdf,.doc,.docx,.txt,.rtf" onChange={e=>parseFile(e.target.files[0])} style={{display:'none'}}/>
+                {parsing?(<>
+                  <div className="pf-resume-ico">⚙️</div>
+                  <div className="pf-resume-title" style={{color:'var(--pur2)'}}>Parsing your resume…</div>
+                  <div className="pf-resume-sub">Extracting skills, experience, education and contact info</div>
+                </>):(<>
+                  <div className="pf-resume-ico">📄</div>
+                  <div className="pf-resume-title">Drop your resume or click to upload</div>
+                  <div className="pf-resume-sub">PDF · DOCX · TXT · RTF — Multi-strategy parser with AI enhancement</div>
+                </>)}
+              </div>
+            )}
+            <div className="pf-anim" style={{background:'var(--surf)',border:'1px solid var(--bdr)',borderRadius:12,padding:'1.2rem 1.4rem'}}>
+              <div style={{fontWeight:700,fontSize:'.82rem',marginBottom:'.75rem',color:'var(--txt)'}}>What our parser extracts:</div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'.4rem'}}>
+                {['Name & contact info','LinkedIn & GitHub URLs','Years of experience','Current job title & company','Programming languages','Frameworks & libraries','Cloud & DevOps tools','Degree & institution','Certifications','Graduation year'].map(i=>(
+                  <div key={i} style={{display:'flex',alignItems:'center',gap:6,fontSize:'.75rem',color:'var(--txt2)'}}><span style={{color:'var(--grn)',fontWeight:700}}>✓</span>{i}</div>
+                ))}
+              </div>
+              <div style={{marginTop:'.9rem',padding:'.6rem .8rem',background:'var(--pur-lo)',borderRadius:8,fontSize:'.72rem',color:'var(--pur2)',display:'flex',gap:6}}>
+                <span>⚡</span><span>Configure AI keys to get AI-enhanced parsing — fills target roles, salary expectations, and fixes ambiguities automatically.</span>
+              </div>
+            </div>
+          </div>)}
+
+          {sec==='personal'&&(<div className="profile-section">
+            <div className="pf-sec-title pf-anim">👤 Personal Info</div>
+            <div className="pf-row pf-anim">
+              <div className="pf-field"><div className="pf-label">First Name</div><input className="pf-input" value={p.personal.first_name} onChange={e=>set('personal','first_name',e.target.value)} placeholder="Rushil"/></div>
+              <div className="pf-field"><div className="pf-label">Last Name</div><input className="pf-input" value={p.personal.last_name} onChange={e=>set('personal','last_name',e.target.value)} placeholder="Pillamari"/></div>
+            </div>
+            <div className="pf-row pf-anim">
+              <div className="pf-field"><div className="pf-label">Email</div><input className="pf-input" type="email" value={p.personal.email} onChange={e=>set('personal','email',e.target.value)} placeholder="you@example.com"/></div>
+              <div className="pf-field"><div className="pf-label">Phone</div><input className="pf-input" value={p.personal.phone} onChange={e=>set('personal','phone',e.target.value)} placeholder="+91 98765 43210"/></div>
+            </div>
+            <div className="pf-field pf-anim"><div className="pf-label">Location</div><input className="pf-input" value={p.personal.location} onChange={e=>set('personal','location',e.target.value)} placeholder="Hyderabad, India"/></div>
+            <div className="pf-field pf-anim"><div className="pf-label">LinkedIn URL</div><input className="pf-input" value={p.personal.linkedin} onChange={e=>set('personal','linkedin',e.target.value)} placeholder="https://linkedin.com/in/yourname"/></div>
+            <div className="pf-field pf-anim"><div className="pf-label">GitHub URL</div><input className="pf-input" value={p.personal.github} onChange={e=>set('personal','github',e.target.value)} placeholder="https://github.com/yourname"/></div>
+            <div className="pf-field pf-anim"><div className="pf-label">Portfolio / Website</div><input className="pf-input" value={p.personal.portfolio} onChange={e=>set('personal','portfolio',e.target.value)} placeholder="https://yoursite.com"/></div>
+          </div>)}
+
+          {sec==='professional'&&(<div className="profile-section">
+            <div className="pf-sec-title pf-anim">💼 Professional</div>
+            <div className="pf-row pf-anim">
+              <div className="pf-field"><div className="pf-label">Current Title</div><input className="pf-input" value={p.professional.current_title} onChange={e=>set('professional','current_title',e.target.value)} placeholder="Senior Software Engineer"/></div>
+              <div className="pf-field"><div className="pf-label">Current Company</div><input className="pf-input" value={p.professional.current_company} onChange={e=>set('professional','current_company',e.target.value)} placeholder="insightsoftware"/></div>
+            </div>
+            <div className="pf-field pf-anim"><div className="pf-label">Years of Experience</div><input className="pf-input" type="number" min="0" max="40" value={p.professional.years_experience} onChange={e=>set('professional','years_experience',parseInt(e.target.value)||0)}/></div>
+            <div className="pf-field pf-anim">
+              <div className="pf-label">Target Roles</div>
+              <div style={{display:'flex',flexWrap:'wrap',minHeight:40,padding:'.4rem .5rem',background:'var(--surf)',border:'1.5px solid var(--bdr)',borderRadius:9,marginBottom:'.5rem'}}>
+                {(p.professional.target_roles||[]).map(r=><span key={r} className="pf-tag">{r}<span className="pf-tag-rm" onClick={()=>setProfile(pr=>({...pr,professional:{...pr.professional,target_roles:pr.professional.target_roles.filter(x=>x!==r)}}))}>✕</span></span>)}
+              </div>
+              <div className="pf-add-row">
+                <input className="pf-input" value={trInput} onChange={e=>setTrInput(e.target.value)} placeholder="e.g. Senior Backend Engineer" onKeyDown={e=>{if(e.key==='Enter'||e.key===','){e.preventDefault();setProfile(pr=>({...pr,professional:{...pr.professional,target_roles:[...new Set([...pr.professional.target_roles,trInput.trim()])]}}));setTrInput('');}}} style={{flex:1}}/>
+                <button className="btn btn-p" style={{flexShrink:0,fontSize:'.75rem'}} onClick={()=>{setProfile(pr=>({...pr,professional:{...pr.professional,target_roles:[...new Set([...pr.professional.target_roles,trInput.trim()])]}}));setTrInput('');}}>Add</button>
+              </div>
+            </div>
+            <div className="pf-field pf-anim">
+              <div className="pf-label">Work Mode Preference</div>
+              <div style={{display:'flex',gap:7,marginTop:'.3rem'}}>
+                {['remote','hybrid','onsite'].map(m=><button key={m} className={'pf-mode-btn'+(p.professional.work_mode_preference===m?' on':'')} onClick={()=>set('professional','work_mode_preference',m)} style={{textTransform:'capitalize'}}>{m}</button>)}
+              </div>
+            </div>
+            <div className="pf-row pf-anim">
+              <div className="pf-field"><div className="pf-label">Notice Period</div><PfSelect value={p.professional.notice_period} onChange={e=>set('professional','notice_period',e.target.value)} options={['Immediate','15 days','30 days','60 days','90 days','3 months']}/></div>
+              <div className="pf-field"><div className="pf-label" style={{marginBottom:'.5rem'}}>Willing to Relocate</div><label style={{display:'flex',alignItems:'center',gap:10,cursor:'pointer'}}><input type="checkbox" checked={p.professional.willing_to_relocate} onChange={e=>set('professional','willing_to_relocate',e.target.checked)} style={{accentColor:'var(--pur)',width:17,height:17}}/><span style={{fontSize:'.82rem'}}>Yes, open to relocation</span></label></div>
+            </div>
+          </div>)}
+
+          {sec==='skills'&&(<div className="profile-section">
+            <div className="pf-sec-title pf-anim">🛠 Skills</div>
+            {[
+              ['languages','Languages',['Python','TypeScript','Java','Go','Rust','C++','Kotlin']],
+              ['frameworks','Frameworks & Libraries',['React','FastAPI','Django','Node.js','Spring','PyTorch','Next.js']],
+              ['tools','Tools & Platforms',['AWS','Docker','Kubernetes','PostgreSQL','Redis','Git','Terraform']],
+            ].map(([cat,label,sugs])=>(
+              <div key={cat} className="pf-field pf-anim">
+                <div className="pf-label">{label}</div>
+                <div style={{display:'flex',flexWrap:'wrap',minHeight:40,padding:'.4rem .5rem',background:'var(--surf)',border:'1.5px solid var(--bdr)',borderRadius:9,marginBottom:'.5rem'}}>
+                  {(p.skills[cat]||[]).map(s=><span key={s} className="pf-tag">{s}<span className="pf-tag-rm" onClick={()=>rmSkill(cat,s)}>✕</span></span>)}
+                </div>
+                <div className="pf-add-row">
+                  <input className="pf-input" value={si[cat]||''} onChange={e=>setSi(x=>({...x,[cat]:e.target.value}))} placeholder={sugs.slice(0,3).join(', ')+', …'} onKeyDown={e=>{if(e.key==='Enter'||e.key===','){e.preventDefault();addSkill(cat,si[cat]||'');}}} style={{flex:1}}/>
+                  <button className="btn btn-p" style={{flexShrink:0,fontSize:'.75rem'}} onClick={()=>addSkill(cat,si[cat]||'')}>Add</button>
+                </div>
+                <div className="pf-tag-suggestions">
+                  {sugs.filter(s=>!(p.skills[cat]||[]).map(x=>x.toLowerCase()).includes(s.toLowerCase())).map(s=><span key={s} className="pf-sug" onClick={()=>setProfile(pr=>({...pr,skills:{...pr.skills,[cat]:[...new Set([...(pr.skills[cat]||[]),s])]}}))}>{s}</span>)}
+                </div>
+              </div>
+            ))}
+            <div className="pf-field pf-anim">
+              <div className="pf-label">Certifications</div>
+              <div style={{display:'flex',flexWrap:'wrap',minHeight:40,padding:'.4rem .5rem',background:'var(--surf)',border:'1.5px solid var(--bdr)',borderRadius:9,marginBottom:'.5rem'}}>
+                {(p.skills.certifications||[]).map(s=><span key={s} className="pf-tag">{s}<span className="pf-tag-rm" onClick={()=>rmSkill('certifications',s)}>✕</span></span>)}
+              </div>
+              <div className="pf-add-row">
+                <input className="pf-input" value={certInput} onChange={e=>setCertInput(e.target.value)} placeholder="AWS Solutions Architect, CKA, …" onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();addTag('certifications',certInput,setCertInput);}}} style={{flex:1}}/>
+                <button className="btn btn-p" style={{flexShrink:0,fontSize:'.75rem'}} onClick={()=>addTag('certifications',certInput,setCertInput)}>Add</button>
+              </div>
+            </div>
+          </div>)}
+
+          {sec==='education'&&(<div className="profile-section">
+            <div className="pf-sec-title pf-anim">🎓 Education</div>
+            <div className="pf-row pf-anim">
+              <div className="pf-field"><div className="pf-label">Degree</div><PfSelect value={p.education.degree} onChange={e=>set('education','degree',e.target.value)} options={[{value:'',label:'Select…'},'B.Tech','B.E.','B.Sc.','BCA','M.Tech','M.S.','MBA','MCA','Ph.D.','Diploma','Other']} placeholder="Select…"/></div>
+              <div className="pf-field"><div className="pf-label">Field of Study</div><input className="pf-input" value={p.education.field} onChange={e=>set('education','field',e.target.value)} placeholder="Computer Science"/></div>
+            </div>
+            <div className="pf-row pf-anim">
+              <div className="pf-field"><div className="pf-label">Institution</div><input className="pf-input" value={p.education.institution} onChange={e=>set('education','institution',e.target.value)} placeholder="IIT Hyderabad"/></div>
+              <div className="pf-field"><div className="pf-label">Graduation Year</div><input className="pf-input" type="number" min="1990" max="2030" value={p.education.year} onChange={e=>set('education','year',e.target.value)} placeholder="2022"/></div>
+            </div>
+          </div>)}
+
+          {sec==='prefs'&&(<div className="profile-section">
+            <div className="pf-sec-title pf-anim">⚙ Preferences</div>
+            <div className="pf-field pf-anim"><div className="pf-label">Salary Expectation</div><input className="pf-input" value={p.answers.salary_expectation} onChange={e=>set('answers','salary_expectation',e.target.value)} placeholder="e.g. 25–35 LPA or As per company norms"/></div>
+            <div className="pf-field pf-anim"><div className="pf-label">Work Authorization</div><input className="pf-input" value={p.answers.work_authorization} onChange={e=>set('answers','work_authorization',e.target.value)} placeholder="Authorized to work in India"/></div>
+            <div className="pf-field pf-anim">
+              <div className="pf-label">Cover Letter Tone</div>
+              <div style={{display:'flex',gap:7,marginTop:'.3rem'}}>
+                {[['professional','Professional'],['conversational','Conversational'],['enthusiastic','Enthusiastic']].map(([v,l])=><button key={v} className={'pf-mode-btn'+(p.answers.cover_letter_tone===v?' on':'')} onClick={()=>set('answers','cover_letter_tone',v)}>{l}</button>)}
+              </div>
+              <div style={{fontSize:'.71rem',color:'var(--txt3)',marginTop:'.4rem'}}>Applied when generating AI cover letters for this profile</div>
+            </div>
+          </div>)}
+
+        </div>
+      </div>
+
+      <div className="pf-footer">
+        <div style={{fontSize:'.73rem',color:'var(--txt3)'}}>All fields are optional but improve auto-fill accuracy significantly.</div>
+      </div>
     </div>
   );
 }
@@ -1218,7 +2226,7 @@ function App(){
   const [disc,setDisc]=useState({status:'starting'});
   const [feed,setFeed]=useState([]);
   const [detail,setDetail]=useState(null);
-  const [feedOpen,setFeedOpen]=useState(true);
+  const [feedOpen,setFeedOpen]=useState(false);
   const [feedPaused,setFeedPaused]=useState(false);
   const [isDark,setIsDark]=useState(false);
   const [tab,setTab]=useState('inbox');
@@ -1240,6 +2248,9 @@ function App(){
   const [showAbout,setShowAbout]=useState(false);
   const [showConfig,setShowConfig]=useState(false);
   const [showAccount,setShowAccount]=useState(false);
+  const [showAISettings,setShowAISettings]=useState(false);
+  const [showProfile,setShowProfile]=useState(false);
+  const [aiActive,setAiActive]=useState(false);
   const [applyJob,setApplyJob]=useState(null);
   const [confirmDlg,setConfirmDlg]=useState(null);
   const [hdrMeta,setHdrMeta]=useState('');
@@ -1255,22 +2266,27 @@ function App(){
   useEffect(()=>{
     const saved=localStorage.getItem('jb-theme');const t=saved||'light';
     setIsDark(t==='dark');document.getElementById('app-html').setAttribute('data-theme',t);
-    const f=localStorage.getItem('jb-feed');if(f==='0')setFeedOpen(false);
-    try{const sk=JSON.parse(localStorage.getItem('jb-skills')||'[]');if(sk.length)setResumeSkills(sk);}catch(e){}
+    const savedAi=localStorage.getItem('jb-ai');
+    if(savedAi==='1'){setAiActive(true);document.getElementById('app-html').setAttribute('data-ai','active');}
+    const f=localStorage.getItem('jb-feed');if(f==='1')setFeedOpen(true);
+    // Load resume skills from profile (profile is the source of truth now)
+    fetch('/api/profile').then(r=>r.ok?r.json():null).then(p=>{
+      if(!p)return;
+      const sk=[...( p.skills?.languages||[]),...(p.skills?.frameworks||[]),...(p.skills?.tools||[]),...(p.skills?.databases||[])];
+      if(sk.length)setResumeSkills(sk);
+    }).catch(()=>{});
+    // Allow any component to open the AI settings modal via custom event
+    const _openAI=()=>setShowAISettings(true);
+    window.addEventListener('jb:open-ai-settings',_openAI);
+    return()=>window.removeEventListener('jb:open-ai-settings',_openAI);
   },[]);
 
   const apiFetch=useCallback(async(url,opts={})=>{
     let r=await fetch(url,opts);
     if(r.status===401){
-      // Try to refresh the token silently
       const ref=await fetch('/auth/refresh',{method:'POST'});
-      if(ref.ok){
-        // Retry the original request with the new cookie
-        r=await fetch(url,opts);
-        if(r.status===401){window.location.href='/';return null;}
-      } else {
-        window.location.href='/';return null;
-      }
+      if(ref.ok){r=await fetch(url,opts);if(r.status===401){window.location.href='/';return null;}}
+      else{window.location.href='/';return null;}
     }
     return r;
   },[]);
@@ -1281,7 +2297,6 @@ function App(){
     const apiStatus=currentTab==='inbox'?'all_new':currentTab;
     const _modeF=params.modeF||modeF;const _portalF=params.portalF||portalF;const _locF=params.locationF!==undefined?params.locationF:locationF;
     const p=new URLSearchParams({status:apiStatus});
-    // Single-value API optimization; multi-select handled client-side
     if(_modeF.length===1&&!_modeF.includes('all'))p.set('mode',_modeF[0]);
     if(_portalF.length===1&&!_portalF.includes('all'))p.set('portal',_portalF[0]);
     const s=params.search!==undefined?params.search:search;if(s)p.set('search',s);
@@ -1303,6 +2318,14 @@ function App(){
     connect();return()=>es&&es.close();
   },[loadStats,loadJobs]);
 
+  useEffect(()=>{
+    // Check AI configuration on mount
+    fetch('/api/settings/ai').then(r=>r.json()).then(d=>{
+      const active=!!(d.is_configured);
+      setAiActive(active);
+      document.getElementById('app-html').setAttribute('data-ai',active?'active':'');
+    }).catch(()=>{});
+  },[]);
   useEffect(()=>{loadJobs();loadStats();pollStatus();const i1=setInterval(()=>{loadStats();pollStatus();},15000);const i2=setInterval(()=>loadJobs(),22000);return()=>{clearInterval(i1);clearInterval(i2);};},[]);
 
   useEffect(()=>{
@@ -1331,78 +2354,41 @@ function App(){
     loadStats();toast('Marked as '+status);
     if(['skipped','reviewed','applied'].includes(status))loadJobs();
   };
-  const startDisc=async()=>{await fetch('/api/discovery/start',{method:'POST'});setDisc(d=>({...d,status:'starting'}));setFeedPaused(false);feedPausedRef.current=false;toast('Discovery started');};
+  const startDisc=async()=>{await fetch('/api/discovery/start',{method:'POST'});setDisc(d=>({...d,status:'starting'}));setFeedPaused(false);feedPausedRef.current=false;setFeedOpen(true);toast('Discovery started');};
   const stopDisc=async()=>{await fetch('/api/discovery/stop',{method:'POST'});setDisc(d=>({...d,status:'stopped'}));toast('Discovery stopped');};
-  const scanNow=async()=>{await fetch('/api/discovery/trigger',{method:'POST'});setDisc(d=>({...d,status:'running'}));setFeedPaused(false);feedPausedRef.current=false;toast('Scanning now!');};
+  const scanNow=async()=>{await fetch('/api/discovery/trigger',{method:'POST'});setDisc(d=>({...d,status:'running'}));setFeedPaused(false);feedPausedRef.current=false;setFeedOpen(true);toast('Scanning now!');};
   const refresh=()=>{loadJobs();loadStats();toast('Refreshed');};
-  const purge=()=>setConfirmDlg({icon:'🗂',title:'Purge Suspicious Jobs',message:'Remove all suspicious or mislabeled new jobs from the database? This cannot be undone.',confirmLabel:'Purge Jobs',onConfirm:async()=>{setConfirmDlg(null);const r=await fetch('/api/jobs/purge-suspicious',{method:'DELETE'});const d=await r.json();loadJobs();loadStats();toast('Purged '+d.deleted+' suspicious jobs');}});
+  const purge=()=>setConfirmDlg({icon:'🗂',title:'Purge Suspicious Jobs',message:'Remove all suspicious or mislabeled new jobs from the database? This cannot be undone.',confirmLabel:'Purge Jobs',onConfirm:async()=>{setConfirmDlg(null);await fetch('/api/discovery/stop',{method:'POST'});setDisc(d=>({...d,status:'stopped'}));setFeedPaused(false);feedPausedRef.current=false;clearFeed();const r=await fetch('/api/jobs/purge-suspicious',{method:'DELETE'});const d=await r.json();loadJobs();loadStats();toast('Purged '+d.deleted+' suspicious jobs');}});
   const clearDb=()=>setConfirmDlg({
     icon:'🗑',title:'Clear Jobs Database',
     message:'Permanently delete all your discovered jobs. Choose whether to trigger a new scan immediately after.',
     confirmLabel:'Clear & Rescan',
-    onConfirm:async()=>{setConfirmDlg(null);const r=await fetch('/api/jobs/clear-all',{method:'DELETE'});const d=await r.json();setJobs([]);setHdrMeta('');setLastScanAt(null);setDisc(prev=>({...prev,last_new_count:0}));clearFeed();loadStats();pollStatus();toast('Cleared '+d.deleted+' jobs — scanning now...');setTimeout(()=>{scanNow();loadJobs();},800);},
+    onConfirm:async()=>{setConfirmDlg(null);await fetch('/api/discovery/stop',{method:'POST'});setDisc(d=>({...d,status:'stopped'}));setFeedPaused(false);feedPausedRef.current=false;clearFeed();const r=await fetch('/api/jobs/clear-all',{method:'DELETE'});const d=await r.json();setJobs([]);setHdrMeta('');setLastScanAt(null);setDisc(prev=>({...prev,last_new_count:0}));loadStats();toast('Cleared '+d.deleted+' jobs — scanning now...');setTimeout(()=>{scanNow();loadJobs();},800);},
     altLabel:'Clear Only',
-    onAlt:async()=>{setConfirmDlg(null);const r=await fetch('/api/jobs/clear-only',{method:'DELETE'});const d=await r.json();setJobs([]);setHdrMeta('');setLastScanAt(null);setDisc(prev=>({...prev,last_new_count:0,status:'idle'}));clearFeed();loadStats();toast('Cleared '+d.deleted+' jobs');}
+    onAlt:async()=>{setConfirmDlg(null);await fetch('/api/discovery/stop',{method:'POST'});setDisc(d=>({...d,status:'stopped'}));setFeedPaused(false);feedPausedRef.current=false;clearFeed();const r=await fetch('/api/jobs/clear-only',{method:'DELETE'});const d=await r.json();setJobs([]);setHdrMeta('');setLastScanAt(null);setDisc(prev=>({...prev,last_new_count:0,status:'idle'}));loadStats();toast('Cleared '+d.deleted+' jobs');}
   });
+  const signOut=()=>setConfirmDlg({icon:'🚪',title:'Sign out?',message:'You will be signed out and redirected to the login page.',confirmLabel:'Sign Out',onConfirm:async()=>{setConfirmDlg(null);await fetch('/auth/logout',{method:'POST'});window.location.href='/';},});
+
   const toggleTheme=()=>{
-    const next=!isDark;
-    const t=next?'dark':'light';
-    const overlay=document.getElementById('theme-overlay');
-    const scanLine=overlay.querySelector('.scan-line');
-    const dur=480;
-    // Set overlay to new theme color, sweep top→bottom
-    overlay.style.background=next?'#080808':'#fafafa';
-    overlay.style.transition='none';
-    overlay.style.transform='translateY(-100%)';
-    void overlay.offsetWidth;
-    overlay.style.transition=`transform ${dur}ms cubic-bezier(.4,0,.2,1)`;
-    overlay.style.transform='translateY(0%)';
-    // Scanline follows leading edge
-    if(scanLine){
-      scanLine.style.transition='none';
-      scanLine.style.top='0px';
-      void scanLine.offsetWidth;
-      scanLine.style.transition=`top ${dur}ms cubic-bezier(.4,0,.2,1)`;
-      scanLine.style.top='100vh';
-    }
-    // Switch theme at midpoint
-    setTimeout(()=>{
-      setIsDark(next);
-      document.getElementById('app-html').setAttribute('data-theme',t);
-      localStorage.setItem('jb-theme',t);
-    }, dur*0.55);
-    // Sweep out downward
-    setTimeout(()=>{
-      overlay.style.transition=`transform ${dur*0.7}ms cubic-bezier(.4,0,.2,1)`;
-      overlay.style.transform='translateY(100%)';
-      if(scanLine){ scanLine.style.transition='none'; scanLine.style.top='0px'; }
-    }, dur);
+    const next=!isDark;const t=next?'dark':'light';
+    const overlay=document.getElementById('theme-overlay');const scanLine=overlay.querySelector('.scan-line');const dur=480;
+    overlay.style.background=next?'#141414':'#f8fafc';overlay.style.transition='none';overlay.style.transform='translateY(-100%)';void overlay.offsetWidth;
+    overlay.style.transition=`transform ${dur}ms cubic-bezier(.4,0,.2,1)`;overlay.style.transform='translateY(0%)';
+    if(scanLine){scanLine.style.transition='none';scanLine.style.top='0px';void scanLine.offsetWidth;scanLine.style.transition=`top ${dur}ms cubic-bezier(.4,0,.2,1)`;scanLine.style.top='100vh';}
+    setTimeout(()=>{setIsDark(next);document.getElementById('app-html').setAttribute('data-theme',t);localStorage.setItem('jb-theme',t);},dur*0.55);
+    setTimeout(()=>{overlay.style.transition=`transform ${dur*0.7}ms cubic-bezier(.4,0,.2,1)`;overlay.style.transform='translateY(100%)';if(scanLine){scanLine.style.transition='none';scanLine.style.top='0px';}},dur);
   };
   const toggleFeed=()=>{setFeedOpen(o=>{localStorage.setItem('jb-feed',o?'0':'1');return !o;});};
   const toggleFeedPause=async()=>{
-    if(feedPaused){
-      // Resume — start discovery again
-      setFeedPaused(false);feedPausedRef.current=false;
-      await fetch('/api/discovery/trigger',{method:'POST'});
-      setDisc(d=>({...d,status:'running'}));
-      toast('Discovery resumed');
-    } else {
-      // Pause — stop discovery, keep feed visible
-      setFeedPaused(true);feedPausedRef.current=true;
-      await fetch('/api/discovery/pause',{method:'POST'});
-      setDisc(d=>({...d,status:'paused'}));
-      toast('Discovery paused');
-    }
+    if(feedPaused){setFeedPaused(false);feedPausedRef.current=false;await fetch('/api/discovery/trigger',{method:'POST'});setDisc(d=>({...d,status:'running'}));toast('Discovery resumed');}
+    else{setFeedPaused(true);feedPausedRef.current=true;await fetch('/api/discovery/pause',{method:'POST'});setDisc(d=>({...d,status:'paused'}));toast('Discovery paused');}
   };
   const clearFeed=()=>{feedRef.current=[];setFeed([]);fetch('/api/discovery/progress/clear',{method:'POST'}).catch(()=>{});};
   const handleSearch=e=>{const v=e.target.value;setSearch(v);clearTimeout(searchTimer.current);searchTimer.current=setTimeout(()=>loadJobs({search:v}),280);};
   const handleTab=k=>{setTab(k);loadJobs({tab:k});};
-  const handleModeF=e=>{setModeF(e.target.value);loadJobs({modeF:e.target.value});};
-  const handlePortalF=e=>{setPortalF(e.target.value);loadJobs({portalF:e.target.value});};
   const handleResume=async e=>{
     const file=e.target.files[0];if(!file)return;
-    setResumeFile(file.name);
-    toast('Parsing resume...');
+    setResumeFile(file.name);toast('Parsing resume...');
     try{
       const fd=new FormData();fd.append('file',file);
       const r=await fetch('/api/resume/parse',{method:'POST',body:fd});
@@ -1417,17 +2403,19 @@ function App(){
     e.target.value='';
   };
   const removeSkill=sk=>{const next=resumeSkills.filter(s=>s!==sk);setResumeSkills(next);localStorage.setItem('jb-skills',JSON.stringify(next));};
-
-  const clearResume=()=>{setResumeFile(null);setResumeSkills([]);setMatchOnly(false);setShowAllSkills(false);localStorage.removeItem('jb-skills');toast('Resume cleared');};
-
-  const getPrevStatus=(j)=>{
-    if(!j.notes)return 'new';
-    const m=j.notes.match(/prev_status:(\w+)/);
-    return m?m[1]:'new';
+  const clearResume=()=>{
+    setResumeFile(null);setResumeSkills([]);setMatchOnly(false);setShowAllSkills(false);
+    // Also clear resume_meta from profile so the profile page shows the upload zone again
+    fetch('/api/profile').then(r=>r.ok?r.json():null).then(p=>{
+      if(!p)return;
+      fetch('/api/profile',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({...p,resume_meta:null})});
+    }).catch(()=>{});
+    toast('Resume removed');
   };
+
+  const getPrevStatus=(j)=>{if(!j.notes)return 'new';const m=j.notes.match(/prev_status:(\w+)/);return m?m[1]:'new';};
   const isNewJob=(j)=>j.status==='new'&&j.discovered_at&&(Date.now()-new Date(j.discovered_at).getTime())<86400000;
   const filteredJobs=jobs.filter(j=>{
-    // Inbox = only new (unreviewed) jobs
     if(tab==='inbox'&&j.status!=='new')return false;
     if(tab!=='inbox'&&j.status!==tab)return false;
     const LOC_TERMS={india:['india','hyderabad','bengaluru','bangalore','mumbai','pune','chennai','delhi','noida','gurgaon','gurugram','kolkata','ahmedabad','telangana','karnataka','maharashtra','rajasthan','kerala','andhra','tamil'],us:['united states','usa',',us','us,','(us)','new york','san francisco','seattle','boston','austin','chicago','los angeles','california','texas','washington'],uk:['united kingdom','uk','england','london','manchester','birmingham','leeds','bristol','scotland','wales'],remote:['remote','anywhere','worldwide','work from home','wfh','distributed']};
@@ -1442,7 +2430,7 @@ function App(){
     if(sortBy==='newest')return (new Date(b.discovered_at))-(new Date(a.discovered_at));
     if(sortBy==='oldest')return (new Date(a.discovered_at))-(new Date(b.discovered_at));
     if(sortBy==='company')return (a.company||'').localeCompare(b.company||'');
-    if(sortBy==='match')return (b.ai_score||0)-(a.ai_score||0);
+    if(sortBy==='match')return aiActive?(b.ai_score||0)-(a.ai_score||0):scoreMatch(b,resumeSkills)-scoreMatch(a,resumeSkills);
     return new Date(b.discovered_at)-new Date(a.discovered_at);
   });
   const isRunning=disc.status==='running'||disc.status==='starting';
@@ -1451,29 +2439,38 @@ function App(){
     <Toast/>
     <GoTop/>
     {confirmDlg&&<ConfirmDialog icon={confirmDlg.icon} title={confirmDlg.title} message={confirmDlg.message} confirmLabel={confirmDlg.confirmLabel} onConfirm={confirmDlg.onConfirm} onCancel={()=>setConfirmDlg(null)} altLabel={confirmDlg.altLabel} onAlt={confirmDlg.onAlt}/>}
-    {applyJob&&<ApplyModal job={applyJob} onClose={()=>setApplyJob(null)} onApplied={j=>{updateJob(j,"applied");setApplyJob(null);}}/> }
+    {applyJob&&<ApplyModal job={applyJob} onClose={()=>setApplyJob(null)} onApplied={j=>{updateJob(j,"applied");setApplyJob(null);}}/>}
     {showAbout&&<AboutModal onClose={()=>setShowAbout(false)}/>}
     {showAccount&&<AccountModal onClose={()=>setShowAccount(false)}/>}
     {showConfig&&<ConfigPanel onClose={()=>setShowConfig(false)}/>}
-    {detail&&<DetailDrawer job={detail} isNew={isNewJob(detail)} onClose={()=>setDetail(null)} onApprove={j=>updateJob(j,'reviewed')} onSkip={j=>updateJob(j,'skipped')} onMarkApplied={j=>updateJob(j,'applied')} onUnreview={j=>updateJob(j,'new')} onRestore={j=>updateJob(j,getPrevStatus(j))} onAutoApply={j=>{setDetail(null);if(j.status==='new')updateJob(j,'reviewed');setApplyJob(j);}}/>}
+    {showAISettings&&<AISettingsModal onClose={()=>setShowAISettings(false)} onConfigured={active=>{setAiActive(active);localStorage.setItem('jb-ai',active?'1':'0');document.getElementById('app-html').setAttribute('data-ai',active?'active':'');}}/>}
+    {showProfile&&<ProfilePage onClose={()=>{setShowProfile(false);fetch('/api/profile').then(r=>r.ok?r.json():null).then(p=>{if(!p)return;const sk=[...(p.skills?.languages||[]),...(p.skills?.frameworks||[]),...(p.skills?.tools||[]),...(p.skills?.databases||[])];if(sk.length)setResumeSkills(sk);}).catch(()=>{});}}/>}
+    {detail&&<DetailDrawer job={detail} isNew={isNewJob(detail)} onClose={()=>setDetail(null)} onApprove={j=>updateJob(j,'reviewed')} onSkip={j=>updateJob(j,'skipped')} onMarkApplied={j=>updateJob(j,'applied')} onUnreview={j=>updateJob(j,'new')} onRestore={j=>updateJob(j,getPrevStatus(j))} onAutoApply={j=>{setDetail(null);if(j.status==='new')updateJob(j,'reviewed');setApplyJob(j);}} aiActive={aiActive}/>}
     <div style={{position:'relative',zIndex:1}}>
-      <Navbar disc={disc} feedOpen={feedOpen} isDark={isDark} hdrMeta={hdrMeta} onStart={startDisc} onStop={stopDisc} onScan={scanNow} onRefresh={refresh} onPurge={purge} onClearDb={clearDb} onAbout={()=>setShowAbout(true)} onConfigure={()=>setShowConfig(true)} onAccount={()=>setShowAccount(true)} onToggleFeed={toggleFeed} onToggleTheme={toggleTheme}/><div className="body-wrap">
+      <Navbar disc={disc} feedOpen={feedOpen} isDark={isDark} hdrMeta={hdrMeta} paused={feedPaused} onStart={startDisc} onStop={stopDisc} onScan={scanNow} onRefresh={refresh} onPurge={purge} onClearDb={clearDb} onAbout={()=>setShowAbout(true)} onConfigure={()=>setShowConfig(true)} onAccount={()=>setShowAccount(true)} onAISettings={()=>setShowAISettings(true)} onToggleFeed={toggleFeed} onToggleTheme={toggleTheme} aiActive={aiActive} onProfile={()=>setShowProfile(true)} onSignOut={signOut}/>
+      <div className="body-wrap">
         <main className="main-col">
           <div className="sticky-bar">
-            <AISearch onResults={(res,q)=>{setAiResults(res);setAiQuery(q);}} onClear={()=>{setAiResults(null);setAiQuery('');}} active={!!aiResults}/>
+            {aiActive&&<AISearch onResults={(res,q)=>{setAiResults(res);setAiQuery(q);}} onClear={()=>{setAiResults(null);setAiQuery('');}} active={!!aiResults}/>}
             <div className="filters-row">
               <div className="search-wrap" style={{flex:1}}>
                 <span className="search-ico">⌕</span>
                 <input type="text" placeholder="Search title, company, location..." value={search} onChange={handleSearch}/>
               </div>
-              <SkillAC value={skillsF} onChange={v=>setSkillsF(v)} />
-              <select value={sortBy} onChange={e=>setSortBy(e.target.value)} style={{fontSize:'.75rem',padding:'6px 10px',borderRadius:8,border:'1px solid var(--bdr)',background:'var(--surf)',color:'var(--txt)',fontFamily:'Inter,sans-serif',cursor:'pointer'}}>
-              <option value="newest">Newest first</option>
-              <option value="oldest">Oldest first</option>
-              <option value="company">Company A–Z</option>
-              <option value="match">Best match</option>
-            </select>
-            <FilterMenu modeF={modeF} portalF={portalF} levelF={levelF} locationF={locationF} matchOnly={matchOnly} resumeFile={resumeFile} hasSkills={resumeSkills.length>0} onMode={v=>{setModeF(v);loadJobs({modeF:v});}} onPortal={v=>{setPortalF(v);loadJobs({portalF:v});}} onLevel={v=>setLevelF(v)} onLocation={v=>{setLocationF(v);loadJobs({locationF:v});}} onMatchOnly={v=>setMatchOnly(v)} onResume={handleResume} onClearResume={clearResume}/>
+              <SkillAC value={skillsF} onChange={v=>setSkillsF(v)}/>
+              <div style={{display:'inline-flex',alignItems:'center',gap:2,background:'var(--surf)',border:'1px solid var(--bdr)',borderRadius:8,padding:2,flexShrink:0}}>
+                {[
+                  ['newest',<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.3"/><path d="M6 3.5V6l1.5 1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>,'New'],
+                  ['oldest',<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1.3"/><path d="M6 8.5V6l-1.5-1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>,'Old'],
+                  ['company',<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><rect x="2" y="4" width="8" height="7" rx="1" stroke="currentColor" strokeWidth="1.3"/><path d="M4 4V3a2 2 0 014 0v1" stroke="currentColor" strokeWidth="1.3"/></svg>,'A–Z'],
+                  ['match',<svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1.5l1.2 2.4 2.7.4-1.95 1.9.46 2.66L6 7.5 3.57 8.9l.46-2.66L2.1 4.3l2.7-.4z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/></svg>,'Best'],
+                ].map(([v,ico,lbl])=>(
+                  <button key={v} onClick={()=>setSortBy(v)} title={v==='newest'?'Newest first':v==='oldest'?'Oldest first':v==='company'?'Company A–Z':'Best match'} style={{display:'flex',alignItems:'center',gap:3,padding:'4px 8px',fontSize:'.72rem',fontWeight:500,borderRadius:6,border:sortBy===v?'.5px solid var(--bdr2)':'none',background:sortBy===v?'var(--surf2)':'transparent',color:sortBy===v?'var(--pur)':'var(--txt3)',cursor:'pointer',transition:'all .12s',whiteSpace:'nowrap',fontFamily:'Inter,sans-serif'}}>
+                    {ico}{lbl}
+                  </button>
+                ))}
+              </div>
+              <FilterMenu modeF={modeF} portalF={portalF} levelF={levelF} locationF={locationF} matchOnly={matchOnly} resumeFile={resumeFile} hasSkills={resumeSkills.length>0} onMode={v=>{setModeF(v);loadJobs({modeF:v});}} onPortal={v=>{setPortalF(v);loadJobs({portalF:v});}} onLevel={v=>setLevelF(v)} onLocation={v=>{setLocationF(v);loadJobs({locationF:v});}} onMatchOnly={v=>setMatchOnly(v)} onResume={handleResume} onClearResume={clearResume}/>
             </div>
             {(resumeFile||resumeSkills.length>0)&&(
               <div className={"resume-bar"+(showAllSkills?" expanded":"")}>
@@ -1490,34 +2487,26 @@ function App(){
             )}
             <div className="tabs">{TABS.map(t=>{const cnt=tab===t.k?filteredJobs.length:(stats[t.k]||0);return(<button key={t.k} className={'tab'+(tab===t.k?' active':'')} onClick={()=>handleTab(t.k)}>{t.l}{tab===t.k&&cnt>0&&<span className="tab-count">{cnt}</span>}</button>);})}</div>
             <div style={{display:'flex',alignItems:'center',gap:10,padding:'.2rem 0 .6rem'}}>
-            {!loading&&<span style={{fontSize:'.72rem',color:'var(--txt3)',fontFamily:'var(--mono)'}}>
-              Showing {filteredJobs.length} job{filteredJobs.length!==1?'s':''}
-              
-            </span>}
-            {!loading&&filteredJobs.length>0&&<button className="btn btn-ghost" style={{fontSize:'.68rem',padding:'2px 8px'}} onClick={selectedIds.size===filteredJobs.length?clearSelection:selectAll}>{selectedIds.size===filteredJobs.length?'Deselect all':'Select all'}</button>}
-          </div>
+              {!loading&&<span style={{fontSize:'.72rem',color:'var(--txt3)',fontFamily:'var(--mono)'}}>Showing {filteredJobs.length} job{filteredJobs.length!==1?'s':''}</span>}
+              {!loading&&filteredJobs.length>0&&<button className="btn btn-ghost" style={{fontSize:'.68rem',padding:'2px 8px'}} onClick={selectedIds.size===filteredJobs.length?clearSelection:selectAll}>{selectedIds.size===filteredJobs.length?'Deselect all':'Select all'}</button>}
+            </div>
           </div>
           <div className="job-scroll" ref={jobListRef}>
             {loading&&<div style={{textAlign:'center',padding:'2.5rem'}}><div className="spin" style={{width:20,height:20,border:'2.5px solid var(--bdr2)',borderTopColor:'var(--pur)',display:'inline-block'}}/></div>}
             {aiResults&&<div className="ai-result-hdr"><span>✦ AI results for <b style={{color:'var(--txt)'}}>"{aiQuery}"</b></span><span style={{marginLeft:'auto'}}>{aiResults.length} matches</span></div>}
-            {(()=>{const vs=[...selectedIds].filter(id=>filteredJobs.some(j=>j.id===id));return vs.length>0&&<div className="bulk-bar"><span className="bb-count">{vs.length} selected</span>{tab==='inbox'&&<><button onClick={()=>bulkAction('reviewed')}>✓ Approve all</button><button onClick={()=>bulkAction('skipped')}>Skip all</button></> }
-                    {tab==='reviewed'&&<><button onClick={()=>bulkAction('applied')}>✓ Applied</button><button onClick={()=>bulkAction('new')}>↩ Unreview all</button><button onClick={()=>bulkAction('skipped')}>Skip all</button></> }
-                    {tab==='applied'&&<button onClick={()=>bulkAction('reviewed')}>↩ Undo Applied</button>}
-                    {tab==='skipped'&&<button onClick={()=>bulkAction('new')}>↩ Undo all</button>}
-                    
-                    <button className="bb-desel" onClick={clearSelection}>✕</button></div>;})()}
-            {!loading&&(aiResults||filteredJobs).length>0&&<div className="jlist">{(aiResults||filteredJobs).map(j=><JobCard key={j.id} job={j} isNew={isNewJob(j)} onClick={()=>setDetail(j)} resumeSkills={resumeSkills} selected={selectedIds.has(j.id)} onSelect={toggleSelect} onApprove={job=>updateJob(job,'reviewed')} onSkip={job=>updateJob(job,'skipped')} onMarkApplied={job=>updateJob(job,'applied')} onUnreview={job=>updateJob(job,'new')} onRestore={job=>updateJob(job,getPrevStatus(job))} onOpen={async job=>{ try{ await fetch('/api/jobs/'+job.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'reviewed'})}); setJobs(prev=>prev.map(j=>j.id===job.id?{...j,status:'reviewed'}:j)); loadStats(); }catch(e){} }} aiScore={j.ai_score} aiReasons={j.ai_reasons}/>)}</div>}
+            {(()=>{const vs=[...selectedIds].filter(id=>filteredJobs.some(j=>j.id===id));return vs.length>0&&<div className="bulk-bar"><span className="bb-count">{vs.length} selected</span>{tab==='inbox'&&<><button onClick={()=>bulkAction('reviewed')}>✓ Approve all</button><button onClick={()=>bulkAction('skipped')}>Skip all</button></>}{tab==='reviewed'&&<><button onClick={()=>bulkAction('applied')}>✓ Applied</button><button onClick={()=>bulkAction('new')}>↩ Unreview all</button><button onClick={()=>bulkAction('skipped')}>Skip all</button></>}{tab==='applied'&&<button onClick={()=>bulkAction('reviewed')}>↩ Undo Applied</button>}{tab==='skipped'&&<button onClick={()=>bulkAction('new')}>↩ Undo all</button>}<button className="bb-desel" onClick={clearSelection}>✕</button></div>;})()}
+            {!loading&&(aiResults||filteredJobs).length>0&&<div className="jlist">{(aiResults||filteredJobs).map(j=><JobCard key={j.id} job={j} isNew={isNewJob(j)} onClick={()=>setDetail(j)} resumeSkills={resumeSkills} selected={selectedIds.has(j.id)} onSelect={toggleSelect} onApprove={job=>updateJob(job,'reviewed')} onSkip={job=>updateJob(job,'skipped')} onMarkApplied={job=>updateJob(job,'applied')} onUnreview={job=>updateJob(job,'new')} onRestore={job=>updateJob(job,getPrevStatus(job))} onOpen={async job=>{try{await fetch('/api/jobs/'+job.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'reviewed'})});setJobs(prev=>prev.map(j=>j.id===job.id?{...j,status:'reviewed'}:j));loadStats();}catch(e){}}} aiScore={j.ai_score} aiReasons={j.ai_reasons}/>)}</div>}
             {!loading&&filteredJobs.length===0&&<div className="empty"><div className="empty-ico">🔭</div><div className="empty-t">{tab==='inbox'?'Inbox is empty':'Nothing here'}</div><div className="empty-s">{tab==='inbox'?'Run a scan to populate your inbox':'Try a different tab or filter'}</div></div>}
           </div>
         </main>
-        <FeedPanel feed={feed} isOpen={feedOpen} onClose={toggleFeed} isRunning={isRunning} onStop={stopDisc} paused={feedPaused} onTogglePause={toggleFeedPause} onClear={clearFeed}/>
+        <FeedPanel feed={feed} isOpen={feedOpen} onClose={toggleFeed} isRunning={isRunning} paused={feedPaused} onTogglePause={toggleFeedPause} onClear={clearFeed}/>
       </div>
       <footer className="footer">
         <div style={{display:"flex",alignItems:"center",gap:10}}>
           <div className="footer-brand">JobBot</div>
-          <span style={{fontSize:".65rem",color:"var(--txt3)",fontFamily:"var(--mono)"}}>v2.0</span>
+          <span style={{fontSize:".65rem",color:"var(--txt3)",fontFamily:"var(--mono)"}}>v3.0 · AI-powered</span>
         </div>
-        <div className="footer-txt" style={{textAlign:"center"}}>LinkedIn &middot; Naukri &middot; Indeed &middot; Monster &middot; Glassdoor &middot; Greenhouse &middot; HiringCafe &middot; Instahire &middot; Uplers</div>
+        <div className="footer-txt" style={{textAlign:"center"}}>LinkedIn · Naukri · Indeed · Monster · Glassdoor · Greenhouse · HiringCafe · Instahire · Uplers</div>
         <div className="footer-txt" style={{cursor:"pointer",color:"var(--pur2)"}} onClick={()=>setShowAbout(true)}>About &amp; Features ↗</div>
       </footer>
     </div>
@@ -1528,4 +2517,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>
-                                                                             

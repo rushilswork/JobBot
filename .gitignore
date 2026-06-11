@@ -3,6 +3,10 @@ data/
 *.db
 *.sqlite
 
+# Secrets — never commit these
+config/credentials.yaml
+data/.jwt_secret
+
 # Browser profiles (contains login cookies)
 data/browser_profile/
 
@@ -24,3 +28,11 @@ Thumbs.db
 
 # Logs
 *.log
+logs/
+
+# Personal data — use profile.example.yaml as template
+config/profile.yaml
+
+# Dev/debug scripts — not part of the app
+diagnose_linkedin.py
+migrate_add_ai_match.py
