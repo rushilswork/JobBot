@@ -1214,7 +1214,7 @@ function AISettingsModal({onClose,onConfigured}){
           ]}
         />
 
-        <div className="ai-test-row">
+        <div className="ai-test-row" style={{marginTop:".9rem"}}>
           <button className="btn" onClick={test} disabled={testing||(!settings?.api_key_set&&!apiKey.trim())} style={{fontSize:'.75rem',padding:'6px 14px'}}>
             {testing?'Testing…':'Test connection'}
           </button>

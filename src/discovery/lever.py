@@ -21,6 +21,8 @@ LEVER_API = "https://api.lever.co/v0/postings/{company_id}?mode=json"
 class LeverDiscoverer(BaseDiscoverer):
 
     async def discover(self, context=None, company: dict = None) -> list[JobListing]:
+        if not company:
+            return []
         lever_id = company.get("lever_id")
         if not lever_id:
             return []

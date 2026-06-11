@@ -38,7 +38,7 @@ def login(body: LoginBody, response: Response, request: Request):
     user = get_user(body.username)
     if not user:
         record_failed_attempt(ip)
-        raise HTTPException(status.HTTP_404_NOT_FOUND, "User not found")
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid credentials")
     if not verify_password(body.password, user.hashed_pw):
         record_failed_attempt(ip)
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Incorrect password")

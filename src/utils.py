@@ -18,7 +18,6 @@ logging.basicConfig(
     datefmt="%H:%M:%S",
 )
 log = logging.getLogger("jobbot")
-# Silence noisy third-party debug logs
 for _lib in ("asyncio","urllib3","aiohttp","playwright","websockets"):
     logging.getLogger(_lib).setLevel(logging.WARNING)
 
@@ -29,19 +28,36 @@ for _lib in ("asyncio","urllib3","aiohttp","playwright","websockets"):
 
 def load_config() -> dict:
     path = PROJECT_ROOT / "config" / "config.yaml"
-    with open(path) as f:
-        return yaml.safe_load(f)
+    if not path.exists():
+        log.warning("config/config.yaml not found — returning empty config")
+        return {}
+    try:
+        with open(path) as f:
+            return yaml.safe_load(f) or {}
+    except Exception as e:
+        log.error(f"Failed to load config.yaml: {e}")
+        return {}
 
 
 def load_profile() -> dict:
     path = PROJECT_ROOT / "config" / "profile.yaml"
-    with open(path) as f:
-        return yaml.safe_load(f)
+    if not path.exists():
+        return {}
+    try:
+        with open(path) as f:
+            return yaml.safe_load(f) or {}
+    except Exception as e:
+        log.error(f"Failed to load profile.yaml: {e}")
+        return {}
 
 
 def load_credentials() -> dict:
     path = PROJECT_ROOT / "config" / "credentials.yaml"
     if not path.exists():
         return {}
-    with open(path) as f:
-        return yaml.safe_load(f) or {}
+    try:
+        with open(path) as f:
+            return yaml.safe_load(f) or {}
+    except Exception as e:
+        log.error(f"Failed to load credentials.yaml: {e}")
+        return {}
