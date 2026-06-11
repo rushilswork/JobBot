@@ -126,6 +126,10 @@ class Job(Base):
     cover_letter = Column(Text)
     screening_answers = Column(Text)   # JSON blob
 
+    # AI analysis results (cached)
+    ai_match_score = Column(Integer, nullable=True)   # 0-100
+    ai_match_data  = Column(Text, nullable=True)      # JSON: {score, matched, missing, recommendation}
+
     company = relationship("Company", back_populates="jobs")
     applications = relationship("Application", back_populates="job", cascade="all, delete-orphan")
 
@@ -149,6 +153,23 @@ class Application(Base):
 
     def __repr__(self) -> str:
         return f"<Application job_id={self.job_id} success={self.success}>"
+
+
+class UserSettings(Base):
+    """Per-user AI provider settings stored in DB (no plain-text config files needed)."""
+    __tablename__ = "user_settings"
+
+    username    = Column(String, primary_key=True)
+    ai_provider = Column(String, default="groq")         # "groq" | "gemini"
+    ai_api_key  = Column(String, default="")             # stored as-is; local app, no remote server
+    ai_model    = Column(String, default="")             # empty = use provider default
+    updated_at  = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # AI-generated profile data (populated by resume parser)
+    profile_summary = Column(Text)   # JSON blob with enriched profile info
+
+    def __repr__(self) -> str:
+        return f"<UserSettings username={self.username!r} provider={self.ai_provider!r}>"
 
 
 # ---------------------------------------------------------------------------
